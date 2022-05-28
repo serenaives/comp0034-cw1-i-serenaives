@@ -26,10 +26,7 @@ df = pd.read_csv('meteorite_landings_cleaned.csv')
 
 # Store MapBox access token
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
-
 # ------------------------------------------------------------------------------
-# Map
-
 
 # ------------------------------------------------------------------------------
 # App layout
@@ -45,11 +42,15 @@ app.layout = html.Div([
         )]),
 
     html.Div([
+        dcc.Graph(
+            id='bar-graph')]),
+
+    html.Div([
         dcc.RangeSlider(
             id='year-slider',
             min=df['year'].min(),
             max=df['year'].max(),
-            value=[1813, 2013],  # default range before slider is adjusted
+            value=[1600, 2013],  # default range
             step=1,
             marks=mark_values,
             allowCross=False,
@@ -64,11 +65,25 @@ app.layout = html.Div([
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
 
-# filters dataframe based on input from user, which is a tuple (start year, end year) from range slider selection
-def get_updated_df(years_selected):
-    new_df = df[(df["year"] >= years_selected[0]) & (df["year"] <= years_selected[1])]
-    return new_df
+# Define functions used in ___
 
+# filters dataframe based on input from user, which is a tuple (start year, end year) from range slider selection
+# ADD FOUND/ FELL FILTER TO THIS FUNCTION
+def get_filtered_df(years_selected):
+    filtered_df = df[(df["year"] >= years_selected[0]) & (df["year"] <= years_selected[1])]
+    return filtered_df
+
+# returns an array containing number of entries for each value in the 'category' column of the dataframe
+def get_category_count(df):
+    num_dict = df['category'].value_counts()
+    key_arr = ['unclassified', 'stony_iron', 'iron', 'stony']
+    num_arr = [0, 0, 0, 0]
+    for i in range(len(num_arr)):
+        try:
+            num_arr[i] = num_dict[key_arr[i]]
+        except KeyError:
+            num_arr[i] = 0
+    return num_arr
 
 # Map
 @app.callback(
@@ -76,14 +91,14 @@ def get_updated_df(years_selected):
     [Input('year-slider', 'value')]
 )
 def update_map(years_selected):
-    new_df = get_updated_df(years_selected)
+    filtered_df = get_filtered_df(years_selected)
 
     trace = [
         dict(
             type="scattermapbox",
-            lat=new_df.reclat,
-            lon=new_df.reclong,
-            text=new_df.name, # add more info to text (i.e include name, year, found/fell)
+            lat=filtered_df.reclat,
+            lon=filtered_df.reclong,
+            text=filtered_df.name, #add more info to text (i.e include name, year, found/fell)
             hoverinfo='text',
             mode='markers',
             marker=dict(
@@ -109,6 +124,26 @@ def update_map(years_selected):
     )
     fig = dict(data=trace, layout=layout)
     return fig
+
+# Bar Graph
+@app.callback(
+    Output('bar-graph', 'figure'),
+    [Input('year-slider', 'value')]
+)
+def update_bar_graph(years_selected):
+        filtered_df = get_filtered_df(years_selected)
+
+        trace = [dict(
+            type='bar',
+            x=get_category_count(filtered_df),
+            y=['unclassified', 'stony-iron', 'iron', 'stony'],
+            orientation='h'
+        )]
+        layout = dict(
+            legend_title_text='Meteorite categories'
+        )
+        fig = dict(data=trace, layout=layout)
+        return fig
 
 # Line graph
 
