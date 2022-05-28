@@ -37,13 +37,25 @@ app.layout = html.Div([
     ]),
 
     html.Div([
+                dcc.RadioItems(
+                    id ='category-graph-type',
+                    options=[
+                        {'label': 'Pie chart', 'value': 'Pie'},
+                        {'label': 'Bar graph', 'value': 'Bar'},
+                    ],
+                    value='Bar',
+                    inline=False,
+                ),
+        ]),
+
+    html.Div([
         dcc.Graph(
             id='map-plot'
         )]),
 
     html.Div([
         dcc.Graph(
-            id='bar-graph')]),
+            id='category-graph')]),
 
     html.Div([
         dcc.RangeSlider(
@@ -127,17 +139,34 @@ def update_map(years_selected):
 
 # Bar Graph
 @app.callback(
-    Output('bar-graph', 'figure'),
-    [Input('year-slider', 'value')]
+    Output('category-graph', 'figure'),
+    [Input('year-slider', 'value'),
+     Input('category-graph-type','value')]
 )
-def update_bar_graph(years_selected):
+def update_category_graph(years_selected, category_graph_type):
         filtered_df = get_filtered_df(years_selected)
-
+        if category_graph_type == 'Bar':
+            type = 'bar'
+            orientation = 'h'
+            x_data = get_category_count(filtered_df)
+            y_data = ['unclassified', 'stony-iron', 'iron', 'stony']
+            values = 'none'
+            labels = 'none'
+        else:
+            if category_graph_type == 'Pie':
+                type = 'pie'
+                orientation = 'v'
+                x_data = 'none'
+                y_data = 'none'
+                values = get_category_count(filtered_df)
+                labels = ['unclassified', 'stony-iron', 'iron', 'stony']
         trace = [dict(
-            type='bar',
-            x=get_category_count(filtered_df),
-            y=['unclassified', 'stony-iron', 'iron', 'stony'],
-            orientation='h'
+            type=type,
+            x=x_data,
+            y=y_data,
+            values = values,
+            labels = labels,
+            orientation=orientation
         )]
         layout = dict(
             legend_title_text='Meteorite categories'
