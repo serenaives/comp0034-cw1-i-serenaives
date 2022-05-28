@@ -37,18 +37,6 @@ app.layout = html.Div([
     ]),
 
     html.Div([
-                dcc.RadioItems(
-                    id ='category-graph-type',
-                    options=[
-                        {'label': 'Pie chart', 'value': 'Pie'},
-                        {'label': 'Bar graph', 'value': 'Bar'},
-                    ],
-                    value='Bar',
-                    inline=False,
-                ),
-        ]),
-
-    html.Div([
         dcc.Graph(
             id='map-plot'
         )]),
@@ -58,20 +46,32 @@ app.layout = html.Div([
             id='category-graph')]),
 
     html.Div([
-        dcc.RangeSlider(
-            id='year-slider',
-            min=df['year'].min(),
-            max=df['year'].max(),
-            value=[1600, 2013],  # default range
-            step=1,
-            marks=mark_values,
-            allowCross=False,
-            verticalHeight=900,
-            pushable=True,
-            tooltip={'always_visible': True,
-                     'placement': 'bottom'}
-        )], style={'width': '70%',
-                   'position': 'absolute', 'left': '5%'}),
+        dcc.RadioItems(
+            id='category-graph-type',
+            options=[
+                {'label': 'Pie chart', 'value': 'Pie'},
+                {'label': 'Bar graph', 'value': 'Bar'},
+            ],
+            value='Bar',
+            inline=False,
+        ),
+    ]),
+
+    html.Div([
+                    dcc.RangeSlider(
+                        id='year-slider',
+                        min=df['year'].min(),
+                        max=df['year'].max(),
+                        value=[1600, 2013],  # default range
+                        step=1,
+                        marks=mark_values,
+                        allowCross=False,
+                        verticalHeight=900,
+                        pushable=True,
+                        tooltip={'always_visible': True,
+                                 'placement': 'bottom'}
+                    )], style={'width': '70%',
+                               'position': 'absolute', 'left': '5%'}),
 ])
 
 # ------------------------------------------------------------------------------
