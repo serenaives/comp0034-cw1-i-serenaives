@@ -58,21 +58,26 @@ app.layout = html.Div([
     ]),
 
     html.Div([
-                    dcc.RangeSlider(
-                        id='year-slider',
-                        min=df['year'].min(),
-                        max=df['year'].max(),
-                        value=[1600, 2013],  # default range
-                        step=1,
-                        marks=mark_values,
-                        allowCross=False,
-                        verticalHeight=900,
-                        pushable=True,
-                        tooltip={'always_visible': True,
-                                 'placement': 'bottom'}
-                    )], style={'width': '70%',
-                               'position': 'absolute', 'left': '5%'}),
+        dcc.Graph(
+            id='year-graph')]),
+
+    html.Div([
+        dcc.RangeSlider(
+            id='year-slider',
+            min=df['year'].min(),
+            max=df['year'].max(),
+            value=[1600, 2013],  # default range
+            step=1,
+            marks=mark_values,
+            allowCross=False,
+            verticalHeight=900,
+            pushable=True,
+            tooltip={'always_visible': True,
+                     'placement': 'bottom'}
+        )], style={'width': '70%',
+                   'position': 'absolute', 'left': '5%'})
 ])
+
 
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
@@ -85,17 +90,15 @@ def get_filtered_df(years_selected):
     filtered_df = df[(df["year"] >= years_selected[0]) & (df["year"] <= years_selected[1])]
     return filtered_df
 
-# returns an array containing number of entries for each value in the 'category' column of the dataframe
-def get_category_count(df):
-    num_dict = df['category'].value_counts()
-    key_arr = ['unclassified', 'stony_iron', 'iron', 'stony']
-    num_arr = [0, 0, 0, 0]
-    for i in range(len(num_arr)):
-        try:
-            num_arr[i] = num_dict[key_arr[i]]
-        except KeyError:
-            num_arr[i] = 0
-    return num_arr
+def get_year_count(df):
+    df_year_count = df.groupby(['year'])['name'].count().reset_index()
+    df_year_count.rename({'name': 'count'}, inplace=True, axis=1)
+    return df_year_count
+
+def get_by_count(df, col):
+    df_count = df.groupby([col])['name'].count().reset_index()
+    df_count.rename({'name': 'count'}, inplace=True, axis=1)
+    return df_count
 
 # Map
 @app.callback(
@@ -104,13 +107,14 @@ def get_category_count(df):
 )
 def update_map(years_selected):
     filtered_df = get_filtered_df(years_selected)
+    text = filtered_df.name
 
     trace = [
         dict(
             type="scattermapbox",
             lat=filtered_df.reclat,
             lon=filtered_df.reclong,
-            text=filtered_df.name, #add more info to text (i.e include name, year, found/fell)
+            text=text,
             hoverinfo='text',
             mode='markers',
             marker=dict(
@@ -131,54 +135,89 @@ def update_map(years_selected):
                 lon=0,
             ),
             zoom=0.5,
-            style='carto-darkmatter',
+            style='carto-positron',
         ),
     )
     fig = dict(data=trace, layout=layout)
     return fig
 
-# Bar Graph
+
+# Category Graph (Bar & Pie chart options)
 @app.callback(
     Output('category-graph', 'figure'),
     [Input('year-slider', 'value'),
-     Input('category-graph-type','value')]
+     Input('category-graph-type', 'value')]
 )
 def update_category_graph(years_selected, category_graph_type):
-        filtered_df = get_filtered_df(years_selected)
-        if category_graph_type == 'Bar':
-            type = 'bar'
-            orientation = 'h'
-            x_data = get_category_count(filtered_df)
-            y_data = ['unclassified', 'stony-iron', 'iron', 'stony']
-            values = 'none'
-            labels = 'none'
-        else:
-            if category_graph_type == 'Pie':
-                type = 'pie'
-                orientation = 'v'
-                x_data = 'none'
-                y_data = 'none'
-                values = get_category_count(filtered_df)
-                labels = ['unclassified', 'stony-iron', 'iron', 'stony']
-        trace = [dict(
-            type=type,
-            x=x_data,
-            y=y_data,
-            values = values,
-            labels = labels,
-            orientation=orientation
-        )]
-        layout = dict(
-            legend_title_text='Meteorite categories'
+    filtered_df = get_filtered_df(years_selected)
+    df_category_count = get_by_count(filtered_df, 'category')
+    category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
+
+    count = df_category_count['count']
+    category = df_category_count['category']
+
+    count_arr = [0, 0, 0, 0]
+    category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
+
+    for i in range(4):
+        try:
+            count_arr[i] = category_dict[category_arr[i]]
+        except KeyError:
+            count_arr[i] = 0
+    if category_graph_type == 'Bar':
+        type = 'bar'
+        orientation = 'h'
+        x_data = count_arr
+        y_data = category_arr
+        values = 'none'
+        labels = 'none'
+    else:
+        if category_graph_type == 'Pie':
+            type = 'pie'
+            orientation = 'v'
+            x_data = 'none'
+            y_data = 'none'
+            values = count_arr
+            labels = category_arr
+    trace = [dict(
+        type=type,
+        x=x_data,
+        y=y_data,
+        values=values,
+        labels=labels,
+        orientation=orientation
+    )]
+    layout = dict(
+        legend_title_text='Meteorite categories'
+    )
+    fig = dict(data=trace, layout=layout)
+    return fig
+
+# Year graph (line graph)
+
+@app.callback(
+    Output('year-graph', 'figure'),
+    [Input('year-slider', 'value')]
+)
+def update_year_graph(years_selected):
+    filtered_df = get_filtered_df(years_selected)
+    df_year_count = get_by_count(filtered_df,'year')
+    trace = [dict(
+        type='scatter',
+        mode='lines',
+        x=df_year_count['year'],
+        y=df_year_count['count'],
+        name='label',
+    )]
+    layout = dict(
+        title=dict(
+            text="Number of meteorite landings per year"
         )
-        fig = dict(data=trace, layout=layout)
-        return fig
+    )
 
-# Line graph
+    fig = dict(data=trace, layout=layout)
+    return fig
 
-# Density graph
-
-# Pie Chart
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
