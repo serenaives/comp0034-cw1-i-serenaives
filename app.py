@@ -82,7 +82,7 @@ app.layout = html.Div([
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
 
-# Define functions used in ___
+# Define functions used in data filtering
 
 # filters dataframe based on input from user, which is a tuple (start year, end year) from range slider selection
 # ADD FOUND/ FELL FILTER TO THIS FUNCTION
