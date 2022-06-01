@@ -13,7 +13,7 @@ mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
                1700: '1700', 1800: '1800', 1900: '1900', 2000: '2000'}
 
 # Initialise the app
-app = dash.Dash(__name__)
+app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR])
 
 colors = {
     'background': '#111111',
@@ -30,54 +30,90 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 
 # ------------------------------------------------------------------------------
 # App layout
-app.layout = html.Div([
-    html.Div([
-        html.H1(children="Meteorite Landings",
-                style={"text-align": "center", "font-size": "200%", "color": "black"})
+app.layout = dbc.Container([
+
+    html.Br(),
+
+    dbc.Col(html.H1('Meteorite Landings')),
+
+    html.Br(),
+
+    dbc.Row([
+        dbc.Col([dbc.Button('explore the data')], width=2),
+        dbc.Col([dbc.Button('take the quiz')], width=2)
     ]),
 
-    html.Div([
-        dcc.Graph(
-            id='map-plot'
-        )]),
+    html.Br(),
 
-    html.Div([
-        dcc.Graph(
-            id='category-graph')]),
-
-    html.Div([
-        dcc.RadioItems(
-            id='category-graph-type',
-            options=[
-                {'label': 'Pie chart', 'value': 'Pie'},
-                {'label': 'Bar graph', 'value': 'Bar'},
-            ],
-            value='Bar',
-            inline=False,
-        ),
+    dbc.Row([
+        dbc.Col([
+            html.H2('Filter data by year')
+        ], style={'width': 2, 'text-align': 'left', 'font-size': '0.5%'}),
+        dbc.Col([
+            dcc.RangeSlider(
+                        id='year-slider',
+                        min=df['year'].min(),
+                        max=df['year'].max(),
+                        value=[1600, 2013],  # default range
+                        step=1,
+                        marks=mark_values,
+                        allowCross=False,
+                        verticalHeight=900,
+                        pushable=True,
+                        tooltip={'always_visible': True,
+                                 'placement': 'bottom'}
+                    )], style={'width': '70%',
+                               'position': 'absolute', 'right': '5%'})
     ]),
 
-    html.Div([
-        dcc.Graph(
-            id='year-graph')]),
+    html.Br(),
 
-    html.Div([
-        dcc.RangeSlider(
-            id='year-slider',
-            min=df['year'].min(),
-            max=df['year'].max(),
-            value=[1600, 2013],  # default range
-            step=1,
-            marks=mark_values,
-            allowCross=False,
-            verticalHeight=900,
-            pushable=True,
-            tooltip={'always_visible': True,
-                     'placement': 'bottom'}
-        )], style={'width': '70%',
-                   'position': 'absolute', 'left': '5%'})
-])
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader(
+                    id='maps',
+                    children=[
+                        dbc.Row([
+                            dcc.Graph(id='map-plot')
+                        ], style={'width': '100%', 'alignment': 'center'})
+                    ]
+                )
+            ], style={'width': '100%', 'alignment': 'center'})
+        ], style={'width': '40%', 'alignment': 'left'}),
 
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader(
+                    id='visualise-by',
+                    children=[
+                        dbc.Row([
+
+                            dbc.Row([
+                                dbc.Card([
+                                    dcc.RadioItems(
+                                    id='category-graph-type',
+                                    options=[
+                                        {'label': 'Pie chart', 'value': 'Pie'},
+                                        {'label': 'Bar graph', 'value': 'Bar'},
+                                    ],
+                                    value='Bar',
+                                    inline=False,
+                                    ),
+                                ], color='primary', inverse=True, style={'width': '25%'})
+                            ]),
+
+                            dbc.Row([
+                                dcc.Graph(id='category-graph')
+                            ], style={})
+
+                        ], style={'width': '100%', 'alignment': 'center'})
+                    ]
+                )
+            ], style={'width': '100%', 'alignment': 'center'})
+        ], style={'width': '40%', 'alignment': 'right'})
+    ])
+], fluid=True)
 
 # ------------------------------------------------------------------------------
 # Connect the Plotly graphs with Dash Components
