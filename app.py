@@ -1,28 +1,28 @@
 import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
-import plotly.express as px
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-import plotly.graph_objects as go
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
                1300: '1300', 1400: '1400', 1500: '1500', 1600: '1600',
                1700: '1700', 1800: '1800', 1900: '1900', 2000: '2000'}
 
+
 # Initialise the app
+# ------------------------------------------------------------------------------
 app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR])
 
 
-# ------------------------------------------------------------------------------
 # Import data
+# ------------------------------------------------------------------------------
 df = pd.read_csv('meteorite_landings_cleaned.csv')
 
 # Store MapBox access token
-mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 # ------------------------------------------------------------------------------
+mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 
 # App layout
 # ------------------------------------------------------------------------------
@@ -86,11 +86,12 @@ app.layout = dbc.Container([
                 dbc.Col(html.Br()),
                 dbc.Col([
                     dbc.Checklist(
+                        id='found-fell-selection',
                         options=[
-                            {'label': 'seen falling', 'value': 'fell'},
-                            {'label': 'discovered after landing', 'value': 'found'}
+                            {'label': 'seen falling', 'value': 'Fell'},
+                            {'label': 'discovered after landing', 'value': 'Found'}
                         ],
-                        value=['fell', 'found'],
+                        value=['Fell', 'Found'],
                         inline=False
                     )
                 ])
@@ -165,34 +166,47 @@ app.layout = dbc.Container([
     ])
 ], fluid=True)
 
-# ------------------------------------------------------------------------------
-# Connect the Plotly graphs with Dash Components
-
 # Define functions used in data filtering
+# ------------------------------------------------------------------------------
 
-# filters dataframe based on input from user, which is a tuple (start year, end year) from range slider selection
-# ADD FOUND/ FELL FILTER TO THIS FUNCTION
-def get_filtered_df(years_selected):
-    filtered_df = df[(df["year"] >= years_selected[0]) & (df["year"] <= years_selected[1])]
+# filters dataframe based on input from user (control box input)
+# years_selected is a tuple (start year, end year) from range slider selection
+# discovery is a tuple containing values 'found' and/or 'fell' or none from checklist selection - rephrase
+# adapted from x
+
+
+def get_filtered_df(years_selected, discovery):
+    # year selection
+    filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
+
+    # discovery (found/ fell) selection
+    filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
     return filtered_df
+
 
 def get_year_count(df):
     df_year_count = df.groupby(['year'])['name'].count().reset_index()
     df_year_count.rename({'name': 'count'}, inplace=True, axis=1)
     return df_year_count
 
+
 def get_by_count(df, col):
     df_count = df.groupby([col])['name'].count().reset_index()
     df_count.rename({'name': 'count'}, inplace=True, axis=1)
     return df_count
 
+
+# App callbacks
+# ------------------------------------------------------------------------------
+
 # Map
 @app.callback(
     Output('map-plot', 'figure'),
-    [Input('year-slider', 'value')]
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value')]
 )
-def update_map(years_selected):
-    filtered_df = get_filtered_df(years_selected)
+def update_map(years_selected, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
     text = filtered_df.name
 
     trace = [
@@ -232,10 +246,11 @@ def update_map(years_selected):
 @app.callback(
     Output('category-graph', 'figure'),
     [Input('year-slider', 'value'),
-     Input('category-graph-type', 'value')]
+     Input('category-graph-type', 'value'),
+     Input('found-fell-selection', 'value')]
 )
-def update_category_graph(years_selected, category_graph_type):
-    filtered_df = get_filtered_df(years_selected)
+def update_category_graph(years_selected, category_graph_type, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
     df_category_count = get_by_count(filtered_df, 'category')
     category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
 
@@ -287,10 +302,11 @@ def update_category_graph(years_selected, category_graph_type):
 
 @app.callback(
     Output('year-graph', 'figure'),
-    [Input('year-slider', 'value')]
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value')]
 )
-def update_year_graph(years_selected):
-    filtered_df = get_filtered_df(years_selected)
+def update_year_graph(years_selected, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
     df_year_count = get_by_count(filtered_df,'year')
     trace = [dict(
         type='scatter',
