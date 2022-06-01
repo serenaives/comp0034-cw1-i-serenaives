@@ -71,7 +71,7 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dbc.Card([
-                dbc.CardHeader(
+                dbc.CardBody(
                     id='maps',
                     children=[
                         dbc.Row([
@@ -84,32 +84,46 @@ app.layout = dbc.Container([
 
         dbc.Col([
             dbc.Card([
-                dbc.CardHeader(
-                    id='visualise-by',
-                    children=[
-                        dbc.Row([
+                dbc.CardHeader([
 
+                    dbc.Tabs([
+                        dbc.Tab(label='category', tab_id='category-tab'),
+                        dbc.Tab(label='year', tab_id='year_tab'),
+                        dbc.Tab(label='mass', tab_id='mass_tab')
+                    ],
+                        id='visualise-by-tabs',
+                        active_tab='category-tab'
+                    ),
+
+                    dbc.CardBody(
+                        id='visualise-by-graph',
+                        children=[
                             dbc.Row([
-                                dbc.Card([
-                                    dcc.RadioItems(
-                                    id='category-graph-type',
-                                    options=[
-                                        {'label': 'Pie chart', 'value': 'Pie'},
-                                        {'label': 'Bar graph', 'value': 'Bar'},
-                                    ],
-                                    value='Bar',
-                                    inline=False,
-                                    ),
-                                ], color='primary', inverse=True, style={'width': '25%'})
-                            ]),
 
-                            dbc.Row([
-                                dcc.Graph(id='category-graph')
-                            ], style={})
+                                dbc.Row([
+                                    dbc.Card([
+                                        dcc.RadioItems(
+                                        id='category-graph-type',
+                                        options=[
+                                            {'label': 'Pie chart', 'value': 'Pie'},
+                                            {'label': 'Bar graph', 'value': 'Bar'},
+                                        ],
+                                        value='Bar',
+                                        inline=False,
+                                        ),
+                                    ], color='primary', inverse=True, style={'width': '25%'})
+                                ]),
 
-                        ], style={'width': '100%', 'alignment': 'center'})
-                    ]
-                )
+                                dbc.Row([html.Br()]),
+
+                                dbc.Row([
+                                    dcc.Graph(id='category-graph')
+                                ], style={})
+
+                            ], style={'width': '100%', 'alignment': 'center'})
+                        ]
+                    )
+                ])
             ], style={'width': '100%', 'alignment': 'center'})
         ], style={'width': '40%', 'alignment': 'right'})
     ])
@@ -175,6 +189,26 @@ def update_map(years_selected):
         ),
     )
     fig = dict(data=trace, layout=layout)
+    return fig
+
+# visualise by graph (select year, category or mass using tabs)
+@app.callback(
+    Output('visualise-by-graph', 'children'),
+    [Input('visualise-by-tabs', 'active-tab'),
+     Input('year-slider', 'value')]
+)
+def update_visualise_by(active_tab, years_selected):
+    if active_tab == 'category_tab':
+        fig = update_category_graph(years_selected, 'Bar')
+    else:
+        if active_tab == 'year-tab':
+            fig = update_year_graph(years_selected)
+        else:
+            if active_tab == 'year-tab':
+                pass
+            else:
+                # error handling - return figure not found error message
+                pass
     return fig
 
 
