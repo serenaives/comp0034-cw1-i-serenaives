@@ -156,7 +156,7 @@ app.layout = dbc.Container([
                     dbc.Col([
                         dbc.Row([
                             dbc.Row([
-                                html.P('Colour-coordinate map-markers to meteorite category:')
+                                html.P('Colour-coordinate map markers to meteorite category:')
                             ]),
                             dbc.Row([
                                 dbc.RadioItems(
@@ -248,6 +248,9 @@ def get_by_count(df, col):
     df_count.rename({'name': 'count'}, inplace=True, axis=1)
     return df_count
 
+'''
+def get_marker_color():
+'''
 
 # App callbacks
 # ------------------------------------------------------------------------------
@@ -361,7 +364,7 @@ def update_category_graph(years_selected, category_graph_type, discovery):
 )
 def update_year_graph(years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
-    df_year_count = get_by_count(filtered_df,'year')
+    df_year_count = get_by_count(filtered_df, 'year')
     trace = [dict(
         type='scatter',
         mode='lines',
