@@ -15,10 +15,6 @@ mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
 # Initialise the app
 app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR])
 
-colors = {
-    'background': '#111111',
-    'text': '#7FDBFF'
-}
 
 # ------------------------------------------------------------------------------
 # Import data
@@ -28,42 +24,78 @@ df = pd.read_csv('meteorite_landings_cleaned.csv')
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 # ------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------
 # App layout
+# ------------------------------------------------------------------------------
 app.layout = dbc.Container([
 
     html.Br(),
 
-    dbc.Col(html.H1('Meteorite Landings')),
-
-    html.Br(),
-
+    # Navbar
+    # ------------------------------------------------------------------------------
     dbc.Row([
-        dbc.Col([dbc.Button('explore the data')], width=2),
-        dbc.Col([dbc.Button('take the quiz')], width=2)
+        dbc.CardGroup([
+            dbc.Card([html.H1('Meteorite Landings')], style={'align': 'left', 'padding': '1%'}),
+            dbc.CardGroup([
+                dbc.Card([dbc.Button(['explore the data'], style={'height': '100%', 'vertical-align': 'top'})], style={'width': '2'}),
+                dbc.Card([dbc.Button(['take the quiz'], style={'height': '100%', 'vertical-align': 'top'})], style={'width': '2'}),
+                dbc.Card([dbc.Button(['log in/ register'], style={'height': '100%', 'vertical-align': 'top'})], style={'width': '2'})
+            ], style={'align': 'right'})
+        ], style={'padding': '1%'}),
     ]),
 
     html.Br(),
 
-    dbc.Row([
-        dbc.Col([
-            html.H2('Filter data by year')
-        ], style={'width': 2, 'text-align': 'left', 'font-size': '0.5%'}),
-        dbc.Col([
-            dcc.RangeSlider(
-                        id='year-slider',
-                        min=df['year'].min(),
-                        max=df['year'].max(),
-                        value=[1600, 2013],  # default range
-                        step=1,
-                        marks=mark_values,
-                        allowCross=False,
-                        verticalHeight=900,
-                        pushable=True,
-                        tooltip={'always_visible': True,
-                                 'placement': 'bottom'}
-                    )], style={'width': '70%',
-                               'position': 'absolute', 'right': '5%'})
+    # control box
+    # ------------------------------------------------------------------------------
+    dbc.Card([
+        dbc.CardHeader([
+            html.P('Control Box')
+        ]),
+        dbc.CardBody([
+            dbc.Row([
+                # year slider
+                # ------------------------------------------------------------------------------
+                dbc.Col([
+                    html.P('Filter meteorite landings by year')
+                ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
+                dbc.Col([
+                    dcc.RangeSlider(
+                                id='year-slider',
+                                min=df['year'].min(),
+                                max=df['year'].max(),
+                                value=[1600, 2013],  # default range
+                                step=1,
+                                marks=mark_values,
+                                allowCross=False,
+                                verticalHeight=900,
+                                pushable=True,
+                                tooltip={'always_visible': True,
+                                         'placement': 'bottom'}
+                            )], style={'width': '70%',
+                                       'position': 'absolute', 'right': '5%'})
+            ]),
+            dbc.Row([
+                dbc.Col(html.Br())
+            ]),
+            # found/fell checkbox selection
+            # ------------------------------------------------------------------------------
+            dbc.Row([
+                dbc.Col([
+                    html.P('Filter meteorites by how they were discovered')
+                ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
+                dbc.Col(html.Br()),
+                dbc.Col([
+                    dbc.Checklist(
+                        options=[
+                            {'label': 'seen falling', 'value': 'fell'},
+                            {'label': 'discovered after landing', 'value': 'found'}
+                        ],
+                        value=['fell', 'found'],
+                        inline=False
+                    )
+                ])
+            ])
+        ])
     ]),
 
     html.Br(),
@@ -71,6 +103,9 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dbc.Card([
+                dbc.CardHeader([
+                    html.P('Geographic Distribution')
+                ]),
                 dbc.CardBody(
                     id='maps',
                     children=[
@@ -84,44 +119,45 @@ app.layout = dbc.Container([
 
         dbc.Col([
             dbc.Card([
-                dbc.CardHeader([
-
+                dbc.CardBody([
                     dbc.Tabs([
-                        dbc.Tab(label='category', tab_id='category-tab'),
-                        dbc.Tab(label='year', tab_id='year_tab'),
+                        # category tab
+                        # ------------------------------------------------------------------------------
+                        dbc.Tab(label='category', tab_id='category-tab', children=[
+                            dbc.Row([
+                                dcc.Graph(id='category-graph')
+                            ], style={'width': '100%', 'alignment': 'center'}),
+
+                            dbc.Row([
+                                # pie or bar chart selection option
+                                # ------------------------------------------------------------------------------
+                                dbc.RadioItems(
+                                    id='category-graph-type',
+                                    options=[
+                                        {'label': 'Pie chart', 'value': 'Pie'},
+                                        {'label': 'Bar graph', 'value': 'Bar'},
+                                    ],
+                                    value='Bar',
+                                    inline=False,
+                                    style={'padding': '2%'}
+                                ),
+                            ], style={'width': '25%', 'margin': '2%'}),
+                        ]),
+
+                        # year tab
+                        # ------------------------------------------------------------------------------
+                        dbc.Tab(label='year', tab_id='year_tab', children=[
+                            dbc.Row([
+                                dcc.Graph(id='year-graph')
+                            ], style={'width:': '100%', 'alignment': 'center'})
+                        ]),
+
+                        # mass tab
+                        # ------------------------------------------------------------------------------
                         dbc.Tab(label='mass', tab_id='mass_tab')
                     ],
                         id='visualise-by-tabs',
                         active_tab='category-tab'
-                    ),
-
-                    dbc.CardBody(
-                        id='visualise-by-graph',
-                        children=[
-                            dbc.Row([
-
-                                dbc.Row([
-                                    dbc.Card([
-                                        dcc.RadioItems(
-                                        id='category-graph-type',
-                                        options=[
-                                            {'label': 'Pie chart', 'value': 'Pie'},
-                                            {'label': 'Bar graph', 'value': 'Bar'},
-                                        ],
-                                        value='Bar',
-                                        inline=False,
-                                        ),
-                                    ], color='primary', inverse=True, style={'width': '25%'})
-                                ]),
-
-                                dbc.Row([html.Br()]),
-
-                                dbc.Row([
-                                    dcc.Graph(id='category-graph')
-                                ], style={})
-
-                            ], style={'width': '100%', 'alignment': 'center'})
-                        ]
                     )
                 ])
             ], style={'width': '100%', 'alignment': 'center'})
@@ -191,26 +227,6 @@ def update_map(years_selected):
     fig = dict(data=trace, layout=layout)
     return fig
 
-# visualise by graph (select year, category or mass using tabs)
-@app.callback(
-    Output('visualise-by-graph', 'children'),
-    [Input('visualise-by-tabs', 'active-tab'),
-     Input('year-slider', 'value')]
-)
-def update_visualise_by(active_tab, years_selected):
-    if active_tab == 'category_tab':
-        fig = update_category_graph(years_selected, 'Bar')
-    else:
-        if active_tab == 'year-tab':
-            fig = update_year_graph(years_selected)
-        else:
-            if active_tab == 'year-tab':
-                pass
-            else:
-                # error handling - return figure not found error message
-                pass
-    return fig
-
 
 # Category Graph (Bar & Pie chart options)
 @app.callback(
@@ -258,7 +274,11 @@ def update_category_graph(years_selected, category_graph_type):
         orientation=orientation
     )]
     layout = dict(
-        legend_title_text='Meteorite categories'
+        legend_title_text='Meteorite landings by category',
+        plot_bgcolor='#22434A',
+        paper_bgcolor='#22434A',
+        xaxis=dict(color="#b58900", showgrid=False),
+        yaxis=dict(color="#b58900", showgrid=False),
     )
     fig = dict(data=trace, layout=layout)
     return fig
@@ -280,9 +300,10 @@ def update_year_graph(years_selected):
         name='label',
     )]
     layout = dict(
-        title=dict(
-            text="Number of meteorite landings per year"
-        )
+        plot_bgcolor = '#22434A',
+        paper_bgcolor = '#22434A',
+        xaxis = dict(color="#b58900", showgrid=False),
+        yaxis = dict(color="#b58900", showgrid=False),
     )
 
     fig = dict(data=trace, layout=layout)
