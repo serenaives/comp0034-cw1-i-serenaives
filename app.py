@@ -24,6 +24,37 @@ df = pd.read_csv('meteorite_landings_cleaned.csv')
 # ------------------------------------------------------------------------------
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 
+
+# Control boxes for visualise-by charts
+# ------------------------------------------------------------------------------
+def category_graph_controls():
+    children = [
+        dbc.Row([
+            dbc.Row([
+                # pie or bar chart selection option
+                # ------------------------------------------------------------------------------
+                dbc.Col([
+                    dbc.Row([
+                        html.P('Select chart type:')
+                    ])
+                ]),
+                dbc.Col([
+                    dbc.RadioItems(
+                        id='category-graph-type',
+                        options=[
+                            {'label': 'Pie chart', 'value': 'Pie'},
+                            {'label': 'Bar graph', 'value': 'Bar'},
+                        ],
+                        value='Bar',
+                        inline=False,
+                        style={'padding': '2%'}
+                    )], style={})
+            ]),
+        ], justify='center')
+    ]
+    return children
+
+
 # App layout
 # ------------------------------------------------------------------------------
 app.layout = dbc.Container([
@@ -159,40 +190,10 @@ app.layout = dbc.Container([
                             dbc.Row([
                                 dcc.Graph(id='category-graph')
                             ], style={'width': '100%', 'margin': '0'}),
-
-                            # controls for category chart
-                            # ------------------------------------------------------------------------------
-                            dbc.Row([
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        dbc.Row([
-                                            # pie or bar chart selection option
-                                            # ------------------------------------------------------------------------------
-                                            dbc.Col([
-                                                dbc.Row([
-                                                    html.P('Select chart type:')
-                                                ])
-                                            ]),
-                                            dbc.Col([
-                                                dbc.RadioItems(
-                                                    id='category-graph-type',
-                                                    options=[
-                                                        {'label': 'Pie chart', 'value': 'Pie'},
-                                                        {'label': 'Bar graph', 'value': 'Bar'},
-                                                    ],
-                                                    value='Bar',
-                                                    inline=False,
-                                                    style={'padding': '2%'}
-                                                )], style={})
-                                            ])
-                                        ]),
-                                    ], style={'width': '50%', 'align': 'center'})
-                                ], justify='center')
-                            ]),
-
+                        ]),
                         # year tab
                         # ------------------------------------------------------------------------------
-                        dbc.Tab(label='year', tab_id='year_tab', children=[
+                        dbc.Tab(label='year', tab_id='year-tab', children=[
                             dbc.Row([
                                 dcc.Graph(id='year-graph')
                             ], style={'margin': '0', 'width:': '100%', 'alignment': 'center'})
@@ -200,13 +201,20 @@ app.layout = dbc.Container([
 
                         # mass tab
                         # ------------------------------------------------------------------------------
-                        dbc.Tab(label='mass', tab_id='mass_tab')
+                        dbc.Tab(label='mass', tab_id='mass-tab')
                     ],
                         id='visualise-by-tabs',
                         active_tab='category-tab'
                     )
                 ])
-            ], style={'width': '100%', 'alignment': 'center'})
+            ], style={'width': '100%', 'alignment': 'center'}
+            ),
+            dbc.Card([
+                dbc.CardBody(
+                    id='visualise-by-chart-controls',
+                    children=category_graph_controls()
+                )
+            ])
         ], style={'width': '40%', 'alignment': 'right'})
     ])
 ], fluid=True)
@@ -370,6 +378,26 @@ def update_year_graph(years_selected, discovery):
 
     fig = dict(data=trace, layout=layout)
     return fig
+
+
+@app.callback(
+    Output('visualise-by-chart-controls', 'children'),
+    [Input('visualise-by-tabs', 'active_tab')]
+)
+def update_visualise_by_chart_controls(active_tab):
+    if active_tab == 'category-tab':
+        children = category_graph_controls()
+    elif active_tab == 'year-tab':
+        children = [
+
+        ]
+    elif active_tab == 'mass-tab':
+        children = [
+
+        ]
+    else:
+        children = [html.P('error displaying chart controls')]
+    return children
 
 
 # ------------------------------------------------------------------------------
