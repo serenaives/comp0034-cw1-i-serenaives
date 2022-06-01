@@ -36,9 +36,9 @@ app.layout = dbc.Container([
         dbc.CardGroup([
             dbc.Card([html.H1('Meteorite Landings')], style={'align': 'left', 'padding': '1%'}),
             dbc.CardGroup([
-                dbc.Card([dbc.Button(['explore the data'], style={'height': '100%', 'vertical-align': 'top'})], style={'width': '2'}),
-                dbc.Card([dbc.Button(['take the quiz'], style={'height': '100%', 'vertical-align': 'top'})], style={'width': '2'}),
-                dbc.Card([dbc.Button(['log in/ register'], style={'height': '100%', 'vertical-align': 'top'})], style={'width': '2'})
+                dbc.Card([dbc.Button(['explore the data'], style={'height': '100%'})], style={'width': '2'}),
+                dbc.Card([dbc.Button(['take the quiz'], style={'height': '100%'})], style={'width': '2'}),
+                dbc.Card([dbc.Button(['log in/ register'], style={'height': '100%'})], style={'width': '2'})
             ], style={'align': 'right'})
         ], style={'padding': '1%'}),
     ]),
@@ -49,30 +49,35 @@ app.layout = dbc.Container([
     # ------------------------------------------------------------------------------
     dbc.Card([
         dbc.CardHeader([
-            html.P('Control Box')
+            html.H3('Data Filters')
         ]),
         dbc.CardBody([
             dbc.Row([
                 # year slider
                 # ------------------------------------------------------------------------------
                 dbc.Col([
-                    html.P('Filter meteorite landings by year')
-                ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
-                dbc.Col([
-                    dcc.RangeSlider(
-                                id='year-slider',
-                                min=df['year'].min(),
-                                max=df['year'].max(),
-                                value=[1600, 2013],  # default range
-                                step=1,
-                                marks=mark_values,
-                                allowCross=False,
-                                verticalHeight=900,
-                                pushable=True,
-                                tooltip={'always_visible': True,
-                                         'placement': 'bottom'}
-                            )], style={'width': '70%',
-                                       'position': 'absolute', 'right': '5%'})
+                    dbc.Row([
+                        dbc.Col([
+                            html.P('Filter meteorite landings by year')
+                        ], style={'text-align': 'left', 'font-size': '100%'}),
+                        dbc.Col([
+                            dcc.RangeSlider(
+                                        id='year-slider',
+                                        min=df['year'].min(),
+                                        max=df['year'].max(),
+                                        value=[1600, 2013],  # default range
+                                        step=1,
+                                        marks=mark_values,
+                                        allowCross=False,
+                                        verticalHeight=900,
+                                        pushable=True,
+                                        tooltip={'always_visible': True,
+                                                 'placement': 'bottom'}
+                                    )], style={'width': '40%',
+                                               'position': 'absolute', 'right': '35%'}
+                        )
+                    ])
+                ])
             ]),
             dbc.Row([
                 dbc.Col(html.Br())
@@ -81,20 +86,19 @@ app.layout = dbc.Container([
             # ------------------------------------------------------------------------------
             dbc.Row([
                 dbc.Col([
-                    html.P('Filter meteorites by how they were discovered')
+                    html.P('Filter meteorites by discovery')
                 ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
-                dbc.Col(html.Br()),
-                dbc.Col([
+                dbc.Row([
                     dbc.Checklist(
                         id='found-fell-selection',
                         options=[
                             {'label': 'seen falling', 'value': 'Fell'},
-                            {'label': 'discovered after landing', 'value': 'Found'}
+                            {'label': 'discovered after falling', 'value': 'Found'}
                         ],
                         value=['Fell', 'Found'],
                         inline=False
                     )
-                ])
+                ], style={'width': '70%', 'position': 'absolute', 'right': '5%'})
             ])
         ])
     ]),
@@ -105,52 +109,93 @@ app.layout = dbc.Container([
         dbc.Col([
             dbc.Card([
                 dbc.CardHeader([
-                    html.P('Geographic Distribution')
+                    html.H3('Geographic Distribution')
                 ]),
                 dbc.CardBody(
                     id='maps',
                     children=[
                         dbc.Row([
                             dcc.Graph(id='map-plot')
-                        ], style={'width': '100%', 'alignment': 'center'})
+                        ], style={'margin': '0', 'width': '100%', 'alignment': 'center'})
                     ]
                 )
-            ], style={'width': '100%', 'alignment': 'center'})
+            ], style={'width': '100%', 'alignment': 'center'}),
+            dbc.Card([
+                dbc.CardBody([
+                    dbc.Col([
+                        dbc.Row([
+                            dbc.Row([
+                                html.P('Colour-coordinate map-markers to meteorite category:')
+                            ]),
+                            dbc.Row([
+                                dbc.RadioItems(
+                                    id='color-coordinate',
+                                    options=[
+                                        {'label': 'ON', 'value': 'on'},
+                                        {'label': 'OFF', 'value': 'off'}
+                                    ],
+                                    value='yes',
+                                    switch=True
+                                )
+                            ])
+                        ])
+                    ])
+                ])
+            ])
         ], style={'width': '40%', 'alignment': 'left'}),
 
         dbc.Col([
             dbc.Card([
+                dbc.CardHeader([
+                    html.H3('Visualise meteorite landings by:')
+                ]),
                 dbc.CardBody([
                     dbc.Tabs([
                         # category tab
                         # ------------------------------------------------------------------------------
                         dbc.Tab(label='category', tab_id='category-tab', children=[
+                            # category chart
+                            # ------------------------------------------------------------------------------
                             dbc.Row([
                                 dcc.Graph(id='category-graph')
-                            ], style={'width': '100%', 'alignment': 'center'}),
+                            ], style={'width': '100%', 'margin': '0'}),
 
+                            # controls for category chart
+                            # ------------------------------------------------------------------------------
                             dbc.Row([
-                                # pie or bar chart selection option
-                                # ------------------------------------------------------------------------------
-                                dbc.RadioItems(
-                                    id='category-graph-type',
-                                    options=[
-                                        {'label': 'Pie chart', 'value': 'Pie'},
-                                        {'label': 'Bar graph', 'value': 'Bar'},
-                                    ],
-                                    value='Bar',
-                                    inline=False,
-                                    style={'padding': '2%'}
-                                ),
-                            ], style={'width': '25%', 'margin': '2%'}),
-                        ]),
+                                dbc.Card([
+                                    dbc.CardBody([
+                                        dbc.Row([
+                                            # pie or bar chart selection option
+                                            # ------------------------------------------------------------------------------
+                                            dbc.Col([
+                                                dbc.Row([
+                                                    html.P('Select chart type:')
+                                                ])
+                                            ]),
+                                            dbc.Col([
+                                                dbc.RadioItems(
+                                                    id='category-graph-type',
+                                                    options=[
+                                                        {'label': 'Pie chart', 'value': 'Pie'},
+                                                        {'label': 'Bar graph', 'value': 'Bar'},
+                                                    ],
+                                                    value='Bar',
+                                                    inline=False,
+                                                    style={'padding': '2%'}
+                                                )], style={})
+                                            ])
+                                        ]),
+                                    ], style={'width': '50%', 'align': 'center'})
+                                ], justify='center')
+                            ]),
 
                         # year tab
                         # ------------------------------------------------------------------------------
                         dbc.Tab(label='year', tab_id='year_tab', children=[
                             dbc.Row([
                                 dcc.Graph(id='year-graph')
-                            ], style={'width:': '100%', 'alignment': 'center'})
+                            ], style={'margin': '0', 'width:': '100%', 'alignment': 'center'})
                         ]),
 
                         # mass tab
@@ -219,7 +264,7 @@ def update_map(years_selected, discovery):
             mode='markers',
             marker=dict(
                 size=5,
-                color='red',
+                color='#b58900',
                 opacity=0.4),
         )
     ]
@@ -292,8 +337,9 @@ def update_category_graph(years_selected, category_graph_type, discovery):
         legend_title_text='Meteorite landings by category',
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
-        xaxis=dict(color="#b58900", showgrid=False),
-        yaxis=dict(color="#b58900", showgrid=False),
+        xaxis=dict(color='#839396', showgrid=False),
+        yaxis=dict(color='#839396', showgrid=False),
+        font={'color': '#839396'}
     )
     fig = dict(data=trace, layout=layout)
     return fig
@@ -316,10 +362,10 @@ def update_year_graph(years_selected, discovery):
         name='label',
     )]
     layout = dict(
-        plot_bgcolor = '#22434A',
-        paper_bgcolor = '#22434A',
-        xaxis = dict(color="#b58900", showgrid=False),
-        yaxis = dict(color="#b58900", showgrid=False),
+        plot_bgcolor='#22434A',
+        paper_bgcolor='#22434A',
+        xaxis=dict(color='#839396', showgrid=False),
+        yaxis=dict(color='#839396', showgrid=False),
     )
 
     fig = dict(data=trace, layout=layout)
