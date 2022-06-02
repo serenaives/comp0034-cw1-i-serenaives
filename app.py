@@ -24,6 +24,9 @@ df = pd.read_csv('meteorite_landings_cleaned.csv')
 # ------------------------------------------------------------------------------
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 
+# Store array containing all possible meteorite categories
+# ------------------------------------------------------------------------------
+category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
 
 # Control boxes for visualise-by charts
 # ------------------------------------------------------------------------------
@@ -165,7 +168,7 @@ app.layout = dbc.Container([
                                         {'label': 'ON', 'value': 'on'},
                                         {'label': 'OFF', 'value': 'off'}
                                     ],
-                                    value='yes',
+                                    value='off',
                                     switch=True
                                 )
                             ])
@@ -248,9 +251,6 @@ def get_by_count(df, col):
     df_count.rename({'name': 'count'}, inplace=True, axis=1)
     return df_count
 
-'''
-def get_marker_color():
-'''
 
 # App callbacks
 # ------------------------------------------------------------------------------
@@ -259,30 +259,57 @@ def get_marker_color():
 @app.callback(
     Output('map-plot', 'figure'),
     [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value')]
+     Input('found-fell-selection', 'value'),
+     Input('color-coordinate', 'value')]
 )
-def update_map(years_selected, discovery):
+def update_map(years_selected, discovery, color_coord):
     filtered_df = get_filtered_df(years_selected, discovery)
-    text = filtered_df.name
+    text = filtered_df.name # edit for hover functionality
 
-    trace = [
-        dict(
-            type="scattermapbox",
-            lat=filtered_df.reclat,
-            lon=filtered_df.reclong,
-            text=text,
-            hoverinfo='text',
-            mode='markers',
-            marker=dict(
-                size=5,
-                color='#b58900',
-                opacity=0.4),
+    discrete_color_map = {'stony': 'pink',
+                          'iron': 'red',
+                          'stony iron': 'blue',
+                          'unclassified': 'green'}
+
+    trace = []
+
+    if color_coord == 'on':
+        for i in category_arr: # like a subplot for each colour
+            trace.append(
+                dict(
+                    type='scattermapbox',
+                    lat=filtered_df[filtered_df['category'] == i]['reclat'],
+                    lon=filtered_df[filtered_df['category'] == i]['reclong'],
+                    text=text,
+                    hoverinfo='text',
+                    mode='markers',
+                    marker=dict(
+                        size=5,
+                        color=discrete_color_map[i],
+                        opacity=0.4),
+                )
+            )
+    else:
+        trace.append(
+            dict(
+                type='scattermapbox',
+                lat=filtered_df.reclat,
+                lon=filtered_df.reclong,
+                text=text,
+                hoverinfo='text',
+                mode='markers',
+                marker=dict(
+                    size=5,
+                    color='#b58900',
+                    opacity=0.4)
+            )
         )
-    ]
 
     layout = dict(
         hovermode='closest',
         margin=dict(r=0, l=0, t=0, b=0),
+        color=filtered_df.category,
+        showlegend=False,
         mapbox=dict(
             accesstoken=mapbox_access_token,
             bearing=0,
@@ -314,7 +341,6 @@ def update_category_graph(years_selected, category_graph_type, discovery):
     category = df_category_count['category']
 
     count_arr = [0, 0, 0, 0]
-    category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
 
     for i in range(4):
         try:
@@ -367,10 +393,9 @@ def update_year_graph(years_selected, discovery):
     df_year_count = get_by_count(filtered_df, 'year')
     trace = [dict(
         type='scatter',
-        mode='lines',
+        mode='line',
         x=df_year_count['year'],
         y=df_year_count['count'],
-        name='label',
     )]
     layout = dict(
         plot_bgcolor='#22434A',
