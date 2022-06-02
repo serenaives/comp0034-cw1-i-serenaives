@@ -4,6 +4,7 @@ import pandas as pd
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
+import plotly.express as px
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
@@ -28,6 +29,10 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 # ------------------------------------------------------------------------------
 category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
 
+discrete_color_map = {'stony': 'pink',
+                      'iron': 'red',
+                      'stony iron': 'blue',
+                      'unclassified': 'green'}
 
 # Define functions used in data filtering
 # ------------------------------------------------------------------------------
@@ -68,46 +73,40 @@ def get_category_graph(years_selected, category_graph_type, discovery):
     category = df_category_count['category']
 
     count_arr = [0, 0, 0, 0]
+    colors = ['pink', 'red', 'blue', 'green']
 
+    # get number of meteorites in each category
     for i in range(4):
         try:
             count_arr[i] = category_dict[category_arr[i]]
         except KeyError:
             count_arr[i] = 0
-    if category_graph_type == 'Bar':
-        type = 'bar'
-        orientation = 'h'
-        x_data = count_arr
-        y_data = category_arr
-        values = 'none'
-        labels = 'none'
-    else:
-        if category_graph_type == 'Pie':
-            type = 'pie'
-            orientation = 'v'
-            x_data = 'none'
-            y_data = 'none'
-            values = count_arr
-            labels = category_arr
 
-    trace = [dict(
-        type=type,
-        x=x_data,
-        y=y_data,
-        values=values,
-        labels=labels,
-        orientation=orientation
-    )]
+    if category_graph_type == 'Bar':
+        fig=px.bar(
+            orientation='h',
+            x=count_arr,
+            y=category_arr,
+            color=category_arr,
+            color_discrete_sequence=colors
+            )
+
+    elif category_graph_type == 'Pie':
+        fig=px.pie(
+            names=category_arr,
+            values=count_arr,
+            color=category_arr,
+            color_discrete_sequence=colors
+        )
 
     layout = dict(
-        legend_title_text='Meteorite landings by category',
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
         xaxis=dict(color='#839396', showgrid=False),
         yaxis=dict(color='#839396', showgrid=False),
         font={'color': '#839396'}
     )
-    fig = dict(data=trace, layout=layout)
+    fig.update_layout(layout)
     return fig
 
 
@@ -338,7 +337,6 @@ app.layout = dbc.Container([
                                                 {'label': 'ON', 'value': 'on'},
                                                 {'label': 'OFF', 'value': 'off'}
                                             ],
-                                            value='off',
                                             inline=False,
                                             switch=True
                                         )
@@ -368,11 +366,6 @@ def update_map(years_selected, discovery, color_coord):
     filtered_df = get_filtered_df(years_selected, discovery)
     text = filtered_df.name # edit for hover functionality
 
-    discrete_color_map = {'stony': 'pink',
-                          'iron': 'red',
-                          'stony iron': 'blue',
-                          'unclassified': 'green'}
-
     trace = []
 
     if color_coord == 'on':
@@ -389,7 +382,7 @@ def update_map(years_selected, discovery, color_coord):
                     marker=dict(
                         size=5,
                         color=discrete_color_map[i],
-                        opacity=0.4),
+                        opacity=0.6),
                 )
             )
         showlegend=False
@@ -468,6 +461,17 @@ def display_category_control_box(active_tab):
         style = {'display': 'none'}
     return style
 
+
+@app.callback(
+    Output('color-coordinate', 'value'),
+    [Input('visualise-by-tabs', 'active_tab')]
+)
+def update_color_coordination(active_tab):
+    if active_tab == 'category-tab':
+        value = 'on'
+    else:
+        value = 'off'
+    return value
 
 
 # ------------------------------------------------------------------------------
