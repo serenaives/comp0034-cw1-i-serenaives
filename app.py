@@ -13,7 +13,7 @@ mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
 
 # Initialise the app
 # ------------------------------------------------------------------------------
-app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR])
+app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_exceptions=True)
 
 
 # Import data
