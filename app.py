@@ -246,8 +246,8 @@ def get_year_count(df):
     return df_year_count
 
 
-def get_by_count(df, col):
-    df_count = df.groupby([col])['name'].count().reset_index()
+def get_by_count(filtered_df, col):
+    df_count = filtered_df.groupby([col, 'fall'])['name'].count().reset_index()
     df_count.rename({'name': 'count'}, inplace=True, axis=1)
     return df_count
 
@@ -277,6 +277,7 @@ def update_map(years_selected, discovery, color_coord):
         for i in category_arr: # like a subplot for each colour
             trace.append(
                 dict(
+                    name=i,
                     type='scattermapbox',
                     lat=filtered_df[filtered_df['category'] == i]['reclat'],
                     lon=filtered_df[filtered_df['category'] == i]['reclong'],
@@ -289,6 +290,7 @@ def update_map(years_selected, discovery, color_coord):
                         opacity=0.4),
                 )
             )
+        showlegend=True
     else:
         trace.append(
             dict(
@@ -304,12 +306,13 @@ def update_map(years_selected, discovery, color_coord):
                     opacity=0.4)
             )
         )
+        showlegend=False
 
     layout = dict(
         hovermode='closest',
         margin=dict(r=0, l=0, t=0, b=0),
         color=filtered_df.category,
-        showlegend=False,
+        showlegend=showlegend,
         mapbox=dict(
             accesstoken=mapbox_access_token,
             bearing=0,
@@ -362,6 +365,7 @@ def update_category_graph(years_selected, category_graph_type, discovery):
             y_data = 'none'
             values = count_arr
             labels = category_arr
+
     trace = [dict(
         type=type,
         x=x_data,
@@ -370,6 +374,7 @@ def update_category_graph(years_selected, category_graph_type, discovery):
         labels=labels,
         orientation=orientation
     )]
+
     layout = dict(
         legend_title_text='Meteorite landings by category',
         plot_bgcolor='#22434A',
@@ -391,17 +396,34 @@ def update_category_graph(years_selected, category_graph_type, discovery):
 def update_year_graph(years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
     df_year_count = get_by_count(filtered_df, 'year')
-    trace = [dict(
-        type='scatter',
-        mode='line',
-        x=df_year_count['year'],
-        y=df_year_count['count'],
-    )]
+
+    trace = []
+
+    for i in discovery:
+        if i == 'Fell':
+            name = 'seen falling'
+        elif i == 'Found':
+            name = 'discovered after falling'
+        trace.append(
+            dict(
+                name=name,
+                type='scatter',
+                mode='line',
+                x=df_year_count[df_year_count['fall'] == i]['year'],
+                y=df_year_count[df_year_count['fall'] == i]['count']
+            )
+        )
+
     layout = dict(
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
         xaxis=dict(color='#839396', showgrid=False),
         yaxis=dict(color='#839396', showgrid=False),
+        legend=dict(
+            font=dict(
+                color='#839396'
+            )
+        )
     )
 
     fig = dict(data=trace, layout=layout)
