@@ -2,6 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import dcc
+from dash import dash_table
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
@@ -29,10 +30,12 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 # ------------------------------------------------------------------------------
 category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
 
-discrete_color_map = {'stony': 'pink',
+discrete_color_map = {'stony': 'purple',
                       'iron': 'red',
                       'stony iron': 'blue',
                       'unclassified': 'green'}
+
+table_cols = ['name', 'fall', 'category', 'year', 'mass (g)']
 
 # Define functions used in data filtering
 # ------------------------------------------------------------------------------
@@ -73,7 +76,7 @@ def get_category_graph(years_selected, category_graph_type, discovery):
     category = df_category_count['category']
 
     count_arr = [0, 0, 0, 0]
-    colors = ['pink', 'red', 'blue', 'green']
+    colors = ['purple', 'red', 'blue', 'green']
 
     # get number of meteorites in each category
     for i in range(4):
@@ -260,19 +263,35 @@ app.layout = dbc.Container([
 
     dbc.Row([
         dbc.Col([
-            dbc.Card([
-                dbc.CardHeader([
-                    html.H3('Geographic Distribution')
-                ]),
-                dbc.CardBody(
-                    id='maps',
-                    children=[
-                        dbc.Row([
-                            dcc.Graph(id='map-plot')
-                        ], style={'margin': '0', 'width': '100%', 'alignment': 'center'})
-                    ]
-                )
-            ], style={'width': '100%', 'alignment': 'center'})
+            dbc.Row([
+                dbc.Card([
+                    dbc.CardHeader([
+                        html.H3('Geographic Distribution')
+                    ]),
+                    dbc.CardBody(
+                        id='maps',
+                        children=[
+                            dbc.Row([
+                                dcc.Graph(id='map-plot')
+                            ], style={'margin': '0', 'width': '100%', 'alignment': 'center'})
+                        ]
+                    )
+                ], style={'width': '100%', 'alignment': 'center'})
+            ]),
+            dbc.Row([
+                dbc.Card([
+                    dbc.CardBody(
+                        id='table-card',
+                        children=[
+                            html.P('Use the selection box on the map to view the data in table format'),
+                            dash_table.DataTable(
+                                id='interactive-table',
+                                columns=[{'name': i, 'id': i} for i in table_cols]
+                            )
+                        ]
+                    )
+                ])
+            ])
         ], style={'width': '40%', 'alignment': 'left'}),
 
         dbc.Col([
@@ -394,9 +413,10 @@ def update_map(years_selected, discovery, color_coord):
                     hoverinfo='text',
                     mode='markers',
                     marker=dict(
-                        size=5,
+                        size=7,
                         color=discrete_color_map[i],
                         opacity=0.6),
+                    customdata=filtered_df.id
                 )
             )
         showlegend=False
@@ -410,9 +430,9 @@ def update_map(years_selected, discovery, color_coord):
                 hoverinfo='text',
                 mode='markers',
                 marker=dict(
-                    size=5,
+                    size=7,
                     color='#b58900',
-                    opacity=0.4)
+                    opacity=0.6)
             )
         )
         showlegend=False
@@ -487,6 +507,29 @@ def update_color_coordination(active_tab):
         value = 'off'
     return value
 
+
+@app.callback(
+    Output('interactive-table', 'data'),
+    [Input('map-plot', 'selectedData'),
+     Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value')]
+)
+def update_table(selected_data, years_selected, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
+
+    row_ids = []
+
+    if selected_data is not None:
+        for point in selected_data['points']:
+            row_ids.append(point['customdata'])
+            dff = filtered_df[filtered_df['id'].isin(row_ids)]
+            dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
+
+    else:
+        # return empty dictionary - nothing selected
+        dff = pd.DataFrame([])
+
+    return dff.to_dict('records')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
