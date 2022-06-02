@@ -84,12 +84,14 @@ def get_category_graph(years_selected, category_graph_type, discovery):
 
     if category_graph_type == 'Bar':
         fig=px.bar(
-            orientation='h',
-            x=count_arr,
-            y=category_arr,
+            orientation='v',
+            x=category_arr,
+            y=count_arr,
             color=category_arr,
-            color_discrete_sequence=colors
+            color_discrete_sequence=colors,
             )
+
+        fig.update_layout(xaxis_title='Meteorite Category', yaxis_title='Number of Meteorite Landings')
 
     elif category_graph_type == 'Pie':
         fig=px.pie(
@@ -99,12 +101,16 @@ def get_category_graph(years_selected, category_graph_type, discovery):
             color_discrete_sequence=colors
         )
 
+        fig.update_traces(textinfo='percent+label',
+                          marker_line=dict(color='white', width=1)
+                          )
+
     layout = dict(
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
-        xaxis=dict(color='#839396', showgrid=False),
-        yaxis=dict(color='#839396', showgrid=False),
-        font={'color': '#839396'}
+        xaxis=dict(color='white', showgrid=False),
+        yaxis=dict(color='white', showgrid=False),
+        font={'color': 'white'}
     )
     fig.update_layout(layout)
     return fig
@@ -149,9 +155,13 @@ def get_year_graph(years_selected, discovery):
         xaxis=dict(color='#839396', showgrid=False),
         yaxis=dict(color='#839396', showgrid=False),
         legend=dict(
+            title_font_family='Times New Roman',
             font=dict(
                 color='#839396'
-            )
+            ),
+            bgcolor='#white',
+            bordercolor='#839396',
+            borderwidth=2
         )
     )
 
@@ -204,7 +214,7 @@ app.layout = dbc.Container([
                                         id='year-slider',
                                         min=df['year'].min(),
                                         max=df['year'].max(),
-                                        value=[1795, 1855],  # default range
+                                        value=[1795, 1915],  # default range
                                         step=1,
                                         marks=mark_values,
                                         allowCross=False,
@@ -415,7 +425,7 @@ def update_map(years_selected, discovery, color_coord):
                 lat=0,
                 lon=0,
             ),
-            zoom=0.5,
+            zoom=0.7,
             style='carto-positron',
         ),
     )
