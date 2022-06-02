@@ -531,6 +531,18 @@ def update_table(selected_data, years_selected, discovery):
 
     return dff.to_dict('records')
 
+
+@app.callback(
+    Output('map-plot', 'selectedData'),
+    [Input('interactive-table', 'data'),
+     Input('map-plot', 'selectedData')]
+)
+def update_selection(table_data, selected_data):
+    if table_data is not None:
+        return None
+    else:
+        return selected_data
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
