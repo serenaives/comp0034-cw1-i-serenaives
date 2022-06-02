@@ -110,7 +110,11 @@ def get_category_graph(years_selected, category_graph_type, discovery):
         paper_bgcolor='#22434A',
         xaxis=dict(color='white', showgrid=False),
         yaxis=dict(color='white', showgrid=False),
-        font={'color': 'white'}
+        font_color='white',
+        font_family='Courier New',
+        title_font_family='Courier New',
+        title_font_color='white',
+        legend_title='Category'
     )
     fig.update_layout(layout)
     return fig
@@ -154,14 +158,14 @@ def get_year_graph(years_selected, discovery):
         paper_bgcolor='#22434A',
         xaxis=dict(color='#839396', showgrid=False),
         yaxis=dict(color='#839396', showgrid=False),
+        title_font_family='Courier New',
+        font_family='Courier New',
+        title_font_color='white',
+        font_color='white',
         legend=dict(
-            title_font_family='Times New Roman',
             font=dict(
-                color='#839396'
-            ),
-            bgcolor='#white',
-            bordercolor='#839396',
-            borderwidth=2
+                color='white'
+            )
         )
     )
 
