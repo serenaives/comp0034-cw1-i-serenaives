@@ -28,6 +28,89 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 # ------------------------------------------------------------------------------
 category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
 
+
+# Define functions used in data filtering
+# ------------------------------------------------------------------------------
+
+# filters dataframe based on input from user (control box input)
+# years_selected is a tuple (start year, end year) from range slider selection
+# discovery is a tuple containing values 'found' and/or 'fell' or none from checklist selection - rephrase
+# adapted from x
+
+
+def get_filtered_df(years_selected, discovery):
+    # year selection
+    filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
+
+    # discovery (found/ fell) selection
+    filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
+    return filtered_df
+
+
+def get_year_count(df):
+    df_year_count = df.groupby(['year'])['name'].count().reset_index()
+    df_year_count.rename({'name': 'count'}, inplace=True, axis=1)
+    return df_year_count
+
+
+def get_by_count(filtered_df, col):
+    df_count = filtered_df.groupby([col, 'fall'])['name'].count().reset_index()
+    df_count.rename({'name': 'count'}, inplace=True, axis=1)
+    return df_count
+
+
+def get_category_graph(years_selected, category_graph_type, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
+    df_category_count = get_by_count(filtered_df, 'category')
+    category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
+
+    count = df_category_count['count']
+    category = df_category_count['category']
+
+    count_arr = [0, 0, 0, 0]
+
+    for i in range(4):
+        try:
+            count_arr[i] = category_dict[category_arr[i]]
+        except KeyError:
+            count_arr[i] = 0
+    if category_graph_type == 'Bar':
+        type = 'bar'
+        orientation = 'h'
+        x_data = count_arr
+        y_data = category_arr
+        values = 'none'
+        labels = 'none'
+    else:
+        if category_graph_type == 'Pie':
+            type = 'pie'
+            orientation = 'v'
+            x_data = 'none'
+            y_data = 'none'
+            values = count_arr
+            labels = category_arr
+
+    trace = [dict(
+        type=type,
+        x=x_data,
+        y=y_data,
+        values=values,
+        labels=labels,
+        orientation=orientation
+    )]
+
+    layout = dict(
+        legend_title_text='Meteorite landings by category',
+        plot_bgcolor='#22434A',
+        paper_bgcolor='#22434A',
+        xaxis=dict(color='#839396', showgrid=False),
+        yaxis=dict(color='#839396', showgrid=False),
+        font={'color': '#839396'}
+    )
+    fig = dict(data=trace, layout=layout)
+    return fig
+
+
 # Control boxes for visualise-by charts
 # ------------------------------------------------------------------------------
 def category_graph_controls():
@@ -187,24 +270,33 @@ app.layout = dbc.Container([
                     dbc.Tabs([
                         # category tab
                         # ------------------------------------------------------------------------------
-                        dbc.Tab(label='category', tab_id='category-tab', children=[
-                            # category chart
-                            # ------------------------------------------------------------------------------
-                            dbc.Row([
-                                dcc.Graph(id='category-graph')
-                            ], style={'width': '100%', 'margin': '0'}),
-                        ]),
+                        dbc.Tab(
+                            label='category',
+                            tab_id='category-tab',
+                            children=[
+                                dbc.Row(
+                                    id='category-tab-content'
+                                )
+                            ]
+                        ),
+
                         # year tab
                         # ------------------------------------------------------------------------------
-                        dbc.Tab(label='year', tab_id='year-tab', children=[
-                            dbc.Row([
-                                dcc.Graph(id='year-graph')
-                            ], style={'margin': '0', 'width:': '100%', 'alignment': 'center'})
-                        ]),
+                        dbc.Tab(label='year', tab_id='year-tab',
+                                children=[
+                                    dbc.Row(
+                                        id='year-tab-content'
+                                    )
+                                ]),
 
                         # mass tab
                         # ------------------------------------------------------------------------------
-                        dbc.Tab(label='mass', tab_id='mass-tab')
+                        dbc.Tab(label='mass', tab_id='mass-tab',
+                                children=[
+                                    dbc.Row(
+                                        id='mass-tab-content'
+                                    )
+                                ])
                     ],
                         id='visualise-by-tabs',
                         active_tab='category-tab'
@@ -221,35 +313,6 @@ app.layout = dbc.Container([
         ], style={'width': '40%', 'alignment': 'right'})
     ])
 ], fluid=True)
-
-# Define functions used in data filtering
-# ------------------------------------------------------------------------------
-
-# filters dataframe based on input from user (control box input)
-# years_selected is a tuple (start year, end year) from range slider selection
-# discovery is a tuple containing values 'found' and/or 'fell' or none from checklist selection - rephrase
-# adapted from x
-
-
-def get_filtered_df(years_selected, discovery):
-    # year selection
-    filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
-
-    # discovery (found/ fell) selection
-    filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
-    return filtered_df
-
-
-def get_year_count(df):
-    df_year_count = df.groupby(['year'])['name'].count().reset_index()
-    df_year_count.rename({'name': 'count'}, inplace=True, axis=1)
-    return df_year_count
-
-
-def get_by_count(filtered_df, col):
-    df_count = filtered_df.groupby([col, 'fall'])['name'].count().reset_index()
-    df_count.rename({'name': 'count'}, inplace=True, axis=1)
-    return df_count
 
 
 # App callbacks
@@ -329,62 +392,7 @@ def update_map(years_selected, discovery, color_coord):
 
 
 # Category Graph (Bar & Pie chart options)
-@app.callback(
-    Output('category-graph', 'figure'),
-    [Input('year-slider', 'value'),
-     Input('category-graph-type', 'value'),
-     Input('found-fell-selection', 'value')]
-)
-def update_category_graph(years_selected, category_graph_type, discovery):
-    filtered_df = get_filtered_df(years_selected, discovery)
-    df_category_count = get_by_count(filtered_df, 'category')
-    category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
 
-    count = df_category_count['count']
-    category = df_category_count['category']
-
-    count_arr = [0, 0, 0, 0]
-
-    for i in range(4):
-        try:
-            count_arr[i] = category_dict[category_arr[i]]
-        except KeyError:
-            count_arr[i] = 0
-    if category_graph_type == 'Bar':
-        type = 'bar'
-        orientation = 'h'
-        x_data = count_arr
-        y_data = category_arr
-        values = 'none'
-        labels = 'none'
-    else:
-        if category_graph_type == 'Pie':
-            type = 'pie'
-            orientation = 'v'
-            x_data = 'none'
-            y_data = 'none'
-            values = count_arr
-            labels = category_arr
-
-    trace = [dict(
-        type=type,
-        x=x_data,
-        y=y_data,
-        values=values,
-        labels=labels,
-        orientation=orientation
-    )]
-
-    layout = dict(
-        legend_title_text='Meteorite landings by category',
-        plot_bgcolor='#22434A',
-        paper_bgcolor='#22434A',
-        xaxis=dict(color='#839396', showgrid=False),
-        yaxis=dict(color='#839396', showgrid=False),
-        font={'color': '#839396'}
-    )
-    fig = dict(data=trace, layout=layout)
-    return fig
 
 # Year graph (line graph)
 
@@ -429,6 +437,16 @@ def update_year_graph(years_selected, discovery):
     fig = dict(data=trace, layout=layout)
     return fig
 
+@app.callback(
+    Output('category-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('category-graph-type', 'value'),
+     Input('found-fell-selection', 'value')]
+)
+def update_category_tab(years_selected, category_graph_type, discovery):
+    fig = get_category_graph(years_selected, category_graph_type, discovery)
+    content = dcc.Graph(id='category-graph', figure=fig)
+    return [content]
 
 @app.callback(
     Output('visualise-by-chart-controls', 'children'),
