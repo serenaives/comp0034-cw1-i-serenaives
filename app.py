@@ -126,9 +126,21 @@ def get_year_graph(years_selected, discovery):
             dict(
                 name=name,
                 type='scatter',
-                mode='line',
+                mode='lines',
                 x=df_year_count[df_year_count['fall'] == i]['year'],
                 y=df_year_count[df_year_count['fall'] == i]['count']
+            )
+        )
+
+    if ('Found' in discovery and 'Fell' in discovery):
+        trace.append(
+            dict(
+                name='all meteorite landings',
+                type='scatter',
+                mode='lines',
+                x=df_year_count['year'],
+                y=df_year_count['count'],
+                visible='legendonly'
             )
         )
 
@@ -193,7 +205,7 @@ app.layout = dbc.Container([
                                         id='year-slider',
                                         min=df['year'].min(),
                                         max=df['year'].max(),
-                                        value=[1600, 2013],  # default range
+                                        value=[1795, 1855],  # default range
                                         step=1,
                                         marks=mark_values,
                                         allowCross=False,
@@ -247,29 +259,7 @@ app.layout = dbc.Container([
                         ], style={'margin': '0', 'width': '100%', 'alignment': 'center'})
                     ]
                 )
-            ], style={'width': '100%', 'alignment': 'center'}),
-            dbc.Card([
-                dbc.CardBody([
-                    dbc.Col([
-                        dbc.Row([
-                            dbc.Row([
-                                html.P('Colour-coordinate map markers to meteorite category:')
-                            ]),
-                            dbc.Row([
-                                dbc.RadioItems(
-                                    id='color-coordinate',
-                                    options=[
-                                        {'label': 'ON', 'value': 'on'},
-                                        {'label': 'OFF', 'value': 'off'}
-                                    ],
-                                    value='off',
-                                    switch=True
-                                )
-                            ])
-                        ])
-                    ])
-                ])
-            ])
+            ], style={'width': '100%', 'alignment': 'center'})
         ], style={'width': '40%', 'alignment': 'left'}),
 
         dbc.Col([
@@ -319,30 +309,43 @@ app.layout = dbc.Container([
                 dbc.Card([
                     dbc.CardBody(
                         id='visualise-by-chart-controls',
-                            children=[
-                                dbc.Row([
+                        children = [
+                            dbc.Row([
+                                dbc.Col([
                                     dbc.Row([
-                                        # pie or bar chart selection option
-                                        # ------------------------------------------------------------------------------
-                                        dbc.Col([
-                                            dbc.Row([
-                                                html.P('Select category chart type:')
-                                            ])
-                                        ]),
-                                        dbc.Col([
-                                            dbc.RadioItems(
-                                                id='category-graph-type',
-                                                options=[
-                                                    {'label': 'Pie chart', 'value': 'Pie'},
-                                                    {'label': 'Bar graph', 'value': 'Bar'},
-                                                ],
-                                                value='Bar',
-                                                inline=False,
-                                                style={'padding': '2%'}
-                                            )], style={})
+                                        html.P('Select category chart type:')
                                     ]),
-                                ], justify='center')
-                            ]
+                                    dbc.Row([
+                                        dbc.RadioItems(
+                                            id='category-graph-type',
+                                            options=[
+                                                {'label': 'Pie chart', 'value': 'Pie'},
+                                                {'label': 'Bar graph', 'value': 'Bar'},
+                                            ],
+                                            value='Bar',
+                                            inline=False
+                                        )
+                                    ])
+                                ], style={'width': '50%', 'alignment': 'left'}),
+                                dbc.Col([
+                                    dbc.Row([
+                                        html.P('Colour-coordinate map markers to meteorite category:')
+                                    ]),
+                                    dbc.Row([
+                                        dbc.RadioItems(
+                                            id='color-coordinate',
+                                            options=[
+                                                {'label': 'ON', 'value': 'on'},
+                                                {'label': 'OFF', 'value': 'off'}
+                                            ],
+                                            value='off',
+                                            inline=False,
+                                            switch=True
+                                        )
+                                    ])
+                                ], style={'width': '50%', 'alignment': 'right'})
+                            ], style={'width': '100%', 'alignment': 'center'})
+                        ]
                     )
                 ])
             ],  id='category-control-box')
@@ -389,7 +392,7 @@ def update_map(years_selected, discovery, color_coord):
                         opacity=0.4),
                 )
             )
-        showlegend=True
+        showlegend=False
     else:
         trace.append(
             dict(
