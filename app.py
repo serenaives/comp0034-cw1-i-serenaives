@@ -111,34 +111,45 @@ def get_category_graph(years_selected, category_graph_type, discovery):
     return fig
 
 
+def get_year_graph(years_selected, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
+    df_year_count = get_by_count(filtered_df, 'year')
+
+    trace = []
+
+    for i in discovery:
+        if i == 'Fell':
+            name = 'seen falling'
+        elif i == 'Found':
+            name = 'discovered after falling'
+        trace.append(
+            dict(
+                name=name,
+                type='scatter',
+                mode='line',
+                x=df_year_count[df_year_count['fall'] == i]['year'],
+                y=df_year_count[df_year_count['fall'] == i]['count']
+            )
+        )
+
+    layout = dict(
+        plot_bgcolor='#22434A',
+        paper_bgcolor='#22434A',
+        xaxis=dict(color='#839396', showgrid=False),
+        yaxis=dict(color='#839396', showgrid=False),
+        legend=dict(
+            font=dict(
+                color='#839396'
+            )
+        )
+    )
+
+    fig = dict(data=trace, layout=layout)
+    return fig
+
+
 # Control boxes for visualise-by charts
 # ------------------------------------------------------------------------------
-def category_graph_controls():
-    children = [
-        dbc.Row([
-            dbc.Row([
-                # pie or bar chart selection option
-                # ------------------------------------------------------------------------------
-                dbc.Col([
-                    dbc.Row([
-                        html.P('Select chart type:')
-                    ])
-                ]),
-                dbc.Col([
-                    dbc.RadioItems(
-                        id='category-graph-type',
-                        options=[
-                            {'label': 'Pie chart', 'value': 'Pie'},
-                            {'label': 'Bar graph', 'value': 'Bar'},
-                        ],
-                        value='Bar',
-                        inline=False,
-                        style={'padding': '2%'}
-                    )], style={})
-            ]),
-        ], justify='center')
-    ]
-    return children
 
 
 # App layout
@@ -304,12 +315,37 @@ app.layout = dbc.Container([
                 ])
             ], style={'width': '100%', 'alignment': 'center'}
             ),
-            dbc.Card([
-                dbc.CardBody(
-                    id='visualise-by-chart-controls',
-                    children=category_graph_controls()
-                )
-            ])
+            html.Div([
+                dbc.Card([
+                    dbc.CardBody(
+                        id='visualise-by-chart-controls',
+                            children=[
+                                dbc.Row([
+                                    dbc.Row([
+                                        # pie or bar chart selection option
+                                        # ------------------------------------------------------------------------------
+                                        dbc.Col([
+                                            dbc.Row([
+                                                html.P('Select category chart type:')
+                                            ])
+                                        ]),
+                                        dbc.Col([
+                                            dbc.RadioItems(
+                                                id='category-graph-type',
+                                                options=[
+                                                    {'label': 'Pie chart', 'value': 'Pie'},
+                                                    {'label': 'Bar graph', 'value': 'Bar'},
+                                                ],
+                                                value='Bar',
+                                                inline=False,
+                                                style={'padding': '2%'}
+                                            )], style={})
+                                    ]),
+                                ], justify='center')
+                            ]
+                    )
+                ])
+            ],  id='category-control-box')
         ], style={'width': '40%', 'alignment': 'right'})
     ])
 ], fluid=True)
@@ -392,50 +428,19 @@ def update_map(years_selected, discovery, color_coord):
 
 
 # Category Graph (Bar & Pie chart options)
-
-
 # Year graph (line graph)
 
+
 @app.callback(
-    Output('year-graph', 'figure'),
+    Output('year-tab-content', 'children'),
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value')]
 )
 def update_year_graph(years_selected, discovery):
-    filtered_df = get_filtered_df(years_selected, discovery)
-    df_year_count = get_by_count(filtered_df, 'year')
+    fig = get_year_graph(years_selected, discovery)
+    content = dcc.Graph(id='year-graph', figure=fig)
+    return [content]
 
-    trace = []
-
-    for i in discovery:
-        if i == 'Fell':
-            name = 'seen falling'
-        elif i == 'Found':
-            name = 'discovered after falling'
-        trace.append(
-            dict(
-                name=name,
-                type='scatter',
-                mode='line',
-                x=df_year_count[df_year_count['fall'] == i]['year'],
-                y=df_year_count[df_year_count['fall'] == i]['count']
-            )
-        )
-
-    layout = dict(
-        plot_bgcolor='#22434A',
-        paper_bgcolor='#22434A',
-        xaxis=dict(color='#839396', showgrid=False),
-        yaxis=dict(color='#839396', showgrid=False),
-        legend=dict(
-            font=dict(
-                color='#839396'
-            )
-        )
-    )
-
-    fig = dict(data=trace, layout=layout)
-    return fig
 
 @app.callback(
     Output('category-tab-content', 'children'),
@@ -448,24 +453,18 @@ def update_category_tab(years_selected, category_graph_type, discovery):
     content = dcc.Graph(id='category-graph', figure=fig)
     return [content]
 
+
 @app.callback(
-    Output('visualise-by-chart-controls', 'children'),
+    Output('category-control-box', 'style'),
     [Input('visualise-by-tabs', 'active_tab')]
 )
-def update_visualise_by_chart_controls(active_tab):
+def display_category_control_box(active_tab):
     if active_tab == 'category-tab':
-        children = category_graph_controls()
-    elif active_tab == 'year-tab':
-        children = [
-
-        ]
-    elif active_tab == 'mass-tab':
-        children = [
-
-        ]
+        style = {'display': 'block'}
     else:
-        children = [html.P('error displaying chart controls')]
-    return children
+        style = {'display': 'none'}
+    return style
+
 
 
 # ------------------------------------------------------------------------------
