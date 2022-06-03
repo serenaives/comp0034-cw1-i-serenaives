@@ -6,6 +6,7 @@ from dash import dash_table
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import plotly.figure_factory as ff
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
@@ -131,9 +132,9 @@ def get_year_graph(years_selected, discovery):
 
     for i in discovery:
         if i == 'Fell':
-            name = 'seen falling'
+            name = 'seen falling (fell)'
         elif i == 'Found':
-            name = 'discovered after falling'
+            name = 'discovered after falling (found)'
         trace.append(
             dict(
                 name=name,
@@ -176,6 +177,33 @@ def get_year_graph(years_selected, discovery):
     return fig
 
 
+def get_mass_graph(years_selected, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
+
+    hist_data = [filtered_df['mass (g)']]
+    group_labels = ['all meteorite landings']
+
+    fig = ff.create_distplot(hist_data, group_labels)
+
+    layout = dict(
+        plot_bgcolor='#22434A',
+        paper_bgcolor='#22434A',
+        xaxis=dict(color='#839396', showgrid=False),
+        yaxis=dict(color='#839396', showgrid=False),
+        title_font_family='Courier New',
+        font_family='Courier New',
+        title_font_color='white',
+        font_color='white',
+        legend=dict(
+            font=dict(
+                color='white'
+            )
+        )
+    )
+
+    fig.update_layout(layout)
+    return fig
+
 # Control boxes for visualise-by charts
 # ------------------------------------------------------------------------------
 
@@ -203,58 +231,60 @@ app.layout = dbc.Container([
 
     # control box
     # ------------------------------------------------------------------------------
-    dbc.Card([
-        dbc.CardHeader([
-            html.H3('Data Filters')
-        ]),
-        dbc.CardBody([
-            dbc.Row([
-                # year slider
-                # ------------------------------------------------------------------------------
-                dbc.Col([
-                    dbc.Row([
-                        dbc.Col([
-                            html.P('Filter meteorite landings by year')
-                        ], style={'text-align': 'left', 'font-size': '100%'}),
-                        dbc.Col([
-                            dcc.RangeSlider(
-                                        id='year-slider',
-                                        min=df['year'].min(),
-                                        max=df['year'].max(),
-                                        value=[1795, 1915],  # default range
-                                        step=1,
-                                        marks=mark_values,
-                                        allowCross=False,
-                                        verticalHeight=900,
-                                        pushable=True,
-                                        tooltip={'always_visible': True,
-                                                 'placement': 'bottom'}
-                                    )], style={'width': '40%',
-                                               'position': 'absolute', 'right': '35%'}
-                        )
-                    ])
-                ])
+    dbc.Row([
+        dbc.Card([
+            dbc.CardHeader([
+                html.H3('Data Filters')
             ]),
-            dbc.Row([
-                dbc.Col(html.Br())
-            ]),
-            # found/fell checkbox selection
-            # ------------------------------------------------------------------------------
-            dbc.Row([
-                dbc.Col([
-                    html.P('Filter meteorites by discovery')
-                ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
+            dbc.CardBody([
                 dbc.Row([
-                    dbc.Checklist(
-                        id='found-fell-selection',
-                        options=[
-                            {'label': 'seen falling', 'value': 'Fell'},
-                            {'label': 'discovered after falling', 'value': 'Found'}
-                        ],
-                        value=['Fell', 'Found'],
-                        inline=False
-                    )
-                ], style={'width': '70%', 'position': 'absolute', 'right': '5%'})
+                    # year slider
+                    # ------------------------------------------------------------------------------
+                    dbc.Col([
+                        dbc.Row([
+                            dbc.Col([
+                                html.P('Filter meteorite landings by year')
+                            ], style={'text-align': 'left', 'font-size': '100%'}),
+                            dbc.Col([
+                                dcc.RangeSlider(
+                                            id='year-slider',
+                                            min=df['year'].min(),
+                                            max=df['year'].max(),
+                                            value=[1795, 1915],  # default range
+                                            step=1,
+                                            marks=mark_values,
+                                            allowCross=False,
+                                            verticalHeight=900,
+                                            pushable=True,
+                                            tooltip={'always_visible': True,
+                                                     'placement': 'bottom'}
+                                        )], style={'width': '40%',
+                                                   'position': 'absolute', 'right': '35%'}
+                            )
+                        ])
+                    ])
+                ]),
+                dbc.Row([
+                    dbc.Col(html.Br())
+                ]),
+                # found/fell checkbox selection
+                # ------------------------------------------------------------------------------
+                dbc.Row([
+                    dbc.Col([
+                        html.P('Filter meteorites by discovery')
+                    ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
+                    dbc.Row([
+                        dbc.Checklist(
+                            id='found-fell-selection',
+                            options=[
+                                {'label': 'seen falling (fell)', 'value': 'Fell'},
+                                {'label': 'discovered after falling (found)', 'value': 'Found'}
+                            ],
+                            value=['Fell', 'Found'],
+                            inline=False
+                        )
+                    ], style={'width': '70%', 'position': 'absolute', 'right': '5%'})
+                ])
             ])
         ])
     ]),
@@ -280,21 +310,24 @@ app.layout = dbc.Container([
             ]),
             dbc.Row([
                 dbc.Card([
-                    dbc.CardBody([
+                    dbc.CardHeader([
                         dbc.Row([
                             dbc.Col([
                                 html.P('Use the selection box on the map to view the data in table format')
-                            ], {'align': 'left'}),
+                            ], {'width': '80%', 'align': 'left'}),
                             dbc.Col([
-                                dbc.Button(
-                                    id='refresh-button',
-                                    n_clicks=0,
-                                    children=[
-                                        html.P('clear selection box')
-                                    ], style={'align': 'right'}
-                                )
-                            ])
-                        ], justify='between'),
+                                dbc.Card([
+                                    dbc.Button(
+                                        id='refresh-button',
+                                        n_clicks=0,
+                                        children=[
+                                            html.P('clear map selection')
+                                    ])
+                                ], style={'align': 'right'})
+                            ], style={'width': '20%', 'align': 'right'})
+                        ])
+                    ]),
+                    dbc.CardBody([
                         dbc.Row([
                             dash_table.DataTable(
                                 id='interactive-table',
@@ -322,8 +355,7 @@ app.layout = dbc.Container([
                                 dbc.Row(
                                     id='category-tab-content'
                                 )
-                            ]
-                        ),
+                            ]),
 
                         # year tab
                         # ------------------------------------------------------------------------------
@@ -474,13 +506,23 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
 # Category Graph (Bar & Pie chart options)
 # Year graph (line graph)
 
+@app.callback(
+    Output('mass-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value')]
+)
+def update_mass_graph(years_selected, discovery):
+    fig = get_mass_graph(years_selected, discovery)
+    content = dcc.Graph(id='mass-graph', figure=fig)
+    return [content]
+
 
 @app.callback(
     Output('year-tab-content', 'children'),
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value')]
 )
-def update_year_graph(years_selected, discovery):
+def update_year_tab(years_selected, discovery):
     fig = get_year_graph(years_selected, discovery)
     content = dcc.Graph(id='year-graph', figure=fig)
     return [content]
@@ -546,4 +588,4 @@ def update_table(selected_data, years_selected, discovery):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
