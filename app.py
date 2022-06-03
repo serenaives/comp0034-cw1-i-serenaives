@@ -242,10 +242,10 @@ app.layout = dbc.Container([
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Row([
-                                        html.P('Filter meteorite landings by year')
+                                    dbc.CardHeader([
+                                        'Filter meteorite landings by year'
                                     ], style={'text-align': 'left'}),
-                                    dbc.Row([
+                                    dbc.CardBody([
                                         dcc.RangeSlider(
                                             id='year-slider',
                                             min=df['year'].min(),
@@ -268,10 +268,10 @@ app.layout = dbc.Container([
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Row([
-                                        html.P('Filter meteorite landings by discovery')
+                                    dbc.CardHeader([
+                                        'Filter meteorite landings by discovery'
                                     ], style={'text-align': 'left'}),
-                                    dbc.Row([
+                                    dbc.CardBody([
                                         dbc.Checklist(
                                             id='found-fell-selection',
                                             options=[
@@ -290,10 +290,10 @@ app.layout = dbc.Container([
                         dbc.CardBody([
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Row([
-                                        html.P('Colour-coordinate map markers to meteorite category:')
-                                    ], style={'text-align': 'left'}),
-                                    dbc.Row([
+                                    dbc.CardHeader([
+                                        'Colour-coordinate map markers to meteorite category:'
+                                    ]),
+                                    dbc.CardBody([
                                         dbc.RadioItems(
                                             id='color-coordinate',
                                             options=[
