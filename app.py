@@ -280,16 +280,28 @@ app.layout = dbc.Container([
             ]),
             dbc.Row([
                 dbc.Card([
-                    dbc.CardBody(
-                        id='table-card',
-                        children=[
-                            html.P('Use the selection box on the map to view the data in table format'),
+                    dbc.CardBody([
+                        dbc.Row([
+                            dbc.Col([
+                                html.P('Use the selection box on the map to view the data in table format')
+                            ], {'align': 'left'}),
+                            dbc.Col([
+                                dbc.Button(
+                                    id='refresh-button',
+                                    n_clicks=0,
+                                    children=[
+                                        html.P('clear selection box')
+                                    ], style={'align': 'right'}
+                                )
+                            ])
+                        ], justify='between'),
+                        dbc.Row([
                             dash_table.DataTable(
                                 id='interactive-table',
                                 columns=[{'name': i, 'id': i} for i in table_cols]
                             )
-                        ]
-                    )
+                        ])
+                    ])
                 ])
             ])
         ], style={'width': '40%', 'alignment': 'left'}),
@@ -341,7 +353,7 @@ app.layout = dbc.Container([
                 dbc.Card([
                     dbc.CardBody(
                         id='visualise-by-chart-controls',
-                        children = [
+                        children=[
                             dbc.Row([
                                 dbc.Col([
                                     dbc.Row([
@@ -393,16 +405,17 @@ app.layout = dbc.Container([
     Output('map-plot', 'figure'),
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
-     Input('color-coordinate', 'value')]
+     Input('color-coordinate', 'value'),
+     Input('refresh-button', 'n_clicks')]
 )
-def update_map(years_selected, discovery, color_coord):
+def update_map(years_selected, discovery, color_coord, n_clicks):
     filtered_df = get_filtered_df(years_selected, discovery)
     text = filtered_df.name # edit for hover functionality
 
     trace = []
 
     if color_coord == 'on':
-        for i in category_arr: # like a subplot for each colour
+        for i in category_arr:
             trace.append(
                 dict(
                     name=i,
@@ -417,10 +430,9 @@ def update_map(years_selected, discovery, color_coord):
                         color=discrete_color_map[i],
                         opacity=0.6),
                     customdata=filtered_df.id,
-                    selectedData = None
+                    selectedData=None
                 )
             )
-        showlegend=False
     else:
         trace.append(
             dict(
@@ -438,13 +450,12 @@ def update_map(years_selected, discovery, color_coord):
                 selectedData=None
             )
         )
-        showlegend=False
 
     layout = dict(
         hovermode='closest',
         margin=dict(r=0, l=0, t=0, b=0),
         color=filtered_df.category,
-        showlegend=showlegend,
+        showlegend=False,
         mapbox=dict(
             accesstoken=mapbox_access_token,
             bearing=0,
@@ -527,12 +538,10 @@ def update_table(selected_data, years_selected, discovery):
             row_ids.append(point['customdata'])
             dff = filtered_df[filtered_df['id'].isin(row_ids)]
             dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
-
+        return dff.to_dict('records')
     else:
         # return empty dictionary - nothing selected
-        dff = pd.DataFrame([])
-
-    return dff.to_dict('records')
+        return None
 
 
 # ------------------------------------------------------------------------------
