@@ -237,15 +237,17 @@ app.layout = dbc.Container([
                 html.H3('Data Filters')
             ]),
             dbc.CardBody([
-                dbc.CardGroup([
-                    dbc.Card([
-                        dbc.CardBody([
-                            dbc.Row([
-                                dbc.Col([
-                                    dbc.CardHeader([
-                                        'Filter meteorite landings by year'
-                                    ], style={'text-align': 'left'}),
-                                    dbc.CardBody([
+                dbc.Row([
+                    dbc.CardGroup([
+                        dbc.Card([
+                            dbc.Col([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        html.P([
+                                            'Filter meteorite landings by year'
+                                        ], style={'text-align': 'left'})
+                                    ]),
+                                    dbc.Row([
                                         dcc.RangeSlider(
                                             id='year-slider',
                                             min=df['year'].min(),
@@ -259,19 +261,22 @@ app.layout = dbc.Container([
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'})
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ])
                                 ])
                             ])
-                        ])
-                    ]),
-                    dbc.Card([
-                        dbc.CardBody([
-                            dbc.Row([
-                                dbc.Col([
-                                    dbc.CardHeader([
-                                        'Filter meteorite landings by discovery'
-                                    ], style={'text-align': 'left'}),
-                                    dbc.CardBody([
+                        ]),
+                        dbc.Card([
+                            dbc.Col([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        html.P([
+                                            'Filter meteorite landings by discovery'
+                                        ], style={'text-align': 'left'}),
+                                        ]),
+                                    dbc.Row([
                                         dbc.Checklist(
                                             id='found-fell-selection',
                                             options=[
@@ -281,19 +286,22 @@ app.layout = dbc.Container([
                                             value=['Fell', 'Found'],
                                             inline=False
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'})
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ])
                                 ])
-                            ])
-                        ])
-                    ]),
-                    dbc.Card([
-                        dbc.CardBody([
-                            dbc.Row([
-                                dbc.Col([
-                                    dbc.CardHeader([
-                                        'Colour-coordinate map markers to meteorite category:'
+                             ])
+                        ]),
+                        dbc.Card([
+                            dbc.Col([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        html.P([
+                                            'Colour-coordinate map markers to meteorite category:'
+                                        ], style={'text-align': 'left'})
                                     ]),
-                                    dbc.CardBody([
+                                    dbc.Row([
                                         dbc.RadioItems(
                                             id='color-coordinate',
                                             options=[
@@ -304,11 +312,14 @@ app.layout = dbc.Container([
                                             switch=True,
                                             value='on'
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'})
-                                ])
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ])
+                                ]),
                             ])
                         ])
-                    ]),
+                    ])
                 ])
             ])
         ])
