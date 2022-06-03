@@ -6,7 +6,7 @@ from dash import dash_table
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
-import plotly.figure_factory as ff
+import plotly.graph_objects as go
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
@@ -38,6 +38,11 @@ discrete_color_map = {'stony': 'purple',
                       'unclassified': 'green'}
 
 table_cols = ['name', 'fall', 'category', 'year', 'mass (g)']
+
+count_arr = [0, 0, 0, 0]
+colors = ['purple', 'red', 'blue', 'green']
+
+# generic layout
 
 # Define functions used in data filtering
 # ------------------------------------------------------------------------------
@@ -76,9 +81,6 @@ def get_category_graph(years_selected, category_graph_type, discovery):
 
     count = df_category_count['count']
     category = df_category_count['category']
-
-    count_arr = [0, 0, 0, 0]
-    colors = ['purple', 'red', 'blue', 'green']
 
     # get number of meteorites in each category
     for i in range(4):
@@ -121,6 +123,7 @@ def get_category_graph(years_selected, category_graph_type, discovery):
         title_font_color='white',
         legend_title='Category'
     )
+
     fig.update_layout(layout)
     return fig
 
@@ -183,28 +186,46 @@ def get_year_graph(years_selected, discovery):
 def get_mass_graph(years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
 
-    hist_data = [filtered_df['mass (g)']]
-    group_labels = ['all meteorite landings']
+    df_found = filtered_df[filtered_df['fall'] == 'Found']
+    df_fell = filtered_df[filtered_df['fall'] == 'Fell']
+    '''
+    hist_data = [df_found['mass (g)'], df_fell['mass (g)']]
+    group_labels = ['found', 'fell']
+    '''
 
-    fig = ff.create_distplot(hist_data, group_labels)
+    xbins = dict(
+        start=df_found['mass (g)'].min(),
+        end=df_found['mass (g)'].min(),
+        size='M12'
+    )
 
+    fig = px.histogram(
+        filtered_df,
+        x='mass (g)',
+        marginal='box'
+    )
+
+    '''
     layout = dict(
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
-        xaxis=dict(color='#839396', showgrid=False),
-        yaxis=dict(color='#839396', showgrid=False),
+        xaxis=dict(color='white', showgrid=False),
+        yaxis=dict(color='white', showgrid=False),
         title_font_family='Courier New',
         font_family='Courier New',
         title_font_color='white',
         font_color='white',
         legend=dict(
             font=dict(
-                color='white'
+                color='white',
+                font_family='Courier New'
             )
         )
     )
-
     fig.update_layout(layout)
+    '''
+
+    #fig.update_xaxes(type='log')
     return fig
 
 
@@ -548,17 +569,16 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
     fig = dict(data=trace, layout=layout)
     return fig
 
-'''
+
 @app.callback(
     Output('mass-tab-content', 'children'),
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value')]
 )
-def update_mass_graph(years_selected, discovery):
+def update_mass_tab(years_selected, discovery):
     fig = get_mass_graph(years_selected, discovery)
     content = dcc.Graph(id='mass-graph', figure=fig)
     return [content]
-'''
 
 
 # category tab
