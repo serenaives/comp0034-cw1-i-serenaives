@@ -5,3 +5,4 @@ dash
 pytest
 dash_bootstrap_components
 plotly
+scipy
