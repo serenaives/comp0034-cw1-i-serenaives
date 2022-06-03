@@ -7,6 +7,7 @@ from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.figure_factory as ff
+import numpy as np
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
@@ -22,6 +23,10 @@ app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_excep
 # Import data
 # ------------------------------------------------------------------------------
 df = pd.read_csv('meteorite_landings_cleaned.csv')
+
+
+df['mass (g)'] = df['mass (g)'].replace(np.nan, 0)
+
 
 # Store MapBox access token
 # ------------------------------------------------------------------------------
@@ -258,8 +263,7 @@ app.layout = dbc.Container([
                                             pushable=True,
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
-                                        )], style={'width': '40%',
-                                                   'position': 'absolute', 'right': '35%'}
+                                        )], style={'width': '40%', 'position': 'absolute', 'right': '35%'}
                             )
                         ])
                     ])
