@@ -261,7 +261,10 @@ app.layout = dbc.Container([
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'}),
+                                    ], style={'width': '90%', 'position': 'absolute', 'left': '1%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ]),
                                     dbc.Row([
                                         html.Br()
                                     ])
@@ -286,7 +289,10 @@ app.layout = dbc.Container([
                                             value=['Fell', 'Found'],
                                             inline=False
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'}),
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '4%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ]),
                                     dbc.Row([
                                         html.Br()
                                     ])
@@ -312,7 +318,10 @@ app.layout = dbc.Container([
                                             switch=True,
                                             value='on'
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'}),
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '4%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ]),
                                     dbc.Row([
                                         html.Br()
                                     ])
