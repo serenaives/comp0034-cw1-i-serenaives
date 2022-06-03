@@ -147,7 +147,7 @@ def get_year_graph(years_selected, discovery):
             )
         )
 
-    if ('Found' in discovery and 'Fell' in discovery):
+    if 'Found' in discovery and 'Fell' in discovery:
         trace.append(
             dict(
                 name='All',
@@ -207,9 +207,6 @@ def get_mass_graph(years_selected, discovery):
     fig.update_layout(layout)
     return fig
 
-# Control boxes for visualise-by charts
-# ------------------------------------------------------------------------------
-
 
 # App layout
 # ------------------------------------------------------------------------------
@@ -217,7 +214,7 @@ app.layout = dbc.Container([
 
     html.Br(),
 
-    # Navbar
+    # page header
     # ------------------------------------------------------------------------------
     dbc.Row([
         dbc.CardGroup([
@@ -240,16 +237,16 @@ app.layout = dbc.Container([
                 html.H3('Data Filters')
             ]),
             dbc.CardBody([
-                dbc.Row([
-                    # year slider
-                    # ------------------------------------------------------------------------------
-                    dbc.Col([
-                        dbc.Row([
-                            dbc.Col([
-                                html.P('Filter meteorite landings by year')
-                            ], style={'text-align': 'left', 'font-size': '100%'}),
-                            dbc.Col([
-                                dcc.RangeSlider(
+                dbc.CardGroup([
+                    dbc.Card([
+                        dbc.CardBody([
+                            dbc.Row([
+                                dbc.Col([
+                                    dbc.Row([
+                                        html.P('Filter meteorite landings by year')
+                                    ], style={'text-align': 'left'}),
+                                    dbc.Row([
+                                        dcc.RangeSlider(
                                             id='year-slider',
                                             min=df['year'].min(),
                                             max=df['year'].max(),
@@ -261,41 +258,73 @@ app.layout = dbc.Container([
                                             pushable=True,
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
-                                        )], style={'width': '40%', 'position': 'absolute', 'right': '35%'}
-                            )
+                                        )
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'})
+                                ])
+                            ])
                         ])
-                    ])
-                ]),
-                dbc.Row([
-                    dbc.Col(html.Br())
-                ]),
-                # found/fell checkbox selection
-                # ------------------------------------------------------------------------------
-                dbc.Row([
-                    dbc.Col([
-                        html.P('Filter meteorites by discovery')
-                    ], style={'width': 2, 'text-align': 'left', 'font-size': '100%'}),
-                    dbc.Row([
-                        dbc.Checklist(
-                            id='found-fell-selection',
-                            options=[
-                                {'label': 'seen falling (fell)', 'value': 'Fell'},
-                                {'label': 'discovered after falling (found)', 'value': 'Found'}
-                            ],
-                            value=['Fell', 'Found'],
-                            inline=False
-                        )
-                    ], style={'width': '70%', 'position': 'absolute', 'right': '5%'})
+                    ]),
+                    dbc.Card([
+                        dbc.CardBody([
+                            dbc.Row([
+                                dbc.Col([
+                                    dbc.Row([
+                                        html.P('Filter meteorite landings by discovery')
+                                    ], style={'text-align': 'left'}),
+                                    dbc.Row([
+                                        dbc.Checklist(
+                                            id='found-fell-selection',
+                                            options=[
+                                                {'label': 'seen falling (fell)', 'value': 'Fell'},
+                                                {'label': 'discovered after falling (found)', 'value': 'Found'}
+                                            ],
+                                            value=['Fell', 'Found'],
+                                            inline=False
+                                        )
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'})
+                                ])
+                            ])
+                        ])
+                    ]),
+                    dbc.Card([
+                        dbc.CardBody([
+                            dbc.Row([
+                                dbc.Col([
+                                    dbc.Row([
+                                        html.P('Colour-coordinate map markers to meteorite category:')
+                                    ], style={'text-align': 'left'}),
+                                    dbc.Row([
+                                        dbc.RadioItems(
+                                            id='color-coordinate',
+                                            options=[
+                                                {'label': 'ON', 'value': 'on'},
+                                                {'label': 'OFF', 'value': 'off'}
+                                            ],
+                                            inline=False,
+                                            switch=True,
+                                            value='on'
+                                        )
+                                    ], style={'width': '80%', 'position': 'absolute', 'left': '0%'})
+                                ])
+                            ])
+                        ])
+                    ]),
                 ])
             ])
         ])
     ]),
 
-    html.Br(),
+    dbc.Row([
+        html.Br()
+    ]),
 
+    # visualisations (split into two columns)
+    # ------------------------------------------------------------------------------
     dbc.Row([
         dbc.Col([
             dbc.Row([
+                # geographic distribution card (map)
+                # ------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardHeader([
                         html.H3('Geographic Distribution')
@@ -311,6 +340,8 @@ app.layout = dbc.Container([
                 ], style={'width': '100%', 'alignment': 'center'})
             ]),
             dbc.Row([
+                # card below geographic distribution contains interactive table
+                # ------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardHeader([
                         dbc.Row([
@@ -318,6 +349,8 @@ app.layout = dbc.Container([
                                 html.P('Use the selection box on the map to view the data in table format')
                             ], {'width': '80%', 'align': 'left'}),
                             dbc.Col([
+                                # reset map selection button
+                                # ------------------------------------------------------------------------------
                                 dbc.Card([
                                     dbc.Button(
                                         id='refresh-button',
@@ -329,6 +362,8 @@ app.layout = dbc.Container([
                             ], style={'width': '20%', 'align': 'right'})
                         ])
                     ]),
+                    # interactive table
+                    # ------------------------------------------------------------------------------
                     dbc.CardBody([
                         dbc.Row([
                             dash_table.DataTable(
@@ -342,6 +377,8 @@ app.layout = dbc.Container([
         ], style={'width': '40%', 'alignment': 'left'}),
 
         dbc.Col([
+            # visualise-by card (split into 3 tabs: category, year & mass)
+            # ------------------------------------------------------------------------------
             dbc.Card([
                 dbc.CardHeader([
                     html.H3('Visualise meteorite landings by:')
@@ -384,9 +421,11 @@ app.layout = dbc.Container([
             ], style={'width': '100%', 'alignment': 'center'}
             ),
             html.Div([
+                # category graph control box (select bar or pie chart)
+                # ------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardBody(
-                        id='visualise-by-chart-controls',
+                        id='category-graph-controls',
                         children=[
                             dbc.Row([
                                 dbc.Col([
@@ -405,22 +444,6 @@ app.layout = dbc.Container([
                                         )
                                     ])
                                 ], style={'width': '50%', 'alignment': 'left'}),
-                                dbc.Col([
-                                    dbc.Row([
-                                        html.P('Colour-coordinate map markers to meteorite category:')
-                                    ]),
-                                    dbc.Row([
-                                        dbc.RadioItems(
-                                            id='color-coordinate',
-                                            options=[
-                                                {'label': 'ON', 'value': 'on'},
-                                                {'label': 'OFF', 'value': 'off'}
-                                            ],
-                                            inline=False,
-                                            switch=True
-                                        )
-                                    ])
-                                ], style={'width': '50%', 'alignment': 'right'})
                             ], style={'width': '100%', 'alignment': 'center'})
                         ]
                     )
@@ -434,7 +457,8 @@ app.layout = dbc.Container([
 # App callbacks
 # ------------------------------------------------------------------------------
 
-# Map
+# scatter map
+# ------------------------------------------------------------------------------
 @app.callback(
     Output('map-plot', 'figure'),
     [Input('year-slider', 'value'),
@@ -504,10 +528,6 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
     fig = dict(data=trace, layout=layout)
     return fig
 
-
-# Category Graph (Bar & Pie chart options)
-# Year graph (line graph)
-
 '''
 @app.callback(
     Output('mass-tab-content', 'children'),
@@ -520,17 +540,9 @@ def update_mass_graph(years_selected, discovery):
     return [content]
 '''
 
-@app.callback(
-    Output('year-tab-content', 'children'),
-    [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value')]
-)
-def update_year_tab(years_selected, discovery):
-    fig = get_year_graph(years_selected, discovery)
-    content = dcc.Graph(id='year-graph', figure=fig)
-    return [content]
 
-
+# category tab
+# ------------------------------------------------------------------------------
 @app.callback(
     Output('category-tab-content', 'children'),
     [Input('year-slider', 'value'),
@@ -543,6 +555,21 @@ def update_category_tab(years_selected, category_graph_type, discovery):
     return [content]
 
 
+# year tab
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('year-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value')]
+)
+def update_year_tab(years_selected, discovery):
+    fig = get_year_graph(years_selected, discovery)
+    content = dcc.Graph(id='year-graph', figure=fig)
+    return [content]
+
+
+# category tab control box
+# ------------------------------------------------------------------------------
 @app.callback(
     Output('category-control-box', 'style'),
     [Input('visualise-by-tabs', 'active_tab')]
@@ -555,18 +582,8 @@ def display_category_control_box(active_tab):
     return style
 
 
-@app.callback(
-    Output('color-coordinate', 'value'),
-    [Input('visualise-by-tabs', 'active_tab')]
-)
-def update_color_coordination(active_tab):
-    if active_tab == 'category-tab':
-        value = 'on'
-    else:
-        value = 'off'
-    return value
-
-
+# interactive table
+# ------------------------------------------------------------------------------
 @app.callback(
     Output('interactive-table', 'data'),
     [Input('map-plot', 'selectedData'),
