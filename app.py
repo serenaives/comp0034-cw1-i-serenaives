@@ -7,7 +7,6 @@ from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import plotly.figure_factory as ff
-import numpy as np
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
@@ -23,9 +22,6 @@ app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_excep
 # Import data
 # ------------------------------------------------------------------------------
 df = pd.read_csv('meteorite_landings_cleaned.csv')
-
-
-df['mass (g)'] = df['mass (g)'].replace(np.nan, 0)
 
 
 # Store MapBox access token
@@ -137,43 +133,45 @@ def get_year_graph(years_selected, discovery):
 
     for i in discovery:
         if i == 'Fell':
-            name = 'seen falling (fell)'
+            name = 'Fell'
         elif i == 'Found':
-            name = 'discovered after falling (found)'
+            name = 'Found'
         trace.append(
             dict(
                 name=name,
                 type='scatter',
                 mode='lines',
                 x=df_year_count[df_year_count['fall'] == i]['year'],
-                y=df_year_count[df_year_count['fall'] == i]['count']
+                y=df_year_count[df_year_count['fall'] == i]['count'],
+                visible='legendonly'
             )
         )
 
     if ('Found' in discovery and 'Fell' in discovery):
         trace.append(
             dict(
-                name='all meteorite landings',
+                name='All',
                 type='scatter',
                 mode='lines',
                 x=df_year_count['year'],
-                y=df_year_count['count'],
-                visible='legendonly'
+                y=df_year_count['count']
             )
         )
 
     layout = dict(
+        hovermode='x unified',
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
-        xaxis=dict(color='#839396', showgrid=False),
-        yaxis=dict(color='#839396', showgrid=False),
+        xaxis=dict(color='white', showgrid=False),
+        yaxis=dict(color='white', showgrid=False),
         title_font_family='Courier New',
         font_family='Courier New',
         title_font_color='white',
         font_color='white',
         legend=dict(
             font=dict(
-                color='white'
+                color='white',
+                font_family='Courier New'
             )
         )
     )
@@ -510,6 +508,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
 # Category Graph (Bar & Pie chart options)
 # Year graph (line graph)
 
+'''
 @app.callback(
     Output('mass-tab-content', 'children'),
     [Input('year-slider', 'value'),
@@ -519,7 +518,7 @@ def update_mass_graph(years_selected, discovery):
     fig = get_mass_graph(years_selected, discovery)
     content = dcc.Graph(id='mass-graph', figure=fig)
     return [content]
-
+'''
 
 @app.callback(
     Output('year-tab-content', 'children'),
@@ -578,6 +577,7 @@ def update_table(selected_data, years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
 
     row_ids = []
+    dff = pd.DataFrame([])
 
     if selected_data is not None:
         for point in selected_data['points']:
