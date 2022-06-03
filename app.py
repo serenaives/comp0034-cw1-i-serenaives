@@ -416,7 +416,8 @@ def update_map(years_selected, discovery, color_coord):
                         size=7,
                         color=discrete_color_map[i],
                         opacity=0.6),
-                    customdata=filtered_df.id
+                    customdata=filtered_df.id,
+                    selectedData = None
                 )
             )
         showlegend=False
@@ -432,7 +433,9 @@ def update_map(years_selected, discovery, color_coord):
                 marker=dict(
                     size=7,
                     color='#b58900',
-                    opacity=0.6)
+                    opacity=0.6),
+                customdata=filtered_df.id,
+                selectedData=None
             )
         )
         showlegend=False
@@ -531,17 +534,6 @@ def update_table(selected_data, years_selected, discovery):
 
     return dff.to_dict('records')
 
-
-@app.callback(
-    Output('map-plot', 'selectedData'),
-    [Input('interactive-table', 'data'),
-     Input('map-plot', 'selectedData')]
-)
-def update_selection(table_data, selected_data):
-    if table_data is not None:
-        return None
-    else:
-        return selected_data
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
