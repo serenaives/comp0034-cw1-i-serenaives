@@ -89,7 +89,7 @@ def get_filtered_df(years_selected, discovery):
 
 
 def get_year_count(df):
-    df_year_count = df.groupby(['year'])['name'].count().reset_index()
+    df_year_count = df.groupby(['year', 'fall'])['name'].count().reset_index()
     df_year_count.rename({'name': 'count'}, inplace=True, axis=1)
     return df_year_count
 
@@ -187,8 +187,7 @@ def get_year_graph(filtered_df, discovery):
     return fig
 
 
-def get_mass_graph(years_selected, discovery, mass_graph_type):
-    filtered_df = get_filtered_df(years_selected, discovery)
+def get_mass_graph(filtered_df, mass_graph_type, discovery):
     filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
 
     fig = go.Figure()
@@ -621,10 +620,16 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
      Input('mass-graph-type', 'value'),
-     Input('found-fell-selection', 'value')]
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks')]
 )
-def update_mass_tab(years_selected, discovery, mass_graph_type):
-    fig = get_mass_graph(years_selected, discovery, mass_graph_type)
+def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks):
+    filtered_df = get_filtered_df(years_selected, discovery)
+
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        filtered_df = geo_filter(filtered_df, selected_data)
+
+    fig = get_mass_graph(filtered_df, mass_graph_type, discovery)
     content = dcc.Graph(id='mass-graph', figure=fig)
     return content
 
