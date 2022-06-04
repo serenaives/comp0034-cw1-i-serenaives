@@ -1,8 +1,8 @@
 pip
-setuptools
-pandas
-dash
+setuptools~=57.0.0
+pandas~=1.4.1
+dash~=2.1.0
 pytest
 dash_bootstrap_components
-plotly
-scipy
+plotly~=5.6.0
+numpy~=1.22.2
