@@ -6,6 +6,7 @@ from dash import dash_table
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
+import plotly.graph_objects as go
 import numpy as np
 
 # ------------------------------------------------------------------------------
@@ -134,22 +135,6 @@ def get_year_graph(years_selected, discovery):
 
     trace = []
 
-    for i in discovery:
-        if i == 'Fell':
-            name = 'Fell'
-        elif i == 'Found':
-            name = 'Found'
-        trace.append(
-            dict(
-                name=name,
-                type='scatter',
-                mode='lines',
-                x=df_year_count[df_year_count['fall'] == i]['year'],
-                y=df_year_count[df_year_count['fall'] == i]['count'],
-                visible='legendonly'
-            )
-        )
-
     if 'Found' in discovery and 'Fell' in discovery:
         trace.append(
             dict(
@@ -158,6 +143,18 @@ def get_year_graph(years_selected, discovery):
                 mode='lines',
                 x=df_year_count['year'],
                 y=df_year_count['count']
+            )
+        )
+
+    for i in discovery:
+        trace.append(
+            dict(
+                name=i,
+                type='scatter',
+                mode='lines',
+                x=df_year_count[df_year_count['fall'] == i]['year'],
+                y=df_year_count[df_year_count['fall'] == i]['count'],
+                visible='legendonly'
             )
         )
 
@@ -187,29 +184,27 @@ def get_mass_graph(years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
     filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
 
-    df_found = filtered_df[filtered_df['fall'] == 'Found']
-    df_fell = filtered_df[filtered_df['fall'] == 'Fell']
-    '''
-    hist_data = [df_found['mass (g)'], df_fell['mass (g)']]
-    group_labels = ['found', 'fell']
-    '''
+    fig = go.Figure()
 
-    xbins = dict(
-        start=df_found['mass (g)'].min(),
-        end=df_found['mass (g)'].min(),
-        size='M12'
-    )
+    if 'Found' in discovery and 'Fell' in discovery:
+        fig.add_trace(
+            go.Histogram(
+                name='All',
+                x=filtered_df['log mass (g)'],
+            ),
+        )
 
-    fig = px.histogram(
-        filtered_df,
-        x='log mass (g)',
-        marginal='box',
-    )
+    for i in discovery:
+        fig.add_trace(
+            go.Histogram(
+                name=i,
+                x=filtered_df[filtered_df['fall'] == i]['log mass (g)'],
+                visible='legendonly'
+            ),
+        )
 
-    # make bins in log scale
-
-    '''
     layout = dict(
+        hovermode='x unified',
         plot_bgcolor='#22434A',
         paper_bgcolor='#22434A',
         xaxis=dict(color='white', showgrid=False),
@@ -217,16 +212,12 @@ def get_mass_graph(years_selected, discovery):
         title_font_family='Courier New',
         font_family='Courier New',
         title_font_color='white',
-        font_color='white',
-        legend=dict(
-            font=dict(
-                color='white',
-                font_family='Courier New'
-            )
-        )
+        font_color='white'
     )
-    fig.update_layout(layout)
-    '''
+
+
+    fig.update_layout(layout, barmode='overlay')
+    fig.update_traces(opacity=0.75)
 
     return fig
 
