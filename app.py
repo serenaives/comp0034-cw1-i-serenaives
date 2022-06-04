@@ -5,6 +5,7 @@ from dash import dcc
 from dash import dash_table
 from dash import html
 from dash.dependencies import Input, Output
+from dash._callback_context import callback_context as ctx
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -493,7 +494,36 @@ app.layout = dbc.Container([
                         ]
                     )
                 ])
-            ],  id='category-control-box')
+            ],  id='category-control-box'),
+            html.Div([
+                # category graph control box (select bar or pie chart)
+                # ------------------------------------------------------------------------------
+                dbc.Card([
+                    dbc.CardBody(
+                        id='mass-graph-controls',
+                        children=[
+                            dbc.Row([
+                                dbc.Col([
+                                    dbc.Row([
+                                        html.P('Select mass chart type:')
+                                    ]),
+                                    dbc.Row([
+                                        dbc.RadioItems(
+                                            id='mass-graph-type',
+                                            options=[
+                                                {'label': 'Histogram', 'value': 'Histogram'},
+                                                {'label': 'Bar graph', 'value': 'Box and Whisker'},
+                                            ],
+                                            value='Histogram',
+                                            inline=False
+                                        )
+                                    ])
+                                ], style={'width': '50%', 'alignment': 'left'}),
+                            ], style={'width': '100%', 'alignment': 'center'})
+                        ]
+                    )
+                ])
+            ], id='mass-control-box')
         ], style={'width': '40%', 'alignment': 'right'})
     ])
 ], fluid=True)
@@ -636,30 +666,48 @@ def display_category_control_box(active_tab):
     return style
 
 
+# mass tab control box
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('mass-control-box', 'style'),
+    [Input('visualise-by-tabs', 'active_tab')]
+)
+def display_mass_control_box(active_tab):
+    if active_tab == 'mass-tab':
+        style = {'display': 'block'}
+    else:
+        style = {'display': 'none'}
+    return style
+
+
+
 # interactive table
 # ------------------------------------------------------------------------------
 @app.callback(
     Output('interactive-table', 'data'),
     [Input('map-plot', 'selectedData'),
      Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value')]
+     Input('found-fell-selection', 'value'),
+     Input('refresh-button', 'n_clicks')]
 )
-def update_table(selected_data, years_selected, discovery):
-    filtered_df = get_filtered_df(years_selected, discovery)
-
-    row_ids = []
-    dff = pd.DataFrame([])
-
-    if selected_data is not None:
-        for point in selected_data['points']:
-            row_ids.append(point['customdata'])
-            dff = filtered_df[filtered_df['id'].isin(row_ids)]
-            dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
-        return dff.to_dict('records')
-    else:
-        # return empty dictionary - nothing selected
+def update_table(selected_data, years_selected, discovery, n_clicks):
+    if ctx.triggered[0]['prop_id'].split('.')[0] == 'refresh-button':
         return None
+    else:
+        filtered_df = get_filtered_df(years_selected, discovery)
 
+        row_ids = []
+        dff = pd.DataFrame([])
+
+        if selected_data is not None:
+            for point in selected_data['points']:
+                row_ids.append(point['customdata'])
+                dff = filtered_df[filtered_df['id'].isin(row_ids)]
+                dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
+            return dff.to_dict('records')
+        else:
+            # return empty dictionary - nothing selected
+            return None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
