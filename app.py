@@ -205,6 +205,8 @@ def get_mass_graph(years_selected, discovery):
         marginal='box'
     )
 
+    # make bins in log scale
+
     '''
     layout = dict(
         plot_bgcolor='#22434A',
@@ -224,8 +226,8 @@ def get_mass_graph(years_selected, discovery):
     )
     fig.update_layout(layout)
     '''
+    # fig.update_xaxes(type='log')
 
-    #fig.update_xaxes(type='log')
     return fig
 
 
