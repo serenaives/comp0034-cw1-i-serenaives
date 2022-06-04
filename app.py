@@ -6,7 +6,7 @@ from dash import dash_table
 from dash import html
 from dash.dependencies import Input, Output
 import plotly.express as px
-import plotly.graph_objects as go
+import numpy as np
 
 # ------------------------------------------------------------------------------
 mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
@@ -185,6 +185,7 @@ def get_year_graph(years_selected, discovery):
 
 def get_mass_graph(years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
+    filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
 
     df_found = filtered_df[filtered_df['fall'] == 'Found']
     df_fell = filtered_df[filtered_df['fall'] == 'Fell']
@@ -201,8 +202,8 @@ def get_mass_graph(years_selected, discovery):
 
     fig = px.histogram(
         filtered_df,
-        x='mass (g)',
-        marginal='box'
+        x='log mass (g)',
+        marginal='box',
     )
 
     # make bins in log scale
@@ -226,7 +227,6 @@ def get_mass_graph(years_selected, discovery):
     )
     fig.update_layout(layout)
     '''
-    # fig.update_xaxes(type='log')
 
     return fig
 
