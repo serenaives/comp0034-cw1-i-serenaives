@@ -44,6 +44,17 @@ count_arr = [0, 0, 0, 0]
 colors = ['purple', 'red', 'blue', 'green']
 
 # generic layout
+layout = dict(
+    plot_bgcolor='#22434A',
+    paper_bgcolor='#22434A',
+    xaxis=dict(color='white', showgrid=False),
+    yaxis=dict(color='white', showgrid=False),
+    title_font_family='Courier New',
+    font_family='Courier New',
+    title_font_color='white',
+    font_color='white'
+)
+
 
 # Define functions used in data filtering
 # ------------------------------------------------------------------------------
@@ -113,19 +124,10 @@ def get_category_graph(years_selected, category_graph_type, discovery):
                           marker_line=dict(color='white', width=1)
                           )
 
-    layout = dict(
-        plot_bgcolor='#22434A',
-        paper_bgcolor='#22434A',
-        xaxis=dict(color='white', showgrid=False),
-        yaxis=dict(color='white', showgrid=False),
-        font_color='white',
-        font_family='Courier New',
-        title_font_family='Courier New',
-        title_font_color='white',
+    fig.update_layout(
+        layout,
         legend_title='Category'
     )
-
-    fig.update_layout(layout)
     return fig
 
 
@@ -158,26 +160,16 @@ def get_year_graph(years_selected, discovery):
             )
         )
 
-    layout = dict(
-        hovermode='x unified',
-        plot_bgcolor='#22434A',
-        paper_bgcolor='#22434A',
-        xaxis=dict(color='white', showgrid=False),
-        yaxis=dict(color='white', showgrid=False),
-        title_font_family='Courier New',
-        font_family='Courier New',
-        title_font_color='white',
-        font_color='white',
-        xaxis_title='Year',
-        yaxis_title='Number of Meteorite Landings'
-    )
-
     fig = go.Figure(data=trace, layout=layout)
+    fig.update_layout(
+        yaxis_title='Number of Meteorite Landings',
+        xaxis_title='Year',
+    )
 
     return fig
 
 
-def get_mass_graph(years_selected, discovery):
+def get_mass_histogram(years_selected, discovery):
     filtered_df = get_filtered_df(years_selected, discovery)
     filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
 
@@ -200,21 +192,10 @@ def get_mass_graph(years_selected, discovery):
             ),
         )
 
-    layout = dict(
-        hovermode='x unified',
-        plot_bgcolor='#22434A',
-        paper_bgcolor='#22434A',
-        xaxis=dict(color='white', showgrid=False),
-        yaxis=dict(color='white', showgrid=False),
-        title_font_family='Courier New',
-        font_family='Courier New',
-        title_font_color='white',
-        font_color='white'
-    )
-
     fig.update_layout(
         layout,
         barmode='overlay',
+        hovermode='x unified',
         xaxis_title='log mass (g)',
         yaxis_title='Number of Meteorite Landings'
     )
@@ -223,6 +204,34 @@ def get_mass_graph(years_selected, discovery):
 
     return fig
 
+
+def get_mass_boxplot(years_selected, discovery):
+    filtered_df = get_filtered_df(years_selected, discovery)
+    filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
+
+    fig = go.Figure()
+
+    if 'Found' in discovery and 'Fell' in discovery:
+        fig.add_trace(
+            go.Box(
+                name='All',
+                x=filtered_df['log mass (g)'],
+                orientation='h'
+            ),
+        )
+
+    for i in discovery:
+        fig.add_trace(
+            go.Box(
+                name=i,
+                x=filtered_df[filtered_df['fall'] == i]['log mass (g)'],
+                visible='legendonly',
+                orientation='h'
+            ),
+        )
+
+    fig.update_layout(layout)
+    return fig
 
 # App layout
 # ------------------------------------------------------------------------------
@@ -571,9 +580,19 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
      Input('found-fell-selection', 'value')]
 )
 def update_mass_tab(years_selected, discovery):
-    fig = get_mass_graph(years_selected, discovery)
-    content = dcc.Graph(id='mass-graph', figure=fig)
-    return [content]
+    box_fig = get_mass_boxplot(years_selected, discovery)
+    hist_fig = get_mass_histogram(years_selected, discovery)
+
+    content = dbc.Row([
+        dbc.Row([
+            dcc.Graph(id='mass-boxplot', figure=box_fig)
+        ]),
+        dbc.Row([
+            dcc.Graph(id='mass-histogram', figure=hist_fig)
+        ])
+    ])
+
+    return content
 
 
 # category tab
