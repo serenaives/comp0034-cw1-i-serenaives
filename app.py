@@ -32,17 +32,22 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 
 # Store array containing all possible meteorite categories
 # ------------------------------------------------------------------------------
-category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
+category_arr = ['stony', 'iron', 'stony_iron', 'unclassified']
+count_arr = [0, 0, 0, 0]
+colors = ['purple', 'red', 'blue', 'green']
 
 discrete_color_map = {'stony': 'purple',
                       'iron': 'red',
-                      'stony iron': 'blue',
+                      'stony_iron': 'blue',
                       'unclassified': 'green'}
+
+count_dict = {'stony': 0,
+              'iron': 0,
+              'stony_iron': 0,
+              'unclassified': 0}
 
 table_cols = ['name', 'fall', 'category', 'year', 'mass (g)']
 
-count_arr = [0, 0, 0, 0]
-colors = ['purple', 'red', 'blue', 'green']
 
 # generic layout
 layout = dict(
@@ -65,6 +70,14 @@ layout = dict(
 # discovery is a tuple containing values 'found' and/or 'fell' or none from checklist selection - rephrase
 # adapted from x
 
+def geo_filter(dff, selected_data):
+    if selected_data is not None:
+        row_ids = []
+        for point in selected_data['points']:
+            row_ids.append(point['customdata'])
+        dff = dff[dff['id'].isin(row_ids)]
+    return dff
+
 
 def get_filtered_df(years_selected, discovery):
     # year selection
@@ -82,18 +95,14 @@ def get_year_count(df):
 
 
 def get_by_count(filtered_df, col):
-    df_count = filtered_df.groupby([col, 'fall'])['name'].count().reset_index()
-    df_count.rename({'name': 'count'}, inplace=True, axis=1)
+    df_count = pd.DataFrame(filtered_df[col].value_counts().reset_index().values, columns=[col, "count"])
+    df_count = df_count.sort_index(axis=0, ascending=True)
     return df_count
 
 
-def get_category_graph(years_selected, discovery, category_graph_type):
-    filtered_df = get_filtered_df(years_selected, discovery)
+def get_category_graph(filtered_df, category_graph_type):
     df_category_count = get_by_count(filtered_df, 'category')
     category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
-
-    count = df_category_count['count']
-    category = df_category_count['category']
 
     # get number of meteorites in each category
     for i in range(4):
@@ -102,8 +111,9 @@ def get_category_graph(years_selected, discovery, category_graph_type):
         except KeyError:
             count_arr[i] = 0
 
+
     if category_graph_type == 'Bar':
-        fig=px.bar(
+        fig = px.bar(
             orientation='v',
             x=category_arr,
             y=count_arr,
@@ -372,7 +382,7 @@ app.layout = dbc.Container([
                         html.H3('Geographic Distribution')
                     ]),
                     dbc.CardBody(
-                        id='maps',
+                        id='map-card',
                         children=[
                             dbc.Row([
                                 dcc.Graph(id='map-plot')
@@ -540,7 +550,6 @@ app.layout = dbc.Container([
 def update_map(years_selected, discovery, color_coord, n_clicks):
     filtered_df = get_filtered_df(years_selected, discovery)
     text = filtered_df.name # edit for hover functionality
-    customdata = np.stack((filtered_df.id, filtered_df.reclat, filtered_df.reclong), axis=-1)
 
     trace = []
 
@@ -559,7 +568,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
                         size=7,
                         color=discrete_color_map[i],
                         opacity=0.6),
-                    customdata=customdata,
+                    customdata=filtered_df[filtered_df['category'] == i]['id'],
                     selectedData=None
                 )
             )
@@ -576,7 +585,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
                     size=7,
                     color='#b58900',
                     opacity=0.6),
-                customdata=customdata,
+                customdata=filtered_df.id,
                 selectedData=None
             )
         )
@@ -605,7 +614,8 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
     Output('mass-tab-content', 'children'),
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
-     Input('mass-graph-type', 'value')]
+     Input('mass-graph-type', 'value'),
+     Input('found-fell-selection', 'value')]
 )
 def update_mass_tab(years_selected, discovery, mass_graph_type):
     fig = get_mass_graph(years_selected, discovery, mass_graph_type)
@@ -619,10 +629,15 @@ def update_mass_tab(years_selected, discovery, mass_graph_type):
     Output('category-tab-content', 'children'),
     [Input('year-slider', 'value'),
      Input('category-graph-type', 'value'),
-     Input('found-fell-selection', 'value')]
+     Input('found-fell-selection', 'value'),
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks')]
 )
-def update_category_tab(years_selected, category_graph_type, discovery):
-    fig = get_category_graph(years_selected, discovery, category_graph_type)
+def update_category_tab(years_selected, category_graph_type, discovery, selected_data, n_clicks):
+    filtered_df = get_filtered_df(years_selected, discovery)
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        filtered_df = geo_filter(filtered_df, selected_data)
+    fig = get_category_graph(filtered_df, category_graph_type)
     content = dcc.Graph(id='category-graph', figure=fig)
     return [content]
 
@@ -682,22 +697,18 @@ def update_table(selected_data, years_selected, discovery, n_clicks):
     # if callback was triggered by refresh button clear table
     if ctx.triggered[0]['prop_id'].split('.')[0] == 'refresh-button':
         return None
+
+    # if nothing is selected on the map table is empty
+    elif selected_data is None:
+        return None
+
     # else populate table according to the selected data
     else:
         filtered_df = get_filtered_df(years_selected, discovery)
+        dff = geo_filter(filtered_df, selected_data)
+        dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
+        return dff.to_dict('records')
 
-        row_ids = []
-        dff = pd.DataFrame([])
-
-        if selected_data is not None:
-            for point in selected_data['points']:
-                row_ids.append(point['customdata'][0])
-                dff = filtered_df[filtered_df['id'].isin(row_ids)]
-                dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
-            return dff.to_dict('records')
-        else:
-            # return empty dictionary - nothing selected
-            return None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
