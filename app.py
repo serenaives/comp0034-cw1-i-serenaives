@@ -11,9 +11,14 @@ import plotly.graph_objects as go
 import numpy as np
 
 # ------------------------------------------------------------------------------
-mark_values = {900: '900', 1000: '1000', 1100: '1100', 1200: '1200',
-               1300: '1300', 1400: '1400', 1500: '1500', 1600: '1600',
-               1700: '1700', 1800: '1800', 1900: '1900', 2000: '2000'}
+year_mark_values = {900: '900', 1100: '1100',
+                    1300: '1300', 1500: '1500',
+                    1700: '1700', 1900: '1900'}
+
+mass_mark_values = {0: '0',
+                    20000000: '20 million',
+                    40000000: '40 million',
+                    60000000: '60 million'}
 
 
 # Initialise the app
@@ -79,7 +84,7 @@ def geo_filter(dff, selected_data):
     return dff
 
 
-def get_filtered_df(years_selected, discovery):
+def get_filtered_df(years_selected, discovery, mass_selected):
     # year selection
     filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
 
@@ -87,6 +92,8 @@ def get_filtered_df(years_selected, discovery):
     filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
     return filtered_df
 
+    # mass selection
+    filtered_df = df[(df['mass (g)'] >= mass_selected[0]) & (df['mass (g)'] <= mass_selected[1])]
 
 def get_year_count(df):
     df_year_count = df.groupby(['year', 'fall'])['name'].count().reset_index()
@@ -238,6 +245,9 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery):
                     orientation='h'
                 ),
             )
+        fig.update_layout(
+            xaxis_title='log mass (g)',
+            yaxis_title=None)
 
     fig.update_layout(layout)
     return fig
@@ -290,14 +300,46 @@ app.layout = dbc.Container([
                                             max=df['year'].max(),
                                             value=[1795, 1915],  # default range
                                             step=1,
-                                            marks=mark_values,
+                                            marks=year_mark_values,
                                             allowCross=False,
                                             verticalHeight=900,
                                             pushable=True,
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
                                         )
-                                    ], style={'width': '90%', 'position': 'absolute', 'left': '1%'}),
+                                    ], style={'width': '95%', 'position': 'absolute', 'left': '1%'}),
+                                    dbc.Row([
+                                        html.Br()
+                                    ]),
+                                    dbc.Row([
+                                        html.Br()
+                                    ])
+                                ])
+                            ])
+                        ]),
+                        dbc.Card([
+                            dbc.Col([
+                                dbc.CardBody([
+                                    dbc.Row([
+                                        html.P([
+                                            'Filter meteorite landings by mass (g)'
+                                        ], style={'text-align': 'left'})
+                                    ]),
+                                    dbc.Row([
+                                        dcc.RangeSlider(
+                                            id='mass-slider',
+                                            min=df['mass (g)'].min(),
+                                            max=df['mass (g)'].max(),
+                                            value=[0.01, 60000000],  # default range
+                                            step=1,
+                                            marks=mass_mark_values,
+                                            allowCross=False,
+                                            verticalHeight=900,
+                                            pushable=True,
+                                            tooltip={'always_visible': True,
+                                                     'placement': 'bottom'}
+                                        )
+                                    ], style={'width': '95%', 'position': 'absolute', 'left': '1%'}),
                                     dbc.Row([
                                         html.Br()
                                     ]),
@@ -402,7 +444,7 @@ app.layout = dbc.Container([
                     dbc.CardHeader([
                         dbc.Row([
                             dbc.Col([
-                                html.P('Use the selection box on the map to view the data in table format')
+                                html.P('Use the selection box on the map to filter the visualisations and view the data in table format')
                             ], {'width': '80%', 'align': 'left'}),
                             dbc.Col([
                                 # reset map selection button
@@ -549,10 +591,11 @@ app.layout = dbc.Container([
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
      Input('color-coordinate', 'value'),
-     Input('refresh-button', 'n_clicks')]
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks):
-    filtered_df = get_filtered_df(years_selected, discovery)
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
     text = filtered_df.name # edit for hover functionality
 
     trace = []
@@ -569,9 +612,10 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
                     hoverinfo='text',
                     mode='markers',
                     marker=dict(
-                        size=7,
+                        size=np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
+                        max_size=15,
                         color=discrete_color_map[i],
-                        opacity=0.6),
+                        opacity=0.6,
                     customdata=filtered_df[filtered_df['category'] == i]['id'],
                     selectedData=None
                 )
@@ -586,9 +630,10 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
                 hoverinfo='text',
                 mode='markers',
                 marker=dict(
-                    size=7,
                     color='#b58900',
-                    opacity=0.6),
+                    size=np.log(filtered_df['mass (g)'])),
+                    max_size=15,
+                    opacity=0.6,
                 customdata=filtered_df.id,
                 selectedData=None
             )
@@ -620,10 +665,11 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
      Input('found-fell-selection', 'value'),
      Input('mass-graph-type', 'value'),
      Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks')]
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
 )
-def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks):
-    filtered_df = get_filtered_df(years_selected, discovery)
+def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
 
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         filtered_df = geo_filter(filtered_df, selected_data)
@@ -641,10 +687,11 @@ def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n
      Input('category-graph-type', 'value'),
      Input('found-fell-selection', 'value'),
      Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks')]
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
 )
-def update_category_tab(years_selected, category_graph_type, discovery, selected_data, n_clicks):
-    filtered_df = get_filtered_df(years_selected, discovery)
+def update_category_tab(years_selected, category_graph_type, discovery, selected_data, n_clicks, mass_selected):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
 
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         filtered_df = geo_filter(filtered_df, selected_data)
@@ -661,10 +708,11 @@ def update_category_tab(years_selected, category_graph_type, discovery, selected
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
      Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks')]
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
 )
-def update_year_tab(years_selected, discovery, selected_data, n_clicks):
-    filtered_df = get_filtered_df(years_selected, discovery)
+def update_year_tab(years_selected, discovery, selected_data, n_clicks, mass_selected):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
 
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         filtered_df = geo_filter(filtered_df, selected_data)
@@ -710,9 +758,10 @@ def display_mass_control_box(active_tab):
     [Input('map-plot', 'selectedData'),
      Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
-     Input('refresh-button', 'n_clicks')]
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
 )
-def update_table(selected_data, years_selected, discovery, n_clicks):
+def update_table(selected_data, years_selected, discovery, n_clicks, mass_selected):
     # if callback was triggered by refresh button clear table
     if ctx.triggered[0]['prop_id'].split('.')[0] == 'refresh-button':
         return None
@@ -723,7 +772,7 @@ def update_table(selected_data, years_selected, discovery, n_clicks):
 
     # else populate table according to the selected data
     else:
-        filtered_df = get_filtered_df(years_selected, discovery)
+        filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
         dff = geo_filter(filtered_df, selected_data)
         dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
         return dff.to_dict('records')
