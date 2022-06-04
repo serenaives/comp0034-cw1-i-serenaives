@@ -150,7 +150,6 @@ def get_category_graph(filtered_df, category_graph_type):
 
 def get_year_graph(filtered_df, discovery):
     df_year_count = get_by_year_count(filtered_df)
-    print(df_year_count.head())
 
     trace = []
 
