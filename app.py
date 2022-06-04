@@ -94,14 +94,21 @@ def get_year_count(df):
     return df_year_count
 
 
-def get_by_count(filtered_df, col):
-    df_count = pd.DataFrame(filtered_df[col].value_counts().reset_index().values, columns=[col, "count"])
+def get_by_category_count(filtered_df):
+    df_count = pd.DataFrame(filtered_df['category'].value_counts().reset_index().values, columns=['category', 'count'])
     df_count = df_count.sort_index(axis=0, ascending=True)
     return df_count
 
 
+def get_by_year_count(filtered_df):
+    year_count = filtered_df.groupby(['year', 'fall'])['name'].count().reset_index()
+    year_count.rename(columns={'name': 'count'}, inplace=True)
+    year_count.sort_values(by='year', inplace=True)
+    return year_count
+
+
 def get_category_graph(filtered_df, category_graph_type):
-    df_category_count = get_by_count(filtered_df, 'category')
+    df_category_count = get_by_category_count(filtered_df)
     category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
 
     # get number of meteorites in each category
@@ -110,7 +117,6 @@ def get_category_graph(filtered_df, category_graph_type):
             count_arr[i] = category_dict[category_arr[i]]
         except KeyError:
             count_arr[i] = 0
-
 
     if category_graph_type == 'Bar':
         fig = px.bar(
@@ -142,9 +148,9 @@ def get_category_graph(filtered_df, category_graph_type):
     return fig
 
 
-def get_year_graph(years_selected, discovery):
-    filtered_df = get_filtered_df(years_selected, discovery)
-    df_year_count = get_by_count(filtered_df, 'year')
+def get_year_graph(filtered_df, discovery):
+    df_year_count = get_by_year_count(filtered_df)
+    print(df_year_count.head())
 
     trace = []
 
@@ -385,7 +391,7 @@ app.layout = dbc.Container([
                         id='map-card',
                         children=[
                             dbc.Row([
-                                dcc.Graph(id='map-plot')
+                                dcc.Graph(id='map-plot', selectedData=None)
                             ], style={'margin': '0', 'width': '100%', 'alignment': 'center'})
                         ]
                     )
@@ -635,8 +641,10 @@ def update_mass_tab(years_selected, discovery, mass_graph_type):
 )
 def update_category_tab(years_selected, category_graph_type, discovery, selected_data, n_clicks):
     filtered_df = get_filtered_df(years_selected, discovery)
+
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         filtered_df = geo_filter(filtered_df, selected_data)
+
     fig = get_category_graph(filtered_df, category_graph_type)
     content = dcc.Graph(id='category-graph', figure=fig)
     return [content]
@@ -647,10 +655,17 @@ def update_category_tab(years_selected, category_graph_type, discovery, selected
 @app.callback(
     Output('year-tab-content', 'children'),
     [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value')]
+     Input('found-fell-selection', 'value'),
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks')]
 )
-def update_year_tab(years_selected, discovery):
-    fig = get_year_graph(years_selected, discovery)
+def update_year_tab(years_selected, discovery, selected_data, n_clicks):
+    filtered_df = get_filtered_df(years_selected, discovery)
+
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        filtered_df = geo_filter(filtered_df, selected_data)
+
+    fig = get_year_graph(filtered_df, discovery)
     content = dcc.Graph(id='year-graph', figure=fig)
     return [content]
 
