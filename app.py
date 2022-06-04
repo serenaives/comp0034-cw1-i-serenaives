@@ -168,15 +168,12 @@ def get_year_graph(years_selected, discovery):
         font_family='Courier New',
         title_font_color='white',
         font_color='white',
-        legend=dict(
-            font=dict(
-                color='white',
-                font_family='Courier New'
-            )
-        )
+        xaxis_title='Year',
+        yaxis_title='Number of Meteorite Landings'
     )
 
-    fig = dict(data=trace, layout=layout)
+    fig = go.Figure(data=trace, layout=layout)
+
     return fig
 
 
@@ -215,8 +212,13 @@ def get_mass_graph(years_selected, discovery):
         font_color='white'
     )
 
+    fig.update_layout(
+        layout,
+        barmode='overlay',
+        xaxis_title='log mass (g)',
+        yaxis_title='Number of Meteorite Landings'
+    )
 
-    fig.update_layout(layout, barmode='overlay')
     fig.update_traces(opacity=0.75)
 
     return fig
