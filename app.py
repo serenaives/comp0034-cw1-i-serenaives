@@ -87,7 +87,7 @@ def get_by_count(filtered_df, col):
     return df_count
 
 
-def get_category_graph(years_selected, category_graph_type, discovery):
+def get_category_graph(years_selected, discovery, category_graph_type):
     filtered_df = get_filtered_df(years_selected, discovery)
     df_category_count = get_by_count(filtered_df, 'category')
     category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
@@ -114,7 +114,7 @@ def get_category_graph(years_selected, category_graph_type, discovery):
         fig.update_layout(xaxis_title='Meteorite Category', yaxis_title='Number of Meteorite Landings')
 
     elif category_graph_type == 'Pie':
-        fig=px.pie(
+        fig = px.pie(
             names=category_arr,
             values=count_arr,
             color=category_arr,
@@ -145,7 +145,8 @@ def get_year_graph(years_selected, discovery):
                 type='scatter',
                 mode='lines',
                 x=df_year_count['year'],
-                y=df_year_count['count']
+                y=df_year_count['count'],
+                visible='legendonly'
             )
         )
 
@@ -156,83 +157,78 @@ def get_year_graph(years_selected, discovery):
                 type='scatter',
                 mode='lines',
                 x=df_year_count[df_year_count['fall'] == i]['year'],
-                y=df_year_count[df_year_count['fall'] == i]['count'],
-                visible='legendonly'
+                y=df_year_count[df_year_count['fall'] == i]['count']
             )
         )
 
     fig = go.Figure(data=trace, layout=layout)
     fig.update_layout(
-        yaxis_title='Number of Meteorite Landings',
-        xaxis_title='Year',
-    )
-
-    return fig
-
-
-def get_mass_histogram(years_selected, discovery):
-    filtered_df = get_filtered_df(years_selected, discovery)
-    filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
-
-    fig = go.Figure()
-
-    if 'Found' in discovery and 'Fell' in discovery:
-        fig.add_trace(
-            go.Histogram(
-                name='All',
-                x=filtered_df['log mass (g)'],
-            ),
-        )
-
-    for i in discovery:
-        fig.add_trace(
-            go.Histogram(
-                name=i,
-                x=filtered_df[filtered_df['fall'] == i]['log mass (g)'],
-                visible='legendonly'
-            ),
-        )
-
-    fig.update_layout(
-        layout,
-        barmode='overlay',
         hovermode='x unified',
-        xaxis_title='log mass (g)',
-        yaxis_title='Number of Meteorite Landings'
+        yaxis_title='Number of Meteorite Landings',
+        xaxis_title='Year'
     )
-
-    fig.update_traces(opacity=0.75)
 
     return fig
 
 
-def get_mass_boxplot(years_selected, discovery):
+def get_mass_graph(years_selected, discovery, mass_graph_type):
     filtered_df = get_filtered_df(years_selected, discovery)
     filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
 
     fig = go.Figure()
 
-    if 'Found' in discovery and 'Fell' in discovery:
-        fig.add_trace(
-            go.Box(
-                name='All',
-                x=filtered_df['log mass (g)'],
-                orientation='h'
-            ),
+    if mass_graph_type == 'Histogram':
+        if 'Found' in discovery and 'Fell' in discovery:
+            fig.add_trace(
+                go.Histogram(
+                    name='All',
+                    x=filtered_df['log mass (g)'],
+                    visible='legendonly'
+                ),
+            )
+
+        for i in discovery:
+            fig.add_trace(
+                go.Histogram(
+                    name=i,
+                    x=filtered_df[filtered_df['fall'] == i]['log mass (g)']
+                ),
+            )
+
+        fig.update_layout(
+            layout,
+            barmode='overlay',
+            hovermode='x unified',
+            xaxis_title='log mass (g)',
+            yaxis_title='Number of Meteorite Landings'
         )
 
-    for i in discovery:
-        fig.add_trace(
-            go.Box(
-                name=i,
-                x=filtered_df[filtered_df['fall'] == i]['log mass (g)'],
-                visible='legendonly',
-                orientation='h'
-            ),
-        )
+        fig.update_traces(opacity=0.75)
+
+    elif mass_graph_type == 'Box':
+        if 'Found' in discovery and 'Fell' in discovery:
+            fig.add_trace(
+                go.Box(
+                    name='All',
+                    x=filtered_df['log mass (g)'],
+                    orientation='h',
+                    visible='legendonly',
+                ),
+            )
+
+        for i in discovery:
+            fig.add_trace(
+                go.Box(
+                    name=i,
+                    x=filtered_df[filtered_df['fall'] == i]['log mass (g)'],
+                    orientation='h'
+                ),
+            )
 
     fig.update_layout(layout)
     return fig
+
+
 
 # App layout
 # ------------------------------------------------------------------------------
@@ -402,7 +398,7 @@ app.layout = dbc.Container([
                                         id='refresh-button',
                                         n_clicks=0,
                                         children=[
-                                            html.P('clear map selection')
+                                            html.P('clear selection')
                                     ])
                                 ], style={'align': 'right'})
                             ], style={'width': '20%', 'align': 'right'})
@@ -512,7 +508,7 @@ app.layout = dbc.Container([
                                             id='mass-graph-type',
                                             options=[
                                                 {'label': 'Histogram', 'value': 'Histogram'},
-                                                {'label': 'Bar graph', 'value': 'Box and Whisker'},
+                                                {'label': 'Box and Whisker', 'value': 'Box'},
                                             ],
                                             value='Histogram',
                                             inline=False
@@ -544,6 +540,7 @@ app.layout = dbc.Container([
 def update_map(years_selected, discovery, color_coord, n_clicks):
     filtered_df = get_filtered_df(years_selected, discovery)
     text = filtered_df.name # edit for hover functionality
+    customdata = np.stack((filtered_df.id, filtered_df.reclat, filtered_df.reclong), axis=-1)
 
     trace = []
 
@@ -562,7 +559,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
                         size=7,
                         color=discrete_color_map[i],
                         opacity=0.6),
-                    customdata=filtered_df.id,
+                    customdata=customdata,
                     selectedData=None
                 )
             )
@@ -579,7 +576,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
                     size=7,
                     color='#b58900',
                     opacity=0.6),
-                customdata=filtered_df.id,
+                customdata=customdata,
                 selectedData=None
             )
         )
@@ -607,21 +604,12 @@ def update_map(years_selected, discovery, color_coord, n_clicks):
 @app.callback(
     Output('mass-tab-content', 'children'),
     [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value')]
+     Input('found-fell-selection', 'value'),
+     Input('mass-graph-type', 'value')]
 )
-def update_mass_tab(years_selected, discovery):
-    box_fig = get_mass_boxplot(years_selected, discovery)
-    hist_fig = get_mass_histogram(years_selected, discovery)
-
-    content = dbc.Row([
-        dbc.Row([
-            dcc.Graph(id='mass-boxplot', figure=box_fig)
-        ]),
-        dbc.Row([
-            dcc.Graph(id='mass-histogram', figure=hist_fig)
-        ])
-    ])
-
+def update_mass_tab(years_selected, discovery, mass_graph_type):
+    fig = get_mass_graph(years_selected, discovery, mass_graph_type)
+    content = dcc.Graph(id='mass-graph', figure=fig)
     return content
 
 
@@ -634,7 +622,7 @@ def update_mass_tab(years_selected, discovery):
      Input('found-fell-selection', 'value')]
 )
 def update_category_tab(years_selected, category_graph_type, discovery):
-    fig = get_category_graph(years_selected, category_graph_type, discovery)
+    fig = get_category_graph(years_selected, discovery, category_graph_type)
     content = dcc.Graph(id='category-graph', figure=fig)
     return [content]
 
@@ -691,8 +679,10 @@ def display_mass_control_box(active_tab):
      Input('refresh-button', 'n_clicks')]
 )
 def update_table(selected_data, years_selected, discovery, n_clicks):
+    # if callback was triggered by refresh button clear table
     if ctx.triggered[0]['prop_id'].split('.')[0] == 'refresh-button':
         return None
+    # else populate table according to the selected data
     else:
         filtered_df = get_filtered_df(years_selected, discovery)
 
@@ -701,7 +691,7 @@ def update_table(selected_data, years_selected, discovery, n_clicks):
 
         if selected_data is not None:
             for point in selected_data['points']:
-                row_ids.append(point['customdata'])
+                row_ids.append(point['customdata'][0])
                 dff = filtered_df[filtered_df['id'].isin(row_ids)]
                 dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
             return dff.to_dict('records')
