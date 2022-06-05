@@ -67,7 +67,7 @@ df = pd.read_csv('meteorite_landings_cleaned.csv')
 
 
 # Define functions used in data filtering
-# # ---------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 
 
 def get_filtered_df(years_selected, discovery, mass_selected):
