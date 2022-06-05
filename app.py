@@ -689,15 +689,6 @@ app.layout = dbc.Container([
 
 # App callbacks
 # ------------------------------------------------------------------------------
-'''
-def remove_cat(filtered_df, cat):
-    filtered_df = filtered_df[filtered_df['category'] != cat]
-    return filtered_df
-
-def add_cat(filtered_df, cat):
-    filtered_df = filtered_df[filtered_df['category'] != cat]
-    return filtered_df
-'''
 
 
 # scatter map
