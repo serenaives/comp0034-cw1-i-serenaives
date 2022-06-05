@@ -8,7 +8,7 @@ from dash import dash_table
 from dash import dcc
 from dash import html
 from dash._callback_context import callback_context as ctx
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 # ------------------------------------------------------------------------------
 year_mark_values = {900: '900', 1100: '1100',
@@ -643,9 +643,10 @@ def add_cat(filtered_df, cat):
      Input('refresh-button', 'n_clicks'),
      Input('mass-slider', 'value'),
      Input('size-coordinate', 'value'),
-     Input('category-graph', 'restyleData')]
+     Input('category-graph', 'restyleData'),
+     State('map-plot', 'figure')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, current_fig):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
     text = filtered_df.name
     trace = []
@@ -658,6 +659,10 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 visible_arr.remove(category_arr[cat_selected[1][0]])
             elif cat_selected[0]['visible'][0]:
                 visible_arr.append(category_arr[cat_selected[1][0]])
+        else:
+            # except for first call, when no fig has been initialised
+            if current_fig is not None:
+                return current_fig
 
     if color_coord == 'on':
         for i in category_arr:
@@ -675,9 +680,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                             color=discrete_color_map[i],
                             size=2*(np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
                             opacity=0.6),
-                        customdata=filtered_df[filtered_df['category'] == i]['id'],
-                        selectedData=None
-
+                        customdata=filtered_df[filtered_df['category'] == i]['id']
                     )
             )
     else:
@@ -694,8 +697,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                     color='#b58900',
                     size=2*(np.log(filtered_df['mass (g)'])),
                     opacity=0.6),
-                customdata=filtered_df.id,
-                selectedData=None
+                customdata=filtered_df.id
             )
         )
 
