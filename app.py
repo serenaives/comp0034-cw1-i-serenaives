@@ -11,7 +11,7 @@ from dash._callback_context import callback_context as ctx
 from dash.dependencies import Input, Output, State
 
 # Store values used in the app
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 
 # mark values for year range slider
 year_mark_values = {900: '900', 1100: '1100',
@@ -57,18 +57,30 @@ layout = dict(
     font_color='white'
 )
 
-
 # Initialise the app
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_exceptions=True)
 
-
 # Import data
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 df = pd.read_csv('meteorite_landings_cleaned.csv')
 
+
 # Define functions used in data filtering
-# ------------------------------------------------------------------------------
+# # ---------------------------------------------------------------------------------
+
+
+def get_filtered_df(years_selected, discovery, mass_selected):
+    # filter by year selection
+    filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
+
+    # filter by discovery (found/ fell) selection
+    filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
+
+    # filter by mass selection
+    filtered_df = filtered_df[
+        (filtered_df['mass (g)'] >= mass_selected[0]) & (filtered_df['mass (g)'] <= mass_selected[1])]
+    return filtered_df
 
 
 def geo_filter(dff, selected_data):
@@ -92,40 +104,42 @@ def geo_filter(dff, selected_data):
     return dff
 
 
-def get_filtered_df(years_selected, discovery, mass_selected):
-    # year selection
-    filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
-
-    # discovery (found/ fell) selection
-    filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
-
-    # mass selection
-    filtered_df = filtered_df[(filtered_df['mass (g)'] >= mass_selected[0]) & (filtered_df['mass (g)'] <= mass_selected[1])]
-    return filtered_df
-
-
-def get_year_count(df):
-    df_year_count = df.groupby(['year', 'fall'])['name'].count().reset_index()
-    df_year_count.rename({'name': 'count'}, inplace=True, axis=1)
-    return df_year_count
-
-
 def get_by_category_count(filtered_df):
+    """calculates count of each unique value in 'category' column of a DataFrame
+    Args:
+        filtered_df: df with current filters applied
+    Returns:
+        df_count: DataFrame with columns 'category' and 'count'
+    """
     df_count = pd.DataFrame(filtered_df['category'].value_counts().reset_index().values, columns=['category', 'count'])
     df_count = df_count.sort_index(axis=0, ascending=True)
     return df_count
 
 
 def get_by_year_count(filtered_df):
-    year_count = filtered_df.groupby(['year', 'fall'])['name'].count().reset_index()
-    year_count.rename(columns={'name': 'count'}, inplace=True)
-    year_count.sort_values(by='year', inplace=True)
-    return year_count
+    """groups a DataFrame by 'year' and 'fall' columns and calculates count of each group
+    Args:
+        filtered_df: df with current filters applied
+    Returns:
+        df_count: DataFrame with columns 'year', 'fall' and 'count'
+    """
+    df_count = filtered_df.groupby(['year', 'fall'])['name'].count().reset_index()
+    df_count.rename(columns={'name': 'count'}, inplace=True)
+    df_count.sort_values(by='year', inplace=True)
+    return df_count
 
 
+# Define functions used to create plotly graph figures
+# --------------------------------------------------------------------------------
+
+
+# category graph (bar graph or pie chart depending on argument category_graph_type)
+# ---------------------------------------------------------------------------------
 def get_category_graph(filtered_df, category_graph_type):
+    # get meteorite count by category
     df_category_count = get_by_category_count(filtered_df)
 
+    # bar graph
     if category_graph_type == 'Bar':
         fig = px.bar(
             data_frame=df_category_count,
@@ -134,12 +148,13 @@ def get_category_graph(filtered_df, category_graph_type):
             orientation='v',
             color='category',
             color_discrete_sequence=colors,
-            )
+        )
 
         fig.update_layout(
             xaxis_title='Meteorite Category',
             yaxis_title='Number of Meteorite Landings')
 
+    # pie chart
     elif category_graph_type == 'Pie':
         fig = px.pie(
             data_frame=df_category_count,
@@ -154,6 +169,7 @@ def get_category_graph(filtered_df, category_graph_type):
             marker_line=dict(color='white', width=1)
         )
 
+    # update fig with generic graph layout and shared legend title
     fig.update_layout(
         layout,
         legend_title='Category'
@@ -161,12 +177,17 @@ def get_category_graph(filtered_df, category_graph_type):
     return fig
 
 
+# year graph (line graph with separate traces corresponding to found/ fell categorisation)
+# ----------------------------------------------------------------------------------------
 def get_year_graph(filtered_df, discovery):
+    # get meteorite count by year
     df_year_count = get_by_year_count(filtered_df)
 
     trace = []
 
+    # if found and fell are both selected
     if 'Found' in discovery and 'Fell' in discovery:
+        # add a trace corresponding to ALL meteorite landings
         trace.append(
             dict(
                 name='All',
@@ -178,6 +199,7 @@ def get_year_graph(filtered_df, discovery):
             )
         )
 
+    # add a separate traces corresponding to each selected mode of discovery (found and/or fell)
     for i in discovery:
         trace.append(
             dict(
@@ -189,16 +211,19 @@ def get_year_graph(filtered_df, discovery):
             )
         )
 
+    # initialise figure with generic layout
     fig = go.Figure(data=trace, layout=layout)
+    # update layout with features specific to year graph
     fig.update_layout(
         hovermode='x unified',
         yaxis_title='Number of Meteorite Landings',
         xaxis_title='Year'
     )
-
     return fig
 
 
+# mass graph (histogram or box & whisker plot depending on argument mass_graph_type)
+# ----------------------------------------------------------------------------------------
 def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
     if log_scale == 'on':
         filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
@@ -262,7 +287,6 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
 
     fig.update_layout(layout)
     return fig
-
 
 
 # App layout
@@ -367,7 +391,7 @@ app.layout = dbc.Container([
                                         html.P([
                                             'Filter meteorite landings by discovery'
                                         ], style={'text-align': 'left'}),
-                                        ]),
+                                    ]),
                                     dbc.Row([
                                         dbc.Checklist(
                                             id='found-fell-selection',
@@ -386,7 +410,7 @@ app.layout = dbc.Container([
                                         html.Br()
                                     ])
                                 ])
-                             ])
+                            ])
                         ]),
                         dbc.Card([
                             dbc.Col([
@@ -481,7 +505,7 @@ app.layout = dbc.Container([
                                         n_clicks=0,
                                         children=[
                                             html.P('clear selection')
-                                    ])
+                                        ])
                                 ], style={'align': 'right'})
                             ], style={'width': '20%', 'align': 'right'})
                         ])
@@ -576,7 +600,7 @@ app.layout = dbc.Container([
                         ]
                     )
                 ])
-            ],  id='category-control-box'),
+            ], id='category-control-box'),
             html.Div([
                 # category graph control box (select bar or pie chart)
                 # ------------------------------------------------------------------------------
@@ -632,7 +656,6 @@ app.layout = dbc.Container([
     ])
 ], fluid=True)
 
-
 # App callbacks
 # ------------------------------------------------------------------------------
 '''
@@ -644,6 +667,8 @@ def add_cat(filtered_df, cat):
     filtered_df = filtered_df[filtered_df['category'] != cat]
     return filtered_df
 '''
+
+
 # scatter map
 # ------------------------------------------------------------------------------
 @app.callback(
@@ -658,7 +683,8 @@ def add_cat(filtered_df, cat):
      Input('map-plot', 'selectedData'),
      State('map-plot', 'figure')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, geo_selected, current_fig):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, geo_selected,
+               current_fig):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         filtered_df = geo_filter(filtered_df, geo_selected)
@@ -693,11 +719,11 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                         mode='markers',
                         marker=dict(
                             color=discrete_color_map[i],
-                            size=2*(np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
+                            size=2 * (np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
                             opacity=0.6),
                         customdata=filtered_df[filtered_df['category'] == i]['id']
                     )
-            )
+                )
     else:
         trace.append(
             dict(
@@ -710,7 +736,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 mode='markers',
                 marker=dict(
                     color='#b58900',
-                    size=2*(np.log(filtered_df['mass (g)'])),
+                    size=2 * (np.log(filtered_df['mass (g)'])),
                     opacity=0.6),
                 customdata=filtered_df.id
             )
@@ -831,7 +857,6 @@ def display_mass_control_box(active_tab):
     else:
         style = {'display': 'none'}
     return style
-
 
 
 # interactive table
