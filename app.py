@@ -636,12 +636,12 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
                     hoverinfo='text',
                     mode='markers',
                     marker=dict(
+                        color=discrete_color_map[i],
                         size=np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
-                    max_size=15,
-                    color=discrete_color_map[i],
-                    opacity=0.6,
-                    customdata=filtered_df[filtered_df['category'] == i]['id'],
-                    selectedData=None
+                        max_size=15,
+                        opacity=0.6,
+                        customdata=filtered_df[filtered_df['category'] == i]['id'],
+                        selectedData=None
                 )
             )
     else:
@@ -657,10 +657,10 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
                 marker=dict(
                     color='#b58900',
                     size=np.log(filtered_df['mass (g)'])),
-                max_size=15,
-                opacity=0.6,
-                customdata=filtered_df.id,
-                selectedData=None
+                    max_size=15,
+                    opacity=0.6,
+                    customdata=filtered_df.id,
+                    selectedData=None
             )
         )
 
