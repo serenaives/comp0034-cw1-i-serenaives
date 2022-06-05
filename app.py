@@ -721,7 +721,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
 
     # if anything other than input from the <<reset map selection>> button triggered the callback
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        # filter by current selection via UI of points on map
+        # filter by current selection of points on map
         filtered_df = geo_filter(filtered_df, geo_selected)
 
     # share data stored in visible_arr between callbacks
@@ -893,7 +893,7 @@ def update_year_tab(years_selected, discovery, selected_data, n_clicks, mass_sel
 
     # if anything other than input from the <<reset map selection>> button triggered the callback
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        # filter by current selection via UI of points on map
+        # filter by current selection of points on map
         filtered_df = geo_filter(filtered_df, selected_data)
 
     fig = get_year_graph(filtered_df, discovery)
@@ -918,7 +918,7 @@ def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n
 
     # if anything other than input from the <<reset map selection>> button triggered the callback
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        # filter by current selection via UI of points on map
+        # filter by current selection of points on map
         filtered_df = geo_filter(filtered_df, selected_data)
 
     fig = get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale)
