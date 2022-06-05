@@ -30,7 +30,7 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 # all meteorite categories in the original dataset
 category_arr = ['stony', 'iron', 'stony_iron', 'unclassified']
 
-# visible_arr is used to keep track of selected meteorite categories
+# array used to keep track of selected meteorite categories
 visible_arr = category_arr.copy()
 
 # dictionary used to map meteorite categories to map marker colors
