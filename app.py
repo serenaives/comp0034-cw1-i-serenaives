@@ -719,9 +719,9 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
     text = filtered_df.name
     trace = []
 
-    # if anything except input from the <<reset map selection>> button triggered the callback
+    # if anything other than input from the <<reset map selection>> button triggered the callback
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        # filter by current selection of points on map via UI
+        # filter by current selection via UI of points on map
         filtered_df = geo_filter(filtered_df, geo_selected)
 
     # share data stored in visible_arr between callbacks
@@ -827,100 +827,6 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
     return fig
 
 
-# category tab
-# ------------------------------------------------------------------------------
-@app.callback(
-    Output('category-tab-content', 'children'),
-    [Input('year-slider', 'value'),
-     Input('category-graph-type', 'value'),
-     Input('found-fell-selection', 'value'),
-     Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks'),
-     Input('mass-slider', 'value')]
-)
-def update_category_tab(years_selected, category_graph_type, discovery, selected_data, n_clicks, mass_selected):
-    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
-
-    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        filtered_df = geo_filter(filtered_df, selected_data)
-
-    fig = get_category_graph(filtered_df, category_graph_type)
-    content = dcc.Graph(id='category-graph', figure=fig)
-    return [content]
-
-
-# year tab
-# ------------------------------------------------------------------------------
-@app.callback(
-    Output('year-tab-content', 'children'),
-    [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value'),
-     Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks'),
-     Input('mass-slider', 'value')]
-)
-def update_year_tab(years_selected, discovery, selected_data, n_clicks, mass_selected):
-    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
-
-    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        filtered_df = geo_filter(filtered_df, selected_data)
-
-    fig = get_year_graph(filtered_df, discovery)
-    content = dcc.Graph(id='year-graph', figure=fig)
-    return [content]
-
-
-# mass tab
-# ------------------------------------------------------------------------------
-@app.callback(
-    Output('mass-tab-content', 'children'),
-    [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value'),
-     Input('mass-graph-type', 'value'),
-     Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks'),
-     Input('mass-slider', 'value'),
-     Input('log-scale', 'value')]
-)
-def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected, log_scale):
-    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
-
-    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        filtered_df = geo_filter(filtered_df, selected_data)
-
-    fig = get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale)
-    content = dcc.Graph(id='mass-graph', figure=fig)
-    return content
-
-
-# category tab control box
-# ------------------------------------------------------------------------------
-@app.callback(
-    Output('category-control-box', 'style'),
-    [Input('visualise-by-tabs', 'active_tab')]
-)
-def display_category_control_box(active_tab):
-    if active_tab == 'category-tab':
-        style = {'display': 'block'}
-    else:
-        style = {'display': 'none'}
-    return style
-
-
-# mass tab control box
-# ------------------------------------------------------------------------------
-@app.callback(
-    Output('mass-control-box', 'style'),
-    [Input('visualise-by-tabs', 'active_tab')]
-)
-def display_mass_control_box(active_tab):
-    if active_tab == 'mass-tab':
-        style = {'display': 'block'}
-    else:
-        style = {'display': 'none'}
-    return style
-
-
 # interactive table
 # ------------------------------------------------------------------------------
 @app.callback(
@@ -946,6 +852,110 @@ def update_table(selected_data, years_selected, discovery, n_clicks, mass_select
         dff = geo_filter(filtered_df, selected_data)
         dff = dff.filter(items=['name', 'fall', 'category', 'year', 'mass (g)'])
         return dff.to_dict('records')
+
+
+# category tab
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('category-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('category-graph-type', 'value'),
+     Input('found-fell-selection', 'value'),
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
+)
+def update_category_tab(years_selected, category_graph_type, discovery, selected_data, n_clicks, mass_selected):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
+
+    # if anything other than input from the <<reset map selection>> button triggered the callback
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        # filter by current selection via UI of points on map
+        filtered_df = geo_filter(filtered_df, selected_data)
+
+    fig = get_category_graph(filtered_df, category_graph_type)
+    content = dcc.Graph(id='category-graph', figure=fig)
+    return [content]
+
+
+# year tab
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('year-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value'),
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value')]
+)
+def update_year_tab(years_selected, discovery, selected_data, n_clicks, mass_selected):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
+
+    # if anything other than input from the <<reset map selection>> button triggered the callback
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        # filter by current selection via UI of points on map
+        filtered_df = geo_filter(filtered_df, selected_data)
+
+    fig = get_year_graph(filtered_df, discovery)
+    content = dcc.Graph(id='year-graph', figure=fig)
+    return [content]
+
+
+# mass tab
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('mass-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value'),
+     Input('mass-graph-type', 'value'),
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value'),
+     Input('log-scale', 'value')]
+)
+def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected, log_scale):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
+
+    # if anything other than input from the <<reset map selection>> button triggered the callback
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        # filter by current selection via UI of points on map
+        filtered_df = geo_filter(filtered_df, selected_data)
+
+    fig = get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale)
+    content = dcc.Graph(id='mass-graph', figure=fig)
+    return content
+
+
+# category tab control box
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('category-control-box', 'style'),
+    [Input('visualise-by-tabs', 'active_tab')]
+)
+def display_category_control_box(active_tab):
+    # display category tab control box if category tab is currently active
+    if active_tab == 'category-tab':
+        style = {'display': 'block'}
+    # else keep hidden
+    else:
+        style = {'display': 'none'}
+    return style
+
+
+# mass tab control box
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('mass-control-box', 'style'),
+    [Input('visualise-by-tabs', 'active_tab')]
+)
+def display_mass_control_box(active_tab):
+    # display mass tab control box if mass tab is currently active
+    if active_tab == 'mass-tab':
+        style = {'display': 'block'}
+    # else keep hidden
+    else:
+        style = {'display': 'none'}
+    return style
 
 
 # ------------------------------------------------------------------------------
