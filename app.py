@@ -308,7 +308,7 @@ app.layout = dbc.Container([
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
                                         )
-                                    ], style={'width': '95%', 'position': 'absolute', 'left': '1%'}),
+                                    ], style={'width': '100%', 'position': 'absolute', 'left': '1%'}),
                                     dbc.Row([
                                         html.Br()
                                     ]),
@@ -340,7 +340,7 @@ app.layout = dbc.Container([
                                             tooltip={'always_visible': True,
                                                      'placement': 'bottom'}
                                         )
-                                    ], style={'width': '95%', 'position': 'absolute', 'left': '1%'}),
+                                    ], style={'width': '100%', 'position': 'absolute', 'left': '1%'}),
                                     dbc.Row([
                                         html.Br()
                                     ]),
@@ -393,17 +393,31 @@ app.layout = dbc.Container([
                                                 {'label': 'ON', 'value': 'on'},
                                                 {'label': 'OFF', 'value': 'off'}
                                             ],
-                                            inline=False,
+                                            inline=True,
                                             switch=True,
                                             value='on'
                                         )
-                                    ], style={'width': '80%', 'position': 'absolute', 'left': '4%'}),
+                                    ], style={'width': '80%', 'left': '4%'}),
                                     dbc.Row([
                                         html.Br()
                                     ]),
                                     dbc.Row([
-                                        html.Br()
-                                    ])
+                                        html.P([
+                                            'Coordinate map markers to size:'
+                                        ], style={'text-align': 'left'})
+                                    ]),
+                                    dbc.Row([
+                                        dbc.RadioItems(
+                                            id='size-coordinate',
+                                            options=[
+                                                {'label': 'ON', 'value': 'on'},
+                                                {'label': 'OFF', 'value': 'off'}
+                                            ],
+                                            inline=True,
+                                            switch=True,
+                                            value='off'
+                                        )
+                                    ], style={'width': '80%', 'left': '4%'})
                                 ]),
                             ])
                         ])
@@ -616,12 +630,12 @@ app.layout = dbc.Container([
      Input('found-fell-selection', 'value'),
      Input('color-coordinate', 'value'),
      Input('refresh-button', 'n_clicks'),
-     Input('mass-slider', 'value')]
+     Input('mass-slider', 'value'),
+     Input('size-coordinate', 'value')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
     text = filtered_df.name
-
     trace = []
 
     if color_coord == 'on':
@@ -637,9 +651,8 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
                     mode='markers',
                     marker=dict(
                         color=discrete_color_map[i],
-                        size=np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
-                        max_size=15,
-                        opacity=0.6,
+                        size=2*(np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
+                        opacity=0.6),
                         customdata=filtered_df[filtered_df['category'] == i]['id'],
                         selectedData=None
                 )
@@ -656,9 +669,8 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
                 mode='markers',
                 marker=dict(
                     color='#b58900',
-                    size=np.log(filtered_df['mass (g)'])),
-                    max_size=15,
-                    opacity=0.6,
+                    size = 2 * (np.log(filtered_df['mass (g)'])),
+                    opacity=0.6),
                     customdata=filtered_df.id,
                     selectedData=None
             )
@@ -681,6 +693,12 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
         ),
     )
     fig = dict(data=trace, layout=layout)
+
+    if size == 'off':
+        for i in fig['data']:
+            print(i)
+            i['marker']['size'] = 9
+
     return fig
 
 
