@@ -117,21 +117,14 @@ def get_by_year_count(filtered_df):
 
 def get_category_graph(filtered_df, category_graph_type):
     df_category_count = get_by_category_count(filtered_df)
-    category_dict = dict(zip(df_category_count['category'], df_category_count['count']))
-
-    # get number of meteorites in each category
-    for i in range(4):
-        try:
-            count_arr[i] = category_dict[category_arr[i]]
-        except KeyError:
-            count_arr[i] = 0
 
     if category_graph_type == 'Bar':
         fig = px.bar(
+            data_frame=df_category_count,
+            x='category',
+            y='count',
             orientation='v',
-            x=category_arr,
-            y=count_arr,
-            color=category_arr,
+            color='category',
             color_discrete_sequence=colors,
             )
 
@@ -139,9 +132,10 @@ def get_category_graph(filtered_df, category_graph_type):
 
     elif category_graph_type == 'Pie':
         fig = px.pie(
-            names=category_arr,
-            values=count_arr,
-            color=category_arr,
+            data_frame=df_category_count,
+            names='category',
+            values='count',
+            color='category',
             color_discrete_sequence=colors
         )
 
@@ -626,7 +620,7 @@ app.layout = dbc.Container([
 )
 def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
-    text = filtered_df.name # edit for hover functionality
+    text = filtered_df.name
 
     trace = []
 
@@ -643,9 +637,9 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
                     mode='markers',
                     marker=dict(
                         size=np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
-                        max_size=15,
-                        color=discrete_color_map[i],
-                        opacity=0.6,
+                    max_size=15,
+                    color=discrete_color_map[i],
+                    opacity=0.6,
                     customdata=filtered_df[filtered_df['category'] == i]['id'],
                     selectedData=None
                 )
@@ -656,14 +650,15 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
                 type='scattermapbox',
                 lat=filtered_df.reclat,
                 lon=filtered_df.reclong,
+                hovertemplate=None,
                 text=text,
                 hoverinfo='text',
                 mode='markers',
                 marker=dict(
                     color='#b58900',
                     size=np.log(filtered_df['mass (g)'])),
-                    max_size=15,
-                    opacity=0.6,
+                max_size=15,
+                opacity=0.6,
                 customdata=filtered_df.id,
                 selectedData=None
             )
