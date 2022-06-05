@@ -187,7 +187,7 @@ def get_year_graph(filtered_df, discovery):
 
     # if found and fell are both selected
     if 'Found' in discovery and 'Fell' in discovery:
-        # add a trace corresponding to ALL meteorite landings
+        # add a trace with data corresponding to ALL meteorite landings
         trace.append(
             dict(
                 name='All',
@@ -199,7 +199,7 @@ def get_year_graph(filtered_df, discovery):
             )
         )
 
-    # add a separate traces corresponding to each selected mode of discovery (found and/or fell)
+    # add separate traces corresponding to each selected mode of discovery (found and/or fell)
     for i in discovery:
         trace.append(
             dict(
@@ -237,7 +237,9 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
     # initialise figure with generic layout
     fig = go.Figure(layout=layout)
 
+    # histogram
     if mass_graph_type == 'Histogram':
+        # if found and fell are both selected
         if 'Found' in discovery and 'Fell' in discovery:
             fig.add_trace(
                 go.Histogram(
@@ -247,6 +249,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                 ),
             )
 
+        # add separate traces corresponding to each selected mode of discovery (found and/or fell)
         for i in discovery:
             fig.add_trace(
                 go.Histogram(
@@ -255,6 +258,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                 ),
             )
 
+        # update layout with features specific to histogram
         fig.update_layout(
             layout,
             barmode='overlay',
@@ -265,8 +269,11 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
 
         fig.update_traces(opacity=0.75)
 
+    # box & whisker plot
     elif mass_graph_type == 'Box':
+        # if found and fell are both selected
         if 'Found' in discovery and 'Fell' in discovery:
+            # add a trace with data corresponding to ALL meteorite landings
             fig.add_trace(
                 go.Box(
                     name='All',
@@ -276,6 +283,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                 ),
             )
 
+        # add separate traces corresponding to each selected mode of discovery (found and/or fell)
         for i in discovery:
             fig.add_trace(
                 go.Box(
@@ -285,6 +293,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                 ),
             )
 
+        # update layout with features specific to box & whisker plot
         fig.update_layout(
             xaxis_title=xaxis_title)
 
@@ -293,6 +302,8 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
 
 # App layout
 # ------------------------------------------------------------------------------
+
+
 app.layout = dbc.Container([
 
     html.Br(),
@@ -312,7 +323,7 @@ app.layout = dbc.Container([
 
     html.Br(),
 
-    # control box
+    # data filters control box
     # ------------------------------------------------------------------------------
     dbc.Row([
         dbc.Card([
@@ -331,6 +342,8 @@ app.layout = dbc.Container([
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
+                                        # year selection slider
+                                        # -------------------------------------------------------
                                         dcc.RangeSlider(
                                             id='year-slider',
                                             min=df['year'].min(),
@@ -363,6 +376,8 @@ app.layout = dbc.Container([
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
+                                        # mass selection slider
+                                        # ---------------------------------------------------------
                                         dcc.RangeSlider(
                                             id='mass-slider',
                                             min=df['mass (g)'].min(),
@@ -395,6 +410,8 @@ app.layout = dbc.Container([
                                         ], style={'text-align': 'left'}),
                                     ]),
                                     dbc.Row([
+                                        # discovery (found/ fell) checklist
+                                        # -------------------------------------------------------------------
                                         dbc.Checklist(
                                             id='found-fell-selection',
                                             options=[
@@ -423,6 +440,8 @@ app.layout = dbc.Container([
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
+                                        # RadioItems selection: color-coordinate to category
+                                        # ---------------------------------------------------------
                                         dbc.RadioItems(
                                             id='color-coordinate',
                                             options=[
@@ -443,6 +462,8 @@ app.layout = dbc.Container([
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
+                                        # RadioItems selection: size-coordinate to mass
+                                        # ---------------------------------------------------------
                                         dbc.RadioItems(
                                             id='size-coordinate',
                                             options=[
@@ -470,10 +491,10 @@ app.layout = dbc.Container([
     # visualisations (split into two columns)
     # ------------------------------------------------------------------------------
     dbc.Row([
+        # visualisation of geographic distribution
+        # --------------------------------------------------------------------------
         dbc.Col([
             dbc.Row([
-                # geographic distribution card (map)
-                # ------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardHeader([
                         html.H3('Geographic Distribution')
@@ -482,6 +503,8 @@ app.layout = dbc.Container([
                         id='map-card',
                         children=[
                             dbc.Row([
+                                # geographic scatter map
+                                # ----------------------------------------------------------------
                                 dcc.Graph(id='map-plot', selectedData=None)
                             ], style={'margin': '0', 'width': '100%', 'alignment': 'center'})
                         ]
@@ -512,17 +535,18 @@ app.layout = dbc.Container([
                             ], style={'width': '20%', 'align': 'right'})
                         ])
                     ]),
-                    # interactive table
-                    # ------------------------------------------------------------------------------
                     dbc.CardBody([
                         dbc.Row([
+                            # interactive table
+                            # ------------------------------------------------------------------------------
                             dash_table.DataTable(
                                 id='interactive-table',
                                 columns=[{'name': i, 'id': i} for i in table_cols],
                                 style_header={
                                     'backgroundColor': '#b58900',
                                     'color': '#ffffff',
-                                    'fontWeight': 'bold'}
+                                    'fontWeight': 'bold'
+                                }
                             )
                         ])
                     ])
@@ -530,14 +554,15 @@ app.layout = dbc.Container([
             ])
         ], style={'width': '40%', 'alignment': 'left'}),
 
+        # visualisations by category/ year/ mass
+        # ------------------------------------------------------------------------------
         dbc.Col([
-            # visualise-by card (split into 3 tabs: category, year & mass)
-            # ------------------------------------------------------------------------------
             dbc.Card([
                 dbc.CardHeader([
                     html.H3('Visualise meteorite landings by:')
                 ]),
                 dbc.CardBody([
+                    # tabs to select category/ year/ mass
                     dbc.Tabs([
                         # category tab
                         # ------------------------------------------------------------------------------
@@ -549,7 +574,6 @@ app.layout = dbc.Container([
                                     id='category-tab-content'
                                 )
                             ]),
-
                         # year tab
                         # ------------------------------------------------------------------------------
                         dbc.Tab(label='year', tab_id='year-tab',
@@ -558,7 +582,6 @@ app.layout = dbc.Container([
                                         id='year-tab-content'
                                     )
                                 ]),
-
                         # mass tab
                         # ------------------------------------------------------------------------------
                         dbc.Tab(label='mass', tab_id='mass-tab',
@@ -575,7 +598,7 @@ app.layout = dbc.Container([
             ], style={'width': '100%', 'alignment': 'center'}
             ),
             html.Div([
-                # category graph control box (select bar or pie chart)
+                # category graphs control box
                 # ------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardBody(
@@ -587,6 +610,8 @@ app.layout = dbc.Container([
                                         html.P('Select category chart type:')
                                     ]),
                                     dbc.Row([
+                                        # RadioItems selection: bar or pie chart
+                                        # -------------------------------------------------------
                                         dbc.RadioItems(
                                             id='category-graph-type',
                                             options=[
@@ -604,7 +629,7 @@ app.layout = dbc.Container([
                 ])
             ], id='category-control-box'),
             html.Div([
-                # category graph control box (select bar or pie chart)
+                # mass graphs control box
                 # ------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardBody(
@@ -618,6 +643,8 @@ app.layout = dbc.Container([
                                                 html.P('Select mass chart type:')
                                             ]),
                                             dbc.Row([
+                                                # RadioItems selection: histogram or box & whisker
+                                                # -------------------------------------------------------
                                                 dbc.RadioItems(
                                                     id='mass-graph-type',
                                                     options=[
@@ -636,6 +663,8 @@ app.layout = dbc.Container([
                                                 html.P('log scale:')
                                             ]),
                                             dbc.Row([
+                                                # RadioItems selection: log scale on or off
+                                                # -------------------------------------------------------
                                                 dbc.RadioItems(
                                                     id='log-scale',
                                                     options=[
