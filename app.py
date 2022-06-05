@@ -1,16 +1,14 @@
-from typing import List
-
 import dash
 import dash_bootstrap_components as dbc
+import numpy as np
 import pandas as pd
-from dash import dcc
-from dash import dash_table
-from dash import html
-from dash.dependencies import Input, Output, State
-from dash._callback_context import callback_context as ctx
 import plotly.express as px
 import plotly.graph_objects as go
-import numpy as np
+from dash import dash_table
+from dash import dcc
+from dash import html
+from dash._callback_context import callback_context as ctx
+from dash.dependencies import Input, Output
 
 # ------------------------------------------------------------------------------
 year_mark_values = {900: '900', 1100: '1100',
