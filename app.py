@@ -137,7 +137,7 @@ def get_by_year_count(filtered_df):
     return df_count
 
 
-# Define functions used to create plotly graph figures
+# Define functions used to create plotly graph figures in visualise-by column
 # --------------------------------------------------------------------------------
 
 
