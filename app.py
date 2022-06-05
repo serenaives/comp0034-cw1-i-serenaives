@@ -197,10 +197,10 @@ def get_year_graph(filtered_df, discovery):
 def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
     if log_scale == 'on':
         filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
-        x = filtered_df['log mass (g)']
+        x_col = 'log mass (g)'
         xaxis_title = 'log mass (g)'
     else:
-        x = filtered_df['mass (g)']
+        x_col = 'mass (g)'
         xaxis_title = 'Mass (g)'
 
     fig = go.Figure()
@@ -210,7 +210,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
             fig.add_trace(
                 go.Histogram(
                     name='All',
-                    x=x,
+                    x=filtered_df[x_col],
                     visible='legendonly'
                 ),
             )
@@ -219,7 +219,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
             fig.add_trace(
                 go.Histogram(
                     name=i,
-                    x=x
+                    x=filtered_df[filtered_df['fall'] == i][x_col]
                 ),
             )
 
@@ -238,7 +238,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
             fig.add_trace(
                 go.Box(
                     name='All',
-                    x=x,
+                    x=filtered_df[x_col],
                     orientation='h',
                     visible='legendonly',
                 ),
@@ -248,7 +248,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
             fig.add_trace(
                 go.Box(
                     name=i,
-                    x=x,
+                    x=filtered_df[filtered_df['fall'] == i][x_col],
                     orientation='h'
                 ),
             )
@@ -389,7 +389,7 @@ app.layout = dbc.Container([
                                 dbc.CardBody([
                                     dbc.Row([
                                         html.P([
-                                            'Colour-coordinate map markers to meteorite category:'
+                                            'Colour-coordinate map markers to category:'
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
