@@ -405,7 +405,7 @@ app.layout = dbc.Container([
                                     ]),
                                     dbc.Row([
                                         html.P([
-                                            'Coordinate map markers to mass:'
+                                            'Coordinate map marker size to mass:'
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
@@ -484,7 +484,8 @@ app.layout = dbc.Container([
                         dbc.Row([
                             dash_table.DataTable(
                                 id='interactive-table',
-                                columns=[{'name': i, 'id': i} for i in table_cols]
+                                columns=[{'name': i, 'id': i} for i in table_cols],
+                                style_header={'backgroundColor': '#b58900', 'color': '#ffffff', 'fontWeight': 'bold'}
                             )
                         ])
                     ])
@@ -845,4 +846,4 @@ def update_table(selected_data, years_selected, discovery, n_clicks, mass_select
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
