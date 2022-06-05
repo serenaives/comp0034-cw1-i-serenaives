@@ -71,6 +71,14 @@ df = pd.read_csv('meteorite_landings_cleaned.csv')
 
 
 def get_filtered_df(years_selected, discovery, mass_selected):
+    """filters global DataFrame df by year, discovery type (found/ fell) and mass
+    Args:
+        years_selected: tuple [start year, end year]
+        discovery: array of strings, one of ["Found"], ["Fell"], ["Found", "Fell"], ["Fell", "Found"] or []
+        mass_selected: tuple [minimum mass, maximum mass]
+    Returns:
+        filtered_df: global df filtered by parameter values
+        """
     # filter by year selection
     filtered_df = df[(df['year'] >= years_selected[0]) & (df['year'] <= years_selected[1])]
 
@@ -84,7 +92,7 @@ def get_filtered_df(years_selected, discovery, mass_selected):
 
 
 def geo_filter(dff, selected_data):
-    """filters DataFrame to match selection of points on geographical scatter map
+    """filters a DataFrame to match selection of points on geographical scatter map
     Args:
         dff: df with current filters applied
         selected_data: dictionary containing points on geographical scatter map selected via UI
@@ -513,17 +521,17 @@ app.layout = dbc.Container([
             ]),
             dbc.Row([
                 # card below geographic distribution contains interactive table
-                # ------------------------------------------------------------------------------
+                # ---------------------------------------------------------------------------------------------
                 dbc.Card([
                     dbc.CardHeader([
                         dbc.Row([
                             dbc.Col([
-                                html.P('Use the selection box on the map to filter the visualisations and view the '
-                                       'data in table format')
+                                html.P('Use the selection box on the map to filter the visualisations and view '
+                                       'the data in table format')
                             ], {'width': '80%', 'align': 'left'}),
                             dbc.Col([
                                 # reset map selection button
-                                # ------------------------------------------------------------------------------
+                                # --------------------------------------------------------------------
                                 dbc.Card([
                                     dbc.Button(
                                         id='refresh-button',
@@ -687,11 +695,12 @@ app.layout = dbc.Container([
     ])
 ], fluid=True)
 
+
 # App callbacks
 # ------------------------------------------------------------------------------
 
 
-# scatter map
+# geographical scatter map
 # ------------------------------------------------------------------------------
 @app.callback(
     Output('map-plot', 'figure'),
@@ -705,48 +714,72 @@ app.layout = dbc.Container([
      Input('map-plot', 'selectedData'),
      State('map-plot', 'figure')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, geo_selected,
-               current_fig):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, geo_selected, current_fig):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
-    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        filtered_df = geo_filter(filtered_df, geo_selected)
-
     text = filtered_df.name
     trace = []
 
+    # if anything except input from the <<reset map selection>> button triggered the callback
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        # filter by current selection of points on map via UI
+        filtered_df = geo_filter(filtered_df, geo_selected)
+
+    # share data stored in visible_arr between callbacks
     global visible_arr
 
+    # if the callback was triggered by trace selection/ deselection on category graph
     if ctx.triggered[0]['prop_id'].split('.')[0] == 'category-graph':
+
+        # then filter data visible on map according to currently selected categories on category graph
         if cat_selected is not None:
+
+            # if the callback was triggered by trace deselection
             if cat_selected[0]['visible'][0] == 'legendonly':
+                # match index to category_arr and remove deselected category from visible_arr
                 visible_arr.remove(category_arr[cat_selected[1][0]])
+
+            # if the callback was triggered by selection of a new trace
             elif cat_selected[0]['visible'][0]:
+                # match index to category_arr and add newly selected category to visible_arr
                 visible_arr.append(category_arr[cat_selected[1][0]])
+
+        # if callback was not triggered by trace selection/ deselection
+        # then it would instead be triggered by switching between bar and pie charts
         else:
-            # except for first call, when no fig has been initialised
+            # except for first call, when no fig has been initialised yet
             if current_fig is not None:
+                # map display remains unchanged
                 return current_fig
 
+    # if user has selected option to coordinate map markers to category
     if color_coord == 'on':
+        # loop through all possible categories in original (unfiltered) dataset
         for i in category_arr:
+            # if category is currently selected via category graph
             if i in visible_arr:
+                # add corresponding data to map trace
                 trace.append(
                     dict(
                         name=i,
                         type='scattermapbox',
+                        # each trace handles only the data corresponding to current category
                         lat=filtered_df[filtered_df['category'] == i]['reclat'],
                         lon=filtered_df[filtered_df['category'] == i]['reclong'],
                         text=text,
                         hoverinfo='text',
                         mode='markers',
                         marker=dict(
+                            # match category to corresponding color
                             color=discrete_color_map[i],
+                            # set marker size proportional to mass
                             size=2 * (np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
                             opacity=0.6),
+                        # store row id of each data point
                         customdata=filtered_df[filtered_df['category'] == i]['id']
                     )
                 )
     else:
+        # display all data in filtered df with a constant color
         trace.append(
             dict(
                 type='scattermapbox',
@@ -758,13 +791,16 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 mode='markers',
                 marker=dict(
                     color='#b58900',
+                    # set marker size proportional to mass
                     size=2 * (np.log(filtered_df['mass (g)'])),
                     opacity=0.6),
+                # store row id of each data point
                 customdata=filtered_df.id
             )
         )
 
-    layout = dict(
+    # set map-specific layout
+    map_layout = dict(
         hovermode='closest',
         margin=dict(r=0, l=0, t=0, b=0),
         color=filtered_df.category,
@@ -780,34 +816,15 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
             style='carto-positron',
         ),
     )
-    fig = dict(data=trace, layout=layout)
+    fig = dict(data=trace, layout=map_layout)
 
+    # if user has not selected to coordinate size to mass
     if size == 'off':
+        # set constant marker size
         for i in fig['data']:
             i['marker']['size'] = 9
 
     return fig
-
-
-@app.callback(
-    Output('mass-tab-content', 'children'),
-    [Input('year-slider', 'value'),
-     Input('found-fell-selection', 'value'),
-     Input('mass-graph-type', 'value'),
-     Input('map-plot', 'selectedData'),
-     Input('refresh-button', 'n_clicks'),
-     Input('mass-slider', 'value'),
-     Input('log-scale', 'value')]
-)
-def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected, log_scale):
-    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
-
-    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
-        filtered_df = geo_filter(filtered_df, selected_data)
-
-    fig = get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale)
-    content = dcc.Graph(id='mass-graph', figure=fig)
-    return content
 
 
 # category tab
@@ -851,6 +868,29 @@ def update_year_tab(years_selected, discovery, selected_data, n_clicks, mass_sel
     fig = get_year_graph(filtered_df, discovery)
     content = dcc.Graph(id='year-graph', figure=fig)
     return [content]
+
+
+# mass tab
+# ------------------------------------------------------------------------------
+@app.callback(
+    Output('mass-tab-content', 'children'),
+    [Input('year-slider', 'value'),
+     Input('found-fell-selection', 'value'),
+     Input('mass-graph-type', 'value'),
+     Input('map-plot', 'selectedData'),
+     Input('refresh-button', 'n_clicks'),
+     Input('mass-slider', 'value'),
+     Input('log-scale', 'value')]
+)
+def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected, log_scale):
+    filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
+
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        filtered_df = geo_filter(filtered_df, selected_data)
+
+    fig = get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale)
+    content = dcc.Graph(id='mass-graph', figure=fig)
+    return content
 
 
 # category tab control box
