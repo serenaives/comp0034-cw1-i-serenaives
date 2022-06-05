@@ -644,10 +644,14 @@ def add_cat(filtered_df, cat):
      Input('mass-slider', 'value'),
      Input('size-coordinate', 'value'),
      Input('category-graph', 'restyleData'),
+     Input('map-plot', 'selectedData'),
      State('map-plot', 'figure')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, current_fig):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, geo_selected, current_fig):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
+    if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
+        filtered_df = geo_filter(filtered_df, geo_selected)
+
     text = filtered_df.name
     trace = []
 
