@@ -1,10 +1,12 @@
+from typing import List
+
 import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 from dash import dcc
 from dash import dash_table
 from dash import html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from dash._callback_context import callback_context as ctx
 import plotly.express as px
 import plotly.graph_objects as go
@@ -30,7 +32,6 @@ app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_excep
 # ------------------------------------------------------------------------------
 df = pd.read_csv('meteorite_landings_cleaned.csv')
 
-
 # Store MapBox access token
 # ------------------------------------------------------------------------------
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
@@ -38,7 +39,8 @@ mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem
 # Store array containing all possible meteorite categories
 # ------------------------------------------------------------------------------
 category_arr = ['stony', 'iron', 'stony_iron', 'unclassified']
-count_arr = [0, 0, 0, 0]
+visible_arr = category_arr.copy()
+
 colors = ['purple', 'red', 'blue', 'green']
 
 discrete_color_map = {'stony': 'purple',
@@ -128,7 +130,9 @@ def get_category_graph(filtered_df, category_graph_type):
             color_discrete_sequence=colors,
             )
 
-        fig.update_layout(xaxis_title='Meteorite Category', yaxis_title='Number of Meteorite Landings')
+        fig.update_layout(
+            xaxis_title='Meteorite Category',
+            yaxis_title='Number of Meteorite Landings')
 
     elif category_graph_type == 'Pie':
         fig = px.pie(
@@ -139,9 +143,10 @@ def get_category_graph(filtered_df, category_graph_type):
             color_discrete_sequence=colors
         )
 
-        fig.update_traces(textinfo='percent+label',
-                          marker_line=dict(color='white', width=1)
-                          )
+        fig.update_traces(
+            textinfo='percent+label',
+            marker_line=dict(color='white', width=1)
+        )
 
     fig.update_layout(
         layout,
@@ -234,7 +239,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                     name='All',
                     x=filtered_df[x_col],
                     orientation='h',
-                    visible='legendonly',
+                    visible='legendonly'
                 ),
             )
 
@@ -247,8 +252,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                 ),
             )
         fig.update_layout(
-            xaxis_title=xaxis_title,
-            yaxis_title=None)
+            xaxis_title=xaxis_title)
 
     fig.update_layout(layout)
     return fig
@@ -271,7 +275,7 @@ app.layout = dbc.Container([
                 dbc.Card([dbc.Button(['take the quiz'], style={'height': '100%'})], style={'width': '2'}),
                 dbc.Card([dbc.Button(['log in/ register'], style={'height': '100%'})], style={'width': '2'})
             ], style={'align': 'right'})
-        ], style={'padding': '1%'}),
+        ], style={'padding': '1%'}, id='card-grp'),
     ]),
 
     html.Br(),
@@ -383,7 +387,7 @@ app.layout = dbc.Container([
                                 dbc.CardBody([
                                     dbc.Row([
                                         html.P([
-                                            'Colour-coordinate map markers to category:'
+                                            'Coordinate map markers to category:'
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
@@ -403,7 +407,7 @@ app.layout = dbc.Container([
                                     ]),
                                     dbc.Row([
                                         html.P([
-                                            'Coordinate map markers to size:'
+                                            'Coordinate map markers to mass:'
                                         ], style={'text-align': 'left'})
                                     ]),
                                     dbc.Row([
@@ -621,7 +625,15 @@ app.layout = dbc.Container([
 
 # App callbacks
 # ------------------------------------------------------------------------------
+'''
+def remove_cat(filtered_df, cat):
+    filtered_df = filtered_df[filtered_df['category'] != cat]
+    return filtered_df
 
+def add_cat(filtered_df, cat):
+    filtered_df = filtered_df[filtered_df['category'] != cat]
+    return filtered_df
+'''
 # scatter map
 # ------------------------------------------------------------------------------
 @app.callback(
@@ -631,31 +643,43 @@ app.layout = dbc.Container([
      Input('color-coordinate', 'value'),
      Input('refresh-button', 'n_clicks'),
      Input('mass-slider', 'value'),
-     Input('size-coordinate', 'value')]
+     Input('size-coordinate', 'value'),
+     Input('category-graph', 'restyleData')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
     text = filtered_df.name
     trace = []
 
+    global visible_arr
+
+    if ctx.triggered[0]['prop_id'].split('.')[0] == 'category-graph':
+        if cat_selected is not None:
+            if cat_selected[0]['visible'][0] == 'legendonly':
+                visible_arr.remove(category_arr[cat_selected[1][0]])
+            elif cat_selected[0]['visible'][0]:
+                visible_arr.append(category_arr[cat_selected[1][0]])
+
     if color_coord == 'on':
         for i in category_arr:
-            trace.append(
-                dict(
-                    name=i,
-                    type='scattermapbox',
-                    lat=filtered_df[filtered_df['category'] == i]['reclat'],
-                    lon=filtered_df[filtered_df['category'] == i]['reclong'],
-                    text=text,
-                    hoverinfo='text',
-                    mode='markers',
-                    marker=dict(
-                        color=discrete_color_map[i],
-                        size=2*(np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
-                        opacity=0.6),
+            if i in visible_arr:
+                trace.append(
+                    dict(
+                        name=i,
+                        type='scattermapbox',
+                        lat=filtered_df[filtered_df['category'] == i]['reclat'],
+                        lon=filtered_df[filtered_df['category'] == i]['reclong'],
+                        text=text,
+                        hoverinfo='text',
+                        mode='markers',
+                        marker=dict(
+                            color=discrete_color_map[i],
+                            size=2*(np.log(filtered_df[filtered_df['category'] == i]['mass (g)'])),
+                            opacity=0.6),
                         customdata=filtered_df[filtered_df['category'] == i]['id'],
                         selectedData=None
-                )
+
+                    )
             )
     else:
         trace.append(
@@ -669,10 +693,10 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 mode='markers',
                 marker=dict(
                     color='#b58900',
-                    size = 2 * (np.log(filtered_df['mass (g)'])),
+                    size=2*(np.log(filtered_df['mass (g)'])),
                     opacity=0.6),
-                    customdata=filtered_df.id,
-                    selectedData=None
+                customdata=filtered_df.id,
+                selectedData=None
             )
         )
 
@@ -696,7 +720,6 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
 
     if size == 'off':
         for i in fig['data']:
-            print(i)
             i['marker']['size'] = 9
 
     return fig
