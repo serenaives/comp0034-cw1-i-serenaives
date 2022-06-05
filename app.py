@@ -10,51 +10,42 @@ from dash import html
 from dash._callback_context import callback_context as ctx
 from dash.dependencies import Input, Output, State
 
+# Store values used in the app
 # ------------------------------------------------------------------------------
+
+# mark values for year range slider
 year_mark_values = {900: '900', 1100: '1100',
                     1300: '1300', 1500: '1500',
                     1700: '1700', 1900: '1900'}
 
+# mark values for mass range slider
 mass_mark_values = {0: '0',
                     20000000: '20 million',
                     40000000: '40 million',
                     60000000: '60 million'}
 
-
-# Initialise the app
-# ------------------------------------------------------------------------------
-app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_exceptions=True)
-
-
-# Import data
-# ------------------------------------------------------------------------------
-df = pd.read_csv('meteorite_landings_cleaned.csv')
-
-# Store MapBox access token
-# ------------------------------------------------------------------------------
+# MapBox access token
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 
-# Store array containing all possible meteorite categories
-# ------------------------------------------------------------------------------
+# all meteorite categories in the original dataset
 category_arr = ['stony', 'iron', 'stony_iron', 'unclassified']
+
+# visible_arr is used to keep track of selected meteorite categories
 visible_arr = category_arr.copy()
 
-colors = ['purple', 'red', 'blue', 'green']
-
+# dictionary used to map meteorite categories to map marker colors
 discrete_color_map = {'stony': 'purple',
                       'iron': 'red',
                       'stony_iron': 'blue',
                       'unclassified': 'green'}
 
-count_dict = {'stony': 0,
-              'iron': 0,
-              'stony_iron': 0,
-              'unclassified': 0}
+# array used to map meteorite categories to bar and pie chart colors
+colors = ['purple', 'red', 'blue', 'green']
 
+# column names for dash_table (corresponding to the dataset columns)
 table_cols = ['name', 'fall', 'category', 'year', 'mass (g)']
 
-
-# generic layout
+# generic layout for dcc.Graph objects
 layout = dict(
     plot_bgcolor='#22434A',
     paper_bgcolor='#22434A',
@@ -67,19 +58,36 @@ layout = dict(
 )
 
 
+# Initialise the app
+# ------------------------------------------------------------------------------
+app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_exceptions=True)
+
+
+# Import data
+# ------------------------------------------------------------------------------
+df = pd.read_csv('meteorite_landings_cleaned.csv')
+
 # Define functions used in data filtering
 # ------------------------------------------------------------------------------
 
-# filters dataframe based on input from user (control box input)
-# years_selected is a tuple (start year, end year) from range slider selection
-# discovery is a tuple containing values 'found' and/or 'fell' or none from checklist selection - rephrase
-# adapted from x
 
 def geo_filter(dff, selected_data):
+    """filters DataFrame to match selection of points on geographical scatter map
+    Args:
+        dff: df with current filters applied
+        selected_data: dictionary containing points on geographical scatter map selected via UI
+                       input, each point is a dictionary:
+                       {'points': {curveNumber, pointNumber, pointIndex, lon, lat, customdata, text}}
+    Returns:
+        dff: dff filtered to include only rows with id values corresponding
+             to those specified by selected_data
+        """
     if selected_data is not None:
         row_ids = []
         for point in selected_data['points']:
+            # customdata stores the id for each point in selected_data
             row_ids.append(point['customdata'])
+        # match ids of selected_data to ids in meteorite dataset and filter accordingly
         dff = dff[dff['id'].isin(row_ids)]
     return dff
 
@@ -485,7 +493,10 @@ app.layout = dbc.Container([
                             dash_table.DataTable(
                                 id='interactive-table',
                                 columns=[{'name': i, 'id': i} for i in table_cols],
-                                style_header={'backgroundColor': '#b58900', 'color': '#ffffff', 'fontWeight': 'bold'}
+                                style_header={
+                                    'backgroundColor': '#b58900',
+                                    'color': '#ffffff',
+                                    'fontWeight': 'bold'}
                             )
                         ])
                     ])
