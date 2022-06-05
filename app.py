@@ -90,10 +90,11 @@ def get_filtered_df(years_selected, discovery, mass_selected):
 
     # discovery (found/ fell) selection
     filtered_df = filtered_df[filtered_df['fall'].isin(discovery)]
-    return filtered_df
 
     # mass selection
-    filtered_df = df[(df['mass (g)'] >= mass_selected[0]) & (df['mass (g)'] <= mass_selected[1])]
+    filtered_df = filtered_df[(filtered_df['mass (g)'] >= mass_selected[0]) & (filtered_df['mass (g)'] <= mass_selected[1])]
+    return filtered_df
+
 
 def get_year_count(df):
     df_year_count = df.groupby(['year', 'fall'])['name'].count().reset_index()
@@ -193,8 +194,14 @@ def get_year_graph(filtered_df, discovery):
     return fig
 
 
-def get_mass_graph(filtered_df, mass_graph_type, discovery):
-    filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
+def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
+    if log_scale == 'on':
+        filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
+        x = filtered_df['log mass (g)']
+        xaxis_title = 'log mass (g)'
+    else:
+        x = filtered_df['mass (g)']
+        xaxis_title = 'Mass (g)'
 
     fig = go.Figure()
 
@@ -203,7 +210,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery):
             fig.add_trace(
                 go.Histogram(
                     name='All',
-                    x=filtered_df['log mass (g)'],
+                    x=x,
                     visible='legendonly'
                 ),
             )
@@ -212,7 +219,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery):
             fig.add_trace(
                 go.Histogram(
                     name=i,
-                    x=filtered_df[filtered_df['fall'] == i]['log mass (g)']
+                    x=x
                 ),
             )
 
@@ -220,7 +227,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery):
             layout,
             barmode='overlay',
             hovermode='x unified',
-            xaxis_title='log mass (g)',
+            xaxis_title=xaxis_title,
             yaxis_title='Number of Meteorite Landings'
         )
 
@@ -231,7 +238,7 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery):
             fig.add_trace(
                 go.Box(
                     name='All',
-                    x=filtered_df['log mass (g)'],
+                    x=x,
                     orientation='h',
                     visible='legendonly',
                 ),
@@ -241,12 +248,12 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery):
             fig.add_trace(
                 go.Box(
                     name=i,
-                    x=filtered_df[filtered_df['fall'] == i]['log mass (g)'],
+                    x=x,
                     orientation='h'
                 ),
             )
         fig.update_layout(
-            xaxis_title='log mass (g)',
+            xaxis_title=xaxis_title,
             yaxis_title=None)
 
     fig.update_layout(layout)
@@ -444,7 +451,8 @@ app.layout = dbc.Container([
                     dbc.CardHeader([
                         dbc.Row([
                             dbc.Col([
-                                html.P('Use the selection box on the map to filter the visualisations and view the data in table format')
+                                html.P('Use the selection box on the map to filter the visualisations and view the '
+                                       'data in table format')
                             ], {'width': '80%', 'align': 'left'}),
                             dbc.Col([
                                 # reset map selection button
@@ -554,23 +562,45 @@ app.layout = dbc.Container([
                     dbc.CardBody(
                         id='mass-graph-controls',
                         children=[
-                            dbc.Row([
-                                dbc.Col([
-                                    dbc.Row([
-                                        html.P('Select mass chart type:')
+                            dbc.Col([
+                                dbc.CardGroup([
+                                    dbc.Card([
+                                        dbc.Col([
+                                            dbc.Row([
+                                                html.P('Select mass chart type:')
+                                            ]),
+                                            dbc.Row([
+                                                dbc.RadioItems(
+                                                    id='mass-graph-type',
+                                                    options=[
+                                                        {'label': 'Histogram', 'value': 'Histogram'},
+                                                        {'label': 'Box and Whisker', 'value': 'Box'},
+                                                    ],
+                                                    value='Histogram',
+                                                    inline=False
+                                                )
+                                            ])
+                                        ], style={'margin': '4%'})
                                     ]),
-                                    dbc.Row([
-                                        dbc.RadioItems(
-                                            id='mass-graph-type',
-                                            options=[
-                                                {'label': 'Histogram', 'value': 'Histogram'},
-                                                {'label': 'Box and Whisker', 'value': 'Box'},
-                                            ],
-                                            value='Histogram',
-                                            inline=False
-                                        )
+                                    dbc.Card([
+                                        dbc.Col([
+                                            dbc.Row([
+                                                html.P('log scale:')
+                                            ]),
+                                            dbc.Row([
+                                                dbc.RadioItems(
+                                                    id='log-scale',
+                                                    options=[
+                                                        {'label': 'ON', 'value': 'on'},
+                                                        {'label': 'OFF', 'value': 'off'},
+                                                    ],
+                                                    value='on',
+                                                    inline=False
+                                                )
+                                            ])
+                                        ], style={'margin': '4%'})
                                     ])
-                                ], style={'width': '50%', 'alignment': 'left'}),
+                                ], style={'width': '100%'}),
                             ], style={'width': '100%', 'alignment': 'center'})
                         ]
                     )
@@ -666,15 +696,16 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected):
      Input('mass-graph-type', 'value'),
      Input('map-plot', 'selectedData'),
      Input('refresh-button', 'n_clicks'),
-     Input('mass-slider', 'value')]
+     Input('mass-slider', 'value'),
+     Input('log-scale', 'value')]
 )
-def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected):
+def update_mass_tab(years_selected, discovery, mass_graph_type, selected_data, n_clicks, mass_selected, log_scale):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
 
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         filtered_df = geo_filter(filtered_df, selected_data)
 
-    fig = get_mass_graph(filtered_df, mass_graph_type, discovery)
+    fig = get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale)
     content = dcc.Graph(id='mass-graph', figure=fig)
     return content
 
