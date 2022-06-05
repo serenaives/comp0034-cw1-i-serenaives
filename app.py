@@ -225,6 +225,7 @@ def get_year_graph(filtered_df, discovery):
 # mass graph (histogram or box & whisker plot depending on argument mass_graph_type)
 # ----------------------------------------------------------------------------------------
 def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
+    # set scale and x-axis title according to parameter log_scale
     if log_scale == 'on':
         filtered_df['log mass (g)'] = np.log(filtered_df['mass (g)'])
         x_col = 'log mass (g)'
@@ -233,7 +234,8 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
         x_col = 'mass (g)'
         xaxis_title = 'Mass (g)'
 
-    fig = go.Figure()
+    # initialise figure with generic layout
+    fig = go.Figure(layout=layout)
 
     if mass_graph_type == 'Histogram':
         if 'Found' in discovery and 'Fell' in discovery:
@@ -282,10 +284,10 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                     orientation='h'
                 ),
             )
+
         fig.update_layout(
             xaxis_title=xaxis_title)
 
-    fig.update_layout(layout)
     return fig
 
 
