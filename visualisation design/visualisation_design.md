@@ -44,7 +44,7 @@ the relationships between these properties. The meteorite properties are:
 4. Year of landing/ discovery
 5. Mass of meteorite
 
-The questions addressed by each visualisation are outlined in the design rationales, linked in the *Visualisations* section below.
+The specific questions addressed by each visualisation are outlined in the design rationales, linked in the *Visualisations* section below.
 
 ## Design Approach
 data filters, interactivity, control boxes, general visual appearance of the dashboard
@@ -52,8 +52,8 @@ UI should be intuitive and simple, not overwhelming (tab structure etc.)
 
 
 ## Visualisations
-The rationale of the visualisations for each property is linked in a separate .md file below:
-1. [Geographic distribution of Meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
+The design rationale of the visualisations for each property is linked in a separate .md file below:
+1. [Location of Meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
 2. [Meteorite landings by category: bar graph & pie chart](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/category_graphs.md)
 3. [Meteorite landings by year: line graph](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/year_graph.md)
 4. [Meteorite landings by mass: histogram & box and whisker plot](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/mass_graphs.md)
