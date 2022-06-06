@@ -34,13 +34,19 @@ category_arr = ['stony', 'iron', 'stony_iron', 'unclassified']
 visible_arr = category_arr.copy()
 
 # dictionary used to map meteorite categories to map marker colors
-discrete_color_map = {'stony': 'purple',
-                      'iron': 'red',
-                      'stony_iron': 'blue',
-                      'unclassified': 'green'}
+discrete_color_map = {'stony': '#3B8FA2',
+                      'iron': '#CD4117',
+                      'stony_iron': '#F3CA4C',
+                      'unclassified': '#FFFFFF'}
 
 # array used to map meteorite categories to bar and pie chart colors
-colors = ['purple', 'red', 'blue', 'green']
+colors = ['#3B8FA2', '#CD4117', '#F3CA4C', '#FFFFFF']
+
+# dictionary used to map year and mass graphs to colors corresponding to found/ fell categorisation
+two_color_palette = {
+    'Found': '#C9EBE1',
+    'Fell': '#00DA9D'
+}
 
 # column names for dash_table (corresponding to the dataset columns)
 table_cols = ['name', 'fall', 'category', 'year', 'mass (g)']
@@ -215,7 +221,10 @@ def get_year_graph(filtered_df, discovery):
                 type='scatter',
                 mode='lines',
                 x=df_year_count[df_year_count['fall'] == i]['year'],
-                y=df_year_count[df_year_count['fall'] == i]['count']
+                y=df_year_count[df_year_count['fall'] == i]['count'],
+                marker=dict(
+                    color=two_color_palette[i]
+                )
             )
         )
 
@@ -262,7 +271,10 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
             fig.add_trace(
                 go.Histogram(
                     name=i,
-                    x=filtered_df[filtered_df['fall'] == i][x_col]
+                    x=filtered_df[filtered_df['fall'] == i][x_col],
+                    marker=dict(
+                        color=two_color_palette[i]
+                    )
                 ),
             )
 
@@ -297,7 +309,10 @@ def get_mass_graph(filtered_df, mass_graph_type, discovery, log_scale):
                 go.Box(
                     name=i,
                     x=filtered_df[filtered_df['fall'] == i][x_col],
-                    orientation='h'
+                    orientation='h',
+                    marker=dict(
+                        color=two_color_palette[i]
+                    )
                 ),
             )
 
@@ -813,7 +828,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 lon=0,
             ),
             zoom=0.7,
-            style='carto-positron',
+            style='dark',
         ),
     )
     fig = dict(data=trace, layout=map_layout)
