@@ -28,7 +28,7 @@ mass_mark_values = {0: '0',
 mapbox_access_token = 'pk.eyJ1Ijoic2VyZW5haXZlcyIsImEiOiJjbDEzeDcxemUwNTN0M2Jxem9hbmVtb3RyIn0.K_CZ4pFHTGuZ2mOrCRC89Q'
 
 # all meteorite categories in the original dataset
-category_arr = ['stony', 'iron', 'stony_iron', 'unclassified']
+category_arr = ['stony', 'iron', 'stony iron', 'unclassified']
 
 # array used to keep track of selected meteorite categories
 visible_arr = category_arr.copy()
@@ -473,7 +473,7 @@ app.layout = dbc.Container([
                                             ],
                                             inline=True,
                                             switch=True,
-                                            value='off'
+                                            value='on'
                                         )
                                     ], style={'width': '80%', 'left': '4%'}),
                                     dbc.Row([
