@@ -36,7 +36,7 @@ visible_arr = category_arr.copy()
 # dictionary used to map meteorite categories to map marker colors
 discrete_color_map = {'stony': '#3B8FA2',
                       'iron': '#CD4117',
-                      'stony_iron': '#F3CA4C',
+                      'stony iron': '#F3CA4C',
                       'unclassified': '#FFFFFF'}
 
 # array used to map meteorite categories to bar and pie chart colors
