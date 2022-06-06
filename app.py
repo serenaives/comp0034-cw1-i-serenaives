@@ -473,7 +473,7 @@ app.layout = dbc.Container([
                                             ],
                                             inline=True,
                                             switch=True,
-                                            value='on'
+                                            value='off'
                                         )
                                     ], style={'width': '80%', 'left': '4%'}),
                                     dbc.Row([
