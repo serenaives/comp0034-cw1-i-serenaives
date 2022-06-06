@@ -44,8 +44,8 @@ colors = ['#3B8FA2', '#CD4117', '#F3CA4C', '#FFFFFF']
 
 # dictionary used to map year and mass graphs to colors corresponding to found/ fell categorisation
 two_color_palette = {
-    'Found': '#C9EBE1',
-    'Fell': '#00DA9D'
+    'Found': '#C5E47D',
+    'Fell': '#7EA30E'
 }
 
 # column names for dash_table (corresponding to the dataset columns)
@@ -473,7 +473,7 @@ app.layout = dbc.Container([
                                             ],
                                             inline=True,
                                             switch=True,
-                                            value='on'
+                                            value='off'
                                         )
                                     ], style={'width': '80%', 'left': '4%'}),
                                     dbc.Row([
