@@ -29,7 +29,7 @@ interest of widening equal access to educational resources.
 
 This is an online application intended for desktop use, as it is assumed that the target audience, given the age group,
 is familiar with technology and has access to an internet connection and laptops or desktop computers, either personally or
-through school. Although it is safe to assume that using the application will be intuitive and overly detailed
+through schools. Although it is safe to assume that using the application will be intuitive and overly detailed
 guidance unnecessary, it is important that the user-interface maintains a simple and clear structure, as the data visualisations
 themselves are expected to be relatively unfamiliar to users. It is likely that being faced with a webpage containing many visualisations
 at once and lacking a clear structure could be overwhelming.
