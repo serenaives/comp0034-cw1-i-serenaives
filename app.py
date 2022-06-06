@@ -337,9 +337,9 @@ app.layout = dbc.Container([
         dbc.CardGroup([
             dbc.Card([html.H1('Meteorite Landings')], style={'align': 'left', 'padding': '1%'}),
             dbc.CardGroup([
-                dbc.Card([dbc.Button(['explore the data'], style={'height': '100%'})], style={'width': '2'}),
-                dbc.Card([dbc.Button(['take the quiz'], style={'height': '100%'})], style={'width': '2'}),
-                dbc.Card([dbc.Button(['log in/ register'], style={'height': '100%'})], style={'width': '2'})
+                dbc.Card([dbc.Button(['explore the data'], color='danger', style={'height': '100%'})], style={'width': '2'}),
+                dbc.Card([dbc.Button(['take the quiz'], color='danger', style={'height': '100%'})], style={'width': '2'}),
+                dbc.Card([dbc.Button(['log in/ register'], color='danger', style={'height': '100%'})], style={'width': '2'})
             ], style={'align': 'right'})
         ], style={'padding': '1%'}, id='card-grp'),
     ]),
@@ -553,7 +553,7 @@ app.layout = dbc.Container([
                                         n_clicks=0,
                                         children=[
                                             html.P('clear selection')
-                                        ])
+                                        ], color='danger')
                                 ], style={'align': 'right'})
                             ], style={'width': '20%', 'align': 'right'})
                         ])
@@ -566,7 +566,7 @@ app.layout = dbc.Container([
                                 id='interactive-table',
                                 columns=[{'name': i, 'id': i} for i in table_cols],
                                 style_header={
-                                    'backgroundColor': '#78C2AD',
+                                    'backgroundColor': '#FF7850',
                                     'color': '#ffffff',
                                     'fontWeight': 'bold'
                                 }
@@ -805,7 +805,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 hoverinfo='text',
                 mode='markers',
                 marker=dict(
-                    color='#78C2AD',
+                    color='#FF7850',
                     # set marker size proportional to mass
                     size=2 * (np.log(filtered_df['mass (g)'])),
                     opacity=0.6),
