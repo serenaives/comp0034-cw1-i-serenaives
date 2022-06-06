@@ -30,7 +30,7 @@ interest of widening equal access to educational resources.
 This is an online application intended for desktop use, as it is assumed that the target audience, given the age group,
 is familiar with technology and has access to an internet connection and laptops or desktop computers, either personally or
 through schools. Although it is safe to assume that using the application will be intuitive and overly detailed
-guidance unnecessary, it is important that the user-interface maintains a simple and clear structure, as the data visualisations
+guidance unnecessary given the target audience, it is important that the user-interface maintains a simple and clear structure, as the data visualisations
 themselves are expected to be relatively unfamiliar to users. It is likely that being faced with a webpage containing many visualisations
 at once and lacking a clear structure could be overwhelming.
 
@@ -47,13 +47,18 @@ the relationships between these properties. The meteorite properties are:
 The specific questions addressed by each visualisation are outlined in the design rationales, linked in the *Visualisations* section below.
 
 ## Design Approach
+
+the priority is interactivity and giving users the ability to control data filters because we want students to feel involved in the process
+of *creating* the visualisations. Truly engaged with the data because they're here first and foremost to learn about the visualisations, rather
+than the meteorites
+
 data filters, interactivity, control boxes, general visual appearance of the dashboard
 UI should be intuitive and simple, not overwhelming (tab structure etc.)
 
 
 ## Visualisations
 The design rationale of the visualisations for each property is linked in a separate .md file below:
-1. [Location of Meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
+1. [Location of meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
 2. [Meteorite landings by category: bar graph & pie chart](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/category_graphs.md)
 3. [Meteorite landings by year: line graph](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/year_graph.md)
 4. [Meteorite landings by mass: histogram & box and whisker plot](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/mass_graphs.md)
