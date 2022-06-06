@@ -37,15 +37,15 @@ visible_arr = category_arr.copy()
 discrete_color_map = {'stony': '#3B8FA2',
                       'iron': '#CD4117',
                       'stony iron': '#F3CA4C',
-                      'unclassified': '#FFFFFF'}
+                      'unclassified': '#888888'}
 
 # array used to map meteorite categories to bar and pie chart colors
-colors = ['#3B8FA2', '#CD4117', '#F3CA4C', '#FFFFFF']
+colors = ['#3B8FA2', '#CD4117', '#F3CA4C', '#888888']
 
 # dictionary used to map year and mass graphs to colors corresponding to found/ fell categorisation
 two_color_palette = {
-    'Found': '#C5E47D',
-    'Fell': '#7EA30E'
+    'Found': '#466930',
+    'Fell': '#48BF52'
 }
 
 # column names for dash_table (corresponding to the dataset columns)
@@ -53,19 +53,19 @@ table_cols = ['name', 'fall', 'category', 'year', 'mass (g)']
 
 # generic layout for dcc.Graph objects
 layout = dict(
-    plot_bgcolor='#22434A',
-    paper_bgcolor='#22434A',
-    xaxis=dict(color='white', showgrid=False),
-    yaxis=dict(color='white', showgrid=False),
+    plot_bgcolor='#FFFFFF',
+    paper_bgcolor='#FFFFFF',
+    xaxis=dict(color='black', showgrid=False),
+    yaxis=dict(color='black', showgrid=False),
     title_font_family='Courier New',
     font_family='Courier New',
-    title_font_color='white',
-    font_color='white'
+    title_font_color='black',
+    font_color='black'
 )
 
 # Initialise the app
 # ---------------------------------------------------------------------------------
-app = dash.Dash(external_stylesheets=[dbc.themes.SOLAR], suppress_callback_exceptions=True)
+app = dash.Dash(external_stylesheets=[dbc.themes.MINTY], suppress_callback_exceptions=True)
 
 # Import data
 # ---------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ def get_category_graph(filtered_df, category_graph_type):
 
         fig.update_traces(
             textinfo='percent+label',
-            marker_line=dict(color='white', width=1)
+            marker_line=dict(color='black', width=1)
         )
 
     # update fig with generic graph layout and shared legend title
@@ -566,7 +566,7 @@ app.layout = dbc.Container([
                                 id='interactive-table',
                                 columns=[{'name': i, 'id': i} for i in table_cols],
                                 style_header={
-                                    'backgroundColor': '#b58900',
+                                    'backgroundColor': '#78C2AD',
                                     'color': '#ffffff',
                                     'fontWeight': 'bold'
                                 }
@@ -805,7 +805,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 hoverinfo='text',
                 mode='markers',
                 marker=dict(
-                    color='#b58900',
+                    color='#78C2AD',
                     # set marker size proportional to mass
                     size=2 * (np.log(filtered_df['mass (g)'])),
                     opacity=0.6),
@@ -828,7 +828,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
                 lon=0,
             ),
             zoom=0.7,
-            style='dark',
+            style='carto-positron',
         ),
     )
     fig = dict(data=trace, layout=map_layout)
