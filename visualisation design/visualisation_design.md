@@ -9,7 +9,7 @@ following learning objectives (Department for Education, 2016):
    2. vertical line charts for ungrouped discrete numerical data
    3. tables and line graphs for time series data 
    4. interpret diagrams for grouped discrete data and continuous data, i.e. histograms
-2. Interpret, analyse and compare the distributions of data sets from univariate empirical 
+2. Interpret, analyse and compare the distributions of data sets from uni-variate empirical 
 distributions through:
    1. appropriate graphical representation involving discrete, continuous and grouped data,
    including box plots
@@ -35,17 +35,24 @@ themselves are expected to be relatively unfamiliar to users. It is likely that 
 at once and lacking a clear structure could be overwhelming.
 
 ## Questions to be Addressed
+The dashboard aims to teach students how to use various data visualisations to gain information about the Meteorite Landings dataset.
+The visualisations were therefore designed with the objective of addressing questions about the properties of meteorite landings and
+the relationships between these properties. The meteorite properties are:
+1. Location of meteorite landing
+2. Discovery of meteorite (was it seen falling or discovered after landing)
+3. Category of meteorite
+4. Year of landing/ discovery
+5. Mass of meteorite
 
-
-1. 
+The questions addressed by each visualisation are outlined in the design rationales, linked in the *Visualisations* section below.
 
 ## Design Approach
 data filters, interactivity, control boxes, general visual appearance of the dashboard
-UI should be intuiotive and simple, not overwhelming (tab structure etc)
+UI should be intuitive and simple, not overwhelming (tab structure etc.)
 
 
 ## Visualisations
-The rationale for each justification is linked in a seperate .md file below:
+The rationale of the visualisations for each property is linked in a separate .md file below:
 1. [Geographic distribution of Meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
 2. [Meteorite landings by category: bar graph & pie chart](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/category_graphs.md)
 3. [Meteorite landings by year: line graph](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/year_graph.md)
