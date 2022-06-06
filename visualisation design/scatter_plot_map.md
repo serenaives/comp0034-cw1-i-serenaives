@@ -18,8 +18,8 @@ see [meteorite landings by category](https://github.com/ucl-comp0035/comp0034-cw
 
 ![](images/map%20selection.png)
 
-![](images/map%20size markers.png)
-
+![](images/map%20size%20markers.png)
+see [meteorite landings by mass](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/mass_graphs.md)
 
 
 
