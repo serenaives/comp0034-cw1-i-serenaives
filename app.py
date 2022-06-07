@@ -976,4 +976,4 @@ def display_mass_control_box(active_tab):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
