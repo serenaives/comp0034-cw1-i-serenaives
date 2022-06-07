@@ -137,8 +137,8 @@ def get_by_year_count(filtered_df):
     Returns:
         df_count: DataFrame with columns 'year', 'fall' and 'count'
     """
-    df_count = filtered_df.groupby(['year', 'fall'])['name'].count().reset_index()
-    df_count.rename(columns={'name': 'count'}, inplace=True)
+    df_count = filtered_df.groupby(['year', 'fall'])['name'].count().unstack(fill_value=0).stack().reset_index()
+    df_count.columns = ['year', 'fall', 'count']
     df_count.sort_values(by='year', inplace=True)
     return df_count
 
@@ -234,8 +234,9 @@ def get_year_graph(filtered_df, discovery):
     fig.update_layout(
         hovermode='x unified',
         yaxis_title='Number of Meteorite Landings',
-        xaxis_title='Year'
+        xaxis_title='Year',
     )
+    fig.update_yaxes(rangemode='tozero')
     return fig
 
 
@@ -975,4 +976,4 @@ def display_mass_control_box(active_tab):
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
