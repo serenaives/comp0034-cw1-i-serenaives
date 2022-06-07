@@ -85,10 +85,10 @@ There are two elements to the dashboard's interactive components:
   - box and lasso selection of data points on the map filters the dataset geographically
   - selecting/ deselecting meteorite categories on the bar chart legend filters the data points that appear
   on the bar graph and map by category
-- **chart editing:** users can choose between options
-  - bar chart/ pie chart to visualise number/ proportion of meteorites in different categories
-  - histogram/ box & whisker plot to visualise meteorite mass distribution
-  - log scale/ normal scale settings for the x-axis of the histogram and box & whisker plot
+- **chart editing:**
+  - bar chart/ pie chart options to visualise number/ proportion of meteorites in different categories
+  - histogram/ box & whisker plot options to visualise meteorite mass distribution
+  - log scale/ normal scale options for the x-axis of the histogram and box & whisker plot
 
 ### Data Visualisations
 The design rationale of the visualisations for each property (as described above) is linked in a separate .md file below:
