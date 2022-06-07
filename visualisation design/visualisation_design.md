@@ -48,7 +48,7 @@ The specific questions addressed by each visualisation are outlined in the desig
 
 ## Design
 Alberto Cairo describes a "fundamental clash" between an approach to data visualisation which emphasises functionality
-and one which treats it as an artistic endeavor, emphasising aesthetics (Cairo, 2012). The approach taken for this project is more suited
+and one which treats it as an artistic endeavor, emphasising aesthetics (Cairo, 2012, ch. 3). The approach taken for this project is more suited
 to the first camp. This decision was taken considering the primary aim of the visualisations to educate and provide users unfamiliar with
 standard data visualisation techniques with an appreciation for how various charts and graphs can convey information about the meteorite
 landings. An over-emphasis on aesthetic trivialities could result in an overly flamboyant feel to the dashboard that would distract
@@ -85,10 +85,11 @@ There are two elements to the dashboard's interactive components:
   - box and lasso selection of data points on the map filters the dataset geographically
   - selecting/ deselecting meteorite categories on the bar chart legend filters the data points that appear
   on the bar graph and map by category
-- **chart editing:**
+- **chart/ graph editing:**
   - bar chart/ pie chart options to visualise number/ proportion of meteorites in different categories
   - histogram/ box & whisker plot options to visualise meteorite mass distribution
   - log scale/ normal scale options for the x-axis of the histogram and box & whisker plot
+  - option to coordinate map marker size to meteorite mass or color to meteorite category
 
 ### Data Visualisations
 The design rationale of the visualisations for each property (as described above) is linked in a separate .md file below:
@@ -101,11 +102,15 @@ The design rationale of the visualisations for each property (as described above
 
 Cairo, A. (2012). *The Functional Art: An introduction to information graphics and visualisation*, New Riders.
 
+Cairo, A. (2016). *The Truthful Art: Data, Charts, and Maps for Communication*, New Riders.
+
 Department for Education. (2016), [GCSE Mathematics subject content and assessment objectives](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/254441/GCSE_mathematics_subject_content_and_assessment_objectives.pdf), *Gov UK* [online].
 
 Few, S. (2005). *[Show Me the Numbers](https://courses.washington.edu/info424/2007/readings/Show_Me_the_Numbers_v2.pdf)*, University of Washington [online].
 
-Haight, D. (2020), [Towards Better Visualisations: Part II - How to be More Effective](https://www.darkhorseanalytics.com/blog/towards-better-visualizations-part-2), *Dark Horse Analytics* [online].
+Grover, V. (2021). [Role of Interactive Maps in Data Visualization](https://www.toolbox.com/marketing/content-marketing/articles/role-of-interactive-maps-in-data-visualization/), *Toolbox* [online].
+
+Haight, D. (2020). [Towards Better Visualisations: Part II - How to be More Effective](https://www.darkhorseanalytics.com/blog/towards-better-visualizations-part-2), *Dark Horse Analytics* [online].
 
 Setlur, V. and Stone, M.C. (2016) [A Linguistic Approach to Categorical Color Assignment for Data Visualization](https://ieeexplore.ieee.org/abstract/document/7192709), *IEEE Transactions on Visualization and Computer Graphics*, 22(1), pp. 698-707.
 
