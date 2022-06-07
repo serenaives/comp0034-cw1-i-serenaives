@@ -59,10 +59,11 @@ for data visualisation as a worthwhile tool.
 
 This functional approach to the dashboard design manifests in:
 - a minimalist design which splits the screen and uses tabs to ensure that there are only two visualisations visible at once, reducing clutter and keeping each graph within eye span (an important consideration according to Stephen Few (Few, 2005))
+- a light-coloured background made up of whites and greys
 - a lack of grid lines on charts (in line with Tufte's advice on minimising the data-ink ratio (Tufte, 1990))
 - employing hover functionality rather than grid labels to communicate data that is not immediately evident from the charts/ graphs
 
-See screenshots of the overall dashboard layout:
+See screenshots of the overall dashboard layout below:
 
 **page header and control box:**
 ![](images/page%20header.png)
@@ -70,17 +71,24 @@ See screenshots of the overall dashboard layout:
 **visualisations:**
 ![](images/full%20page.png)
 
-
-### Colour Palettes
-
-**category:**
-![](images/category%20colour%20palette.png)
-
-**discovery:**
-![](images/discovery%20colour%20palette.png)
-
 ### Interactivity
-All the visualisations use colour to highlight distinctions between categorical data in order to guide the user in making distinctions when interpreting the visualisations. The colour
+
+Interactive components allow users to manipulate the dataset and charts by choosing between various data filters and settings.
+It is expected that these features encourage users to pay attention to how the charts respond, familiarising them with the
+relationship between the data and the visualisations in line with the educational objective. The interactive component also aims
+to promote genuine engagement with the dataset by encouraging users to "cross the great chasm between passive consumption and active
+exploration" as referenced by Daniel Haight (Haight, 2020).
+
+There are two elements to the dashboard's interactive components:
+- **data filtering:** 
+  - the control box at the top of the page allows the user to apply various filters to the dataset
+  - box and lasso selection of data points on the map filters the dataset geographically
+  - selecting/ deselecting meteorite categories on the bar chart legend filters the data points that appear
+  on the bar graph and map by category
+- **chart editing:** users can choose between options
+  - bar chart/ pie chart to visualise number/ proportion of meteorites in different categories
+  - histogram/ box & whisker plot to visualise meteorite mass distribution
+  - log scale/ normal scale settings for the x-axis of the histogram and box & whisker plot
 
 ### Data Visualisations
 The design rationale of the visualisations for each property (as described above) is linked in a separate .md file below:
