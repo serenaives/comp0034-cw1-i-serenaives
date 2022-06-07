@@ -3,7 +3,7 @@
 ## Target Audience
 The target audience is GCSE Maths students aged 15-16. This application is intended to
 complement the Statistics component of GCSE Maths, which specifies the
-following learning objectives (Department for Education, 2016):
+following learning objectives (Department for Education, 2016, p. 11-12):
 1. Interpret tables, charts and diagrams and know their appropriate use, including:
    1. frequency tables, bar charts and pie charts for categorical data,
    2. vertical line charts for ungrouped discrete numerical data
@@ -22,7 +22,7 @@ referenced in the syllabus. The chosen dataset is ideal as it includes discrete,
 giving students the opportunity to familiarise themselves with various data types.
 
 The application targets ambitious students eager to learn and willing to explore the syllabus content in their own time.
-The intended target audience also has at least a mild interest in meteorites, as the core idea is that giving students
+The intended target audience also has a significant interest in meteorites, as the core idea is that giving students
 the opportunity to apply the tools they have been taught in the classroom to learn about a topic of personal interest will
 encourage further engagement and an improved understanding of the syllabus content. The application is open-source in the
 interest of widening equal access to educational resources.
@@ -34,9 +34,9 @@ guidance unnecessary given the target audience, it is important that the user-in
 themselves are expected to be relatively unfamiliar to users. It is likely that being faced with a webpage containing many visualisations
 at once and lacking a clear structure could be overwhelming.
 
-## Questions to be Addressed
-The dashboard aims to teach students how to use various data visualisations to gain information about the Meteorite Landings dataset.
-The visualisations were therefore designed with the objective of addressing questions about the properties of meteorite landings and
+## Data
+The dashboard aims to teach students how to use various data visualisations to gain information about the [Meteorite Landings dataset](https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh).
+The visualisations were designed with the objective of addressing questions about the properties of meteorite landings and
 the relationships between these properties. The meteorite properties are:
 1. Location of meteorite landing
 2. Discovery of meteorite (was it seen falling or discovered after landing)
@@ -46,18 +46,44 @@ the relationships between these properties. The meteorite properties are:
 
 The specific questions addressed by each visualisation are outlined in the design rationales, linked in the *Visualisations* section below.
 
-## Design Approach
+## Design
+Alberto Cairo describes a "fundamental clash" between an approach to data visualisation which emphasises functionality
+and one which treats it as an artistic endeavor, emphasising aesthetics (Cairo, 2012). The approach taken for this project is more suited
+to the first camp. This decision was taken considering the primary aim of the visualisations to educate and provide users unfamiliar with
+standard data visualisation techniques with an appreciation for how various charts and graphs can convey information about the meteorite
+landings. An over-emphasis on aesthetic trivialities could result in an overly flamboyant feel to the dashboard that would distract
+from the data itself and overwhelm users. In addition to minimising clutter and confusion, the choice of a functional approach is particularly
+relevant to Edward Tufte's criticisms of "chartjunk" as exposing an underlying belief "that numbers and details are boring, dull, and tedious,
+requiring ornament to enliven" (Tufte, 1990, p. 34); it is important that users *see* the data speaking for itself if they are to gain an appreciation
+for data visualisation as a worthwhile tool.
 
-the priority is interactivity and giving users the ability to control data filters because we want students to feel involved in the process
-of *creating* the visualisations. Truly engaged with the data because they're here first and foremost to learn about the visualisations, rather
-than the meteorites
+This functional approach to the dashboard design manifests in:
+- a minimalist design which splits the screen and uses tabs to ensure that there are only two visualisations visible at once, reducing clutter and keeping each graph within eye span (an important consideration according to Stephen Few (Few, 2005))
+- a lack of grid lines on charts (in line with Tufte's advice on minimising the data-ink ratio (Tufte, 1990))
+- employing hover functionality rather than grid labels to communicate data that is not immediately evident from the charts/ graphs
 
-data filters, interactivity, control boxes, general visual appearance of the dashboard
-UI should be intuitive and simple, not overwhelming (tab structure etc.)
+See screenshots of the overall dashboard layout:
+
+**page header and control box:**
+![](images/page%20header.png)
+
+**visualisations:**
+![](images/full%20page.png)
 
 
-## Visualisations
-The design rationale of the visualisations for each property is linked in a separate .md file below:
+### Colour Palettes
+
+**category:**
+![](images/category%20colour%20palette.png)
+
+**discovery:**
+![](images/discovery%20colour%20palette.png)
+
+### Interactivity
+All the visualisations use colour to highlight distinctions between categorical data in order to guide the user in making distinctions when interpreting the visualisations. The colour
+
+### Data Visualisations
+The design rationale of the visualisations for each property (as described above) is linked in a separate .md file below:
 1. [Location of meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
 2. [Meteorite landings by category: bar graph & pie chart](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/category_graphs.md)
 3. [Meteorite landings by year: line graph](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/year_graph.md)
@@ -65,4 +91,15 @@ The design rationale of the visualisations for each property is linked in a sepa
 
 ## References
 
-Department for Education (2016), [GCSE Mathematics subject content and assessment objectives](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/254441/GCSE_mathematics_subject_content_and_assessment_objectives.pdf), Gov UK, p. 11-12
+Cairo, A. (2012). *The Functional Art: An introduction to information graphics and visualisation*, New Riders.
+
+Department for Education. (2016), [GCSE Mathematics subject content and assessment objectives](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/254441/GCSE_mathematics_subject_content_and_assessment_objectives.pdf), *Gov UK* [online].
+
+Few, S. (2005). *[Show Me the Numbers](https://courses.washington.edu/info424/2007/readings/Show_Me_the_Numbers_v2.pdf)*, University of Washington [online].
+
+Haight, D. (2020), [Towards Better Visualisations: Part II - How to be More Effective](https://www.darkhorseanalytics.com/blog/towards-better-visualizations-part-2), *Dark Horse Analytics* [online].
+
+Setlur, V. and Stone, M.C. (2016) [A Linguistic Approach to Categorical Color Assignment for Data Visualization](https://ieeexplore.ieee.org/abstract/document/7192709), *IEEE Transactions on Visualization and Computer Graphics*, 22(1), pp. 698-707.
+
+Tufte, E. (1990). *Envisioning Information*, Graphics Press: Michigan.
+
