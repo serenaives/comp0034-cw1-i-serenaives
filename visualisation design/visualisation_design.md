@@ -88,7 +88,7 @@ There are two elements to the dashboard's interactive components:
 - **chart/ graph editing:**
   - bar chart/ pie chart options to visualise number/ proportion of meteorites in different categories
   - histogram/ box & whisker plot options to visualise meteorite mass distribution
-  - log scale/ normal scale options for the x-axis of the histogram and box & whisker plot
+  - log/ linear scale options for the x-axis of the histogram and box & whisker plot
   - option to coordinate map marker size to meteorite mass or color to meteorite category
 
 ### Individual Data Visualisations
