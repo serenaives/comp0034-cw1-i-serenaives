@@ -4,9 +4,9 @@
 1. Are there any **spatial patterns** in the locations of the meteorite landings?
 2. What is the **geographical distribution** of meteorite landings?
 3. How is the geographic distribution of meteorite landings **related to**
-   1. meteorite category?
-   2. the year the meteorite was observed falling or found?
-   3. meteorite mass?
+   1. meteorite category
+   2. year of meteorite landing/ discovery
+   3. meteorite mass
 
 ## Visualisation: Scatter Plot Map
 The latitude and longitude data for each meteorite landing was used to create a scatter plot map with
@@ -34,7 +34,7 @@ these controls can be seen in the following screenshots.
 **table (updates depending on the map markers selected by the user):**
 ![](images/table.png)
 
-### Explanation
+## Explanation
 
 Although scatter map plots are not on the GCSE syllabus which concerns the target audience, it has been noted that when maps
 are used in data visualisation, "visual navigation is easier, even novice users can find correlations, patterns, and outliers"
@@ -50,7 +50,7 @@ distract from the plotted data points. Following Cairo's guidance (Cairo, 2016, 
 clarity and reduce visual clutter. Marker sizes are kept proportional to mass (another significant point of emphasis for Cairo)
 by setting size to double the logarithm of meteorite mass for each data point.
 
-### Evaluation
+## Evaluation
 
 The map is a valuable inclusion in the application, aesthetically pleasing in its simplicity without sacrificing information.
 The interactive component is a key contributor to the success of this balance, as it allows for a very simple design that only

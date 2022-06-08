@@ -4,9 +4,9 @@
 1. **How many** meteorites of each category have landed over the years?
 2. **What proportion** of meteorites of each category have landed over the years?
 3. What is the **relationship** between the amount/ proportion of meteorite landings by category and
-   1. the geographical distribution of meteorite landings
-   2. the year of meteorite landing/ discovery
-   3. the mass of meteorites
+   1. geographical distribution of meteorite landings
+   2. year of meteorite landing/ discovery
+   3. meteorite mass
 
 ## Visualisations: Bar Graph and Pie Chart
 
