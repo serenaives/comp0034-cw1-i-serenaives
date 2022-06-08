@@ -106,6 +106,8 @@ Cairo, A. (2016). *The Truthful Art: Data, Charts, and Maps for Communication*, 
 
 Department for Education. (2016), [GCSE Mathematics subject content and assessment objectives](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/254441/GCSE_mathematics_subject_content_and_assessment_objectives.pdf), *Gov UK* [online].
 
+Indeed Editorial Team (2022), [Color Choices in Data Visualizations: Importance and How To](https://www.indeed.com/career-advice/career-development/how-to-choose-color-for-data-visualizations). *Career Development* [online].
+
 Few, S. (2005). *[Show Me the Numbers](https://courses.washington.edu/info424/2007/readings/Show_Me_the_Numbers_v2.pdf)*, University of Washington [online].
 
 Grover, V. (2021). [Role of Interactive Maps in Data Visualization](https://www.toolbox.com/marketing/content-marketing/articles/role-of-interactive-maps-in-data-visualization/), *Toolbox* [online].
@@ -116,3 +118,4 @@ Setlur, V. and Stone, M.C. (2016) [A Linguistic Approach to Categorical Color As
 
 Tufte, E. (1990). *Envisioning Information*, Graphics Press: Michigan.
 
+Unwin, A. et al. (2008). *Handbook of Data Visualisation*(https://haralick.org/DV/Handbook_of_Data_Visualization.pdf). CASE: Berlin.
