@@ -5,7 +5,8 @@
    1. is it skewed in any particular way?
    2. what are the descriptive statistics such as the mean, median, mode, quartile ranges etc.?
    3. are there any outliers?
-2. How is the distribution of meteorite mass related (if at all) to 
+2. How does the distribution of observed landings **compare to** the distribution of meteorites that were discovered after landing over the years?
+3. How is the distribution of meteorite mass related (if at all) to 
    1. geographical distribution of meteorite landings
    3. meteorite category
    3. year of meteorite landing/ discovery
@@ -32,3 +33,17 @@ as these graphs deal similarly with meteorite discovery categorisation and consi
 (Unwin et al., 2008, p. 59).
 
 ## Evaluation
+
+The simplicity of the design and the moderate use of colour allows for visually appealing visualisations,
+very important as histograms and box & whisker plots tend to be one of the topics students find most daunting.
+The semi-transparent design of the different histograms allows for convenient comparison between the different
+modes of discovery with the goal of addressing question 2.
+
+The interactive component of the visualisation could have been improved by allowing the user to manipulate bin
+size, as interpreting histograms with different bin sizes, including equal and unequal intervals, is specifically
+referenced in the GCSE syllabus. This could have allowed more advanced students to engage more deeply with the content.
+t is important to note, however, that imposing constraints on users is an important consideration in designing
+interactive graphics (Cairo, 2012, ch. 9), and there is already a significant amount of interactivity already
+available. Including this function would certainly benefit a small number of students, but it deals with a relatively
+advanced section of the syllabus and may confuse the majority, likely requiring more explanation and guidance than can
+be provided through this application.
