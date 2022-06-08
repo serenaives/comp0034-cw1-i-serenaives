@@ -12,7 +12,10 @@
    3. year of meteorite landing/ discovery
 
 ## Visualisations: Histogram and Box and Whisker Plot
-allows to answer distribution q - outliers etc
+Mass is a continuous measure, so a histogram is ideal to answer questions related to its distribution. The box and whisker
+plot allows users to observe outliers and any data at a glance, with labels illuminating the descriptive statistics referenced
+in question 1ii. Different colours corresponding to different modes of discovery address question 2 and the data filters in the
+control box allow the user to explore the relationship to other properties of meteorite landings (question 3).
 
 **Histogram:**
 ![](images/histogram.png)
@@ -30,7 +33,13 @@ allows to answer distribution q - outliers etc
 
 The same colour palette is used in these graphs as explained in the design rationale for the [line graph](year_graph.md)
 as these graphs deal similarly with meteorite discovery categorisation and consistency is crucial to effective visualisations
-(Unwin et al., 2008, p. 59).
+(Unwin et al., 2008, p. 59). 
+
+Users are given the option to switch between a box plot and histogram in order to familiarise them with both graphs and get a
+sense of the differences between both in the context of the same data. Meteorite mass is heavily skewed towards very small values,
+so a log scale is set as the default for the x-axis. The user is given the option to view both plots with either a log or linear scale
+in order for them to gain an understanding of the difference and why a log scale is more appropriate in this case - it makes the user
+more engaged in the process of *constructing* the visualisations.
 
 ## Evaluation
 
@@ -47,3 +56,6 @@ interactive graphics (Cairo, 2012, ch. 9), and there is already a significant am
 available. Including this function would certainly benefit a small number of students, but it deals with a relatively
 advanced section of the syllabus and may confuse the majority, likely requiring more explanation and guidance than can
 be provided through this application.
+
+Finally, it may have been useful to display the histogram and box plot simultaneously on the same tab as each presents
+a very different approach to visualising the distribution of a continuous variable and complement each other.
