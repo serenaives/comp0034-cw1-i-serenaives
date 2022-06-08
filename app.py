@@ -719,7 +719,8 @@ app.layout = dbc.Container([
 # geographical scatter map
 # ------------------------------------------------------------------------------
 @app.callback(
-    Output('map-plot', 'figure'),
+    [Output('map-plot', 'figure'),
+     Output('map-plot', 'selectedData')],
     [Input('year-slider', 'value'),
      Input('found-fell-selection', 'value'),
      Input('color-coordinate', 'value'),
@@ -730,15 +731,18 @@ app.layout = dbc.Container([
      Input('map-plot', 'selectedData'),
      State('map-plot', 'figure')]
 )
-def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, geo_selected, current_fig):
+def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, size, cat_selected, selected_data, current_fig):
     filtered_df = get_filtered_df(years_selected, discovery, mass_selected)
     text = filtered_df.name
     trace = []
+    selectedData = None
 
     # if anything other than input from the <<reset map selection>> button triggered the callback
     if ctx.triggered[0]['prop_id'].split('.')[0] != 'refresh-button':
         # filter by current selection of points on map
-        filtered_df = geo_filter(filtered_df, geo_selected)
+        filtered_df = geo_filter(filtered_df, selected_data)
+        # keep the same selection of points as before
+        selectedData = selected_data
 
     # share data stored in visible_arr between callbacks
     global visible_arr
@@ -765,7 +769,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
             # except for first call, when no fig has been initialised yet
             if current_fig is not None:
                 # map display remains unchanged
-                return current_fig
+                return [current_fig, selected_data]
 
     # if user has selected option to coordinate map markers to category
     if color_coord == 'on':
@@ -840,7 +844,7 @@ def update_map(years_selected, discovery, color_coord, n_clicks, mass_selected, 
         for i in fig['data']:
             i['marker']['size'] = 9
 
-    return fig
+    return [fig, selectedData]
 
 
 # interactive table
