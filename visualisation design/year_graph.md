@@ -43,9 +43,10 @@ to obscure the other.
 
 ## Evaluation
 
-- replacing no data with zeros after reading cairo should be suspicious if axis not based at zero
-- misleading - nothing shows up
-- definitely can't rely on target audience to make that conclusion, will just confuse them
-
-- may have helped to have x axes longer but can't use no data and also can't lengthen it bc will confuse so this
-is the trade-off
+The initial design refrained from plotting data points for years when no landings were recorded. This resulted in the y-axis beginning at 1, and
+meant that certain selected time-intervals would reveal no points on the graph (if there was never more than one landing per year in a given time
+period) despite landings having been recorded. This was adjusted after noting Unwin's remark that not ncluding zero in a scale ought to
+"make the reader wonder if some deception is being practiced" (Unwin et al., 2008). Although the target audience is unlikely to be "suspicious"
+given their level of experience, this kind of unconventional scaling would certainly be a potential point of confusion which misleads and
+undermines the educational gial. The years with no corresponding data were therefore replaced with zero values and the y-axis adjusted to
+start at zero, which resulted in a much cleaner look first the graph overall.
