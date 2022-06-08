@@ -91,8 +91,8 @@ There are two elements to the dashboard's interactive components:
   - log scale/ normal scale options for the x-axis of the histogram and box & whisker plot
   - option to coordinate map marker size to meteorite mass or color to meteorite category
 
-### Data Visualisations
-The design rationale of the visualisations for each property (as described above) is linked in a separate .md file below:
+### Individual Data Visualisations
+The design rationale and evaluation of the visualisations for each property (as described above) is linked in a separate .md file below:
 1. [Location of meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
 2. [Meteorite landings by category: bar graph & pie chart](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/category_graphs.md)
 3. [Meteorite landings by year: line graph](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/year_graph.md)
