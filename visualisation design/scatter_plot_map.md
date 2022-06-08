@@ -58,7 +58,7 @@ adds complexity and additional visual elements if the user's preferences dictate
 
 Although the interactivity helps push the user towards the crucial "active exploration", there is a risk that this visualisation
 relies too much on user initiative to recognise patters and correlations, particularly considering the inexperience of the target
-audience. It is a key responsibility of successful data visualisations to guide the user through a narrative (Haight, 2020), and a solution such
+audience. It is a key responsibility of successful data visualisations to *guide* the user through a narrative (Haight, 2020), and a solution such
 as including an animation element would likely improve user understanding further. For example, an animation in which the data points 
 appear sequentially across a time series would help address the question about the relationship between geographic distribution and 
 year of discovery without relying on the user to experiment with the year range-slider.
