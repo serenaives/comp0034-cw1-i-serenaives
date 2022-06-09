@@ -1,6 +1,6 @@
 # COMP0034 Coursework 1
 
-Linkk to: [GitHub repository](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives)
+Link to: [GitHub repository](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives)
 
 Link to: [video demonstration](https://www.youtube.com/watch?v=z-lsMgPTBN8)
 
