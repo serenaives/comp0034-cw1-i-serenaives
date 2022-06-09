@@ -32,14 +32,14 @@ items addresses question 3i, while the range sliders in the control box help add
 
 ## Explanation
 
-It is commonplace to colour-code discrete categorical data using diverging colour palettes (Indeed Editorial Team, 2022). The colour palette chosen.
+It is commonplace to colour-code discrete categorical data using diverging colour palettes (Indeed Editorial Team, 2022). The colour palette (displayed above) was chosen accordingly.
 Semantic associations were also considered (iron was assigned to red, stony to blue, grey to uncategorised and overall,
 earthy tones were used) to improve the intuitiveness of the visualisation. This is particularly important considering that 
 the need to look between one end of the screen and the other in order to compare the bar/ pie chart to the colour-coordinated
 map means that it is not convenient to be constantly referring to the legend too, and meaningful colour assignments tend to improve
 information recall (Indeed Editorial Team, 2022).
 
-There was a trade-off to consider between pie charts and nar charts for visualising meteorite category; pie charts tend to be more intuitive, especially 
+There was a trade-off to consider between pie charts and bar charts for visualising meteorite category; pie charts tend to be more intuitive, especially 
 regarding the question related to *proportion,* but bar charts are more informative in terms of communicating actual numerical values and answering the
 *how many* question. It was eventually decided that the bar chart would be the main visualisation, with an option for the user to switch to viewing the data 
 as a pie chart in order to get a feel for how two of the core charts referenced on the syllabus can represent the same data, and allow the more intuitive pie
