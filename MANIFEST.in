@@ -1,2 +1,4 @@
+graft flask_app/static
+graft flask_app/templates
 global-exclude *.py[cod]
 exclude test*/*.py
