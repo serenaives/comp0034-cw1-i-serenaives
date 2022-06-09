@@ -1,6 +1,6 @@
 # Meteorite Mass
 
-## Questions Addressed]
+## Questions Addressed
 1. What is the distribution of meteorite mass
    1. is it skewed in any particular way?
    2. what are the descriptive statistics such as the mean, median, mode, quartile ranges etc.?
