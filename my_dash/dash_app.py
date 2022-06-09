@@ -69,7 +69,7 @@ app = dash.Dash(external_stylesheets=[dbc.themes.MINTY], suppress_callback_excep
 
 # Import data
 # ---------------------------------------------------------------------------------
-df = pd.read_csv('meteorite_landings_cleaned.csv')
+df = pd.read_csv('../meteorite_landings_cleaned.csv')
 
 
 # Define functions used in data filtering
