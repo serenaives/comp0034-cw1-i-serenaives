@@ -12,5 +12,6 @@ setup(
         'pandas',
         'dash',
         'dash-bootstrap-components',
+        'flask'
     ],
 )
