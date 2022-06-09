@@ -18,16 +18,16 @@ categories appear/ disappear simultaneously on the map and bar chart by selectin
 items addresses question 3i, while the range sliders in the control box help address questions 3ii and iii.
 
 **Bar graph:**
-![](images/bar%20graph.png)
+![](images/bar graph.png)
 
 **Bar chart hover functionality:**
-![](images/bar%20chart%20hover.png)
+![](images/bar chart hover.png)
 
 **Pie chart:**
-![](images/pie%20chart.png)
+![](images/pie chart.png)
 
 **colour palette:**
-![](images/category%20colour%20palette.png)
+![](images/category colour palette.png)
 
 
 ## Explanation

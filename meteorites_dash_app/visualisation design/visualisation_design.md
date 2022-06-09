@@ -66,10 +66,10 @@ This functional approach to the dashboard design manifests in:
 See screenshots of the overall dashboard layout below:
 
 **page header and control box:**
-![](images/page%20header.png)
+![](images/page header.png)
 
 **visualisations:**
-![](images/full%20page.png)
+![](images/full page.png)
 
 ### Interactivity
 

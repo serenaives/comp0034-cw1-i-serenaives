@@ -21,13 +21,13 @@ control box allow the user to explore the relationship to other properties of me
 ![](images/histogram.png)
 
 **Box and whisker plot**
-![](images/box%20plot.png)
+![](images/box plot.png)
 
 **Box and whisker plot with labels:**
-![](images/box%20plot%20labelled.png)
+![](images/box plot labelled.png)
 
 **colour palette**
-![](images/discovery%20colour%20palette.png)
+![](images/discovery colour palette.png)
 
 ## Explanation
 
