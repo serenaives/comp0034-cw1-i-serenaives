@@ -21,7 +21,7 @@ items addresses question 3i, while the range sliders in the control box help add
 ![](/coursework_1/visualisation%20design/images/bar%20graph.png)
 
 **Bar chart hover functionality:**
-![](/coursework_1/visualisation%20design/images/bar%20chart hover.png)
+![](/coursework_1/visualisation%20design/images/bar%20chart%20hover.png)
 
 **Pie chart:**
 ![](/coursework_1/visualisation%20design/images/pie%20chart.png)
