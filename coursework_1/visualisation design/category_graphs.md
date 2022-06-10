@@ -13,21 +13,21 @@
 Since meteorite category is a discrete measure related here to questions of *how many* and 
 *what proportion*, the classic bar and pie chart visualisations are appropriate. The option to coordinate
 map markers to the colour of the bar/ segment meteorite category (as described in the design rationale for
-the [scatter map plot](scatter_plot_map.md)), and the ability to make points corresponding to certain
+the [scatter map plot](/coursework_1/visualisation%20design/scatter_plot_map.md)), and the ability to make points corresponding to certain
 categories appear/ disappear simultaneously on the map and bar chart by selecting/ deselecting legend
 items addresses question 3i, while the range sliders in the control box help address questions 3ii and iii.
 
 **Bar graph:**
-![](images/bar graph.png)
+![](/coursework_1/visualisation%20design/images/bar graph.png)
 
 **Bar chart hover functionality:**
-![](images/bar chart hover.png)
+![](/coursework_1/visualisation%20design/images/bar chart hover.png)
 
 **Pie chart:**
-![](images/pie chart.png)
+![](/coursework_1/visualisation%20design/images/pie chart.png)
 
 **colour palette:**
-![](images/category colour palette.png)
+![](/coursework_1/visualisation%20design/images/category colour palette.png)
 
 
 ## Explanation
