@@ -28,3 +28,4 @@ tenacity==8.0.1
 tomli==2.0.1
 Werkzeug==2.0.3
 flask_migrate
+flask_bootstrap

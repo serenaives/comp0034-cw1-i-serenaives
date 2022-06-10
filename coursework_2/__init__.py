@@ -3,7 +3,7 @@ from flask import Flask
 from flask.helpers import get_root_path
 from flask_login import login_required
 import dash_bootstrap_components as dbc
-
+from flask_bootstrap import Bootstrap
 
 def create_app(Config):
     server = Flask(__name__)
@@ -17,6 +17,9 @@ def create_app(Config):
         from coursework_2.models import User
         from coursework_2.extensions import db
         db.create_all()
+
+    Bootstrap(server)
+
     return server
 
 
