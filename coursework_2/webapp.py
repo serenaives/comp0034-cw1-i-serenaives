@@ -9,10 +9,10 @@ from flask_login import login_user
 from flask_login import logout_user
 from werkzeug.urls import url_parse
 
-from extensions import db
-from forms import LoginForm
-from forms import RegistrationForm
-from models import User
+from coursework_2.extensions import db
+from coursework_2.forms import LoginForm
+from coursework_2.forms import RegistrationForm
+from coursework_2.models import User
 
 server_bp = Blueprint('main', __name__)
 
@@ -66,9 +66,3 @@ def register():
         return redirect(url_for('main.login'))
 
     return render_template('register.html', title='Register', form=form)
-
-
-app = dash.Dash(server=server, routes_pathname_prefix="/dash/")
-
-if __name__ == "__main__":
-    app.run()

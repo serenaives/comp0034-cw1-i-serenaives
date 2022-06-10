@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from dash.dependencies import Input, Output, State
@@ -44,7 +46,8 @@ layout = dict(
 
 # Import data
 # ---------------------------------------------------------------------------------
-df = pd.read_csv('../meteorite_landings_cleaned.csv')
+fp = Path(__file__).parent.parent.parent.joinpath('meteorite_landings_cleaned.csv')
+df = pd.read_csv(fp)
 
 # Define functions used in data filtering
 # ---------------------------------------------------------------------------------

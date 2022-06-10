@@ -2,8 +2,8 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
-from extensions import db
-from extensions import login
+from coursework_2.extensions import db
+from coursework_2.extensions import login
 
 
 @login.user_loader

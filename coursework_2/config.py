@@ -16,7 +16,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
 
-    DATA_PATH = pathlib.Path(__file__).parent.parent.joinpath("data")
+    DATA_PATH = pathlib.Path(__file__).parent.joinpath("data")
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(DATA_PATH.joinpath('coursework_2.sqlite'))
 
 

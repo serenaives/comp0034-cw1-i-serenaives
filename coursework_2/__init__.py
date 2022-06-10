@@ -2,24 +2,27 @@ import dash
 from flask import Flask
 from flask.helpers import get_root_path
 from flask_login import login_required
+import dash_bootstrap_components as dbc
 
-from config import DevelopmentConfig
 
-
-def create_app():
+def create_app(Config):
     server = Flask(__name__)
-    server.config.from_object(DevelopmentConfig)
+    server.config.from_object(Config)
 
     register_dashapp(server)
     register_extensions(server)
     register_blueprints(server)
 
+    with server.app_context():
+        from coursework_2.models import User
+        from coursework_2.extensions import db
+        db.create_all()
     return server
 
 
 def register_dashapp(app):
-    from dashboard.layout import layout
-    from dashboard.callbacks import register_callbacks
+    from coursework_2.dashboard.layout import layout
+    from coursework_2.dashboard.callbacks import register_callbacks
 
     # Meta tags for viewport responsiveness
     meta_viewport = {
@@ -30,7 +33,10 @@ def register_dashapp(app):
                          server=app,
                          url_base_pathname='/dashboard/',
                          assets_folder=get_root_path(__name__) + '/dashboard/assets/',
-                         meta_tags=[meta_viewport])
+                         meta_tags=[meta_viewport],
+                         external_stylesheets=[dbc.themes.MINTY],
+                         suppress_callback_exceptions=True
+                         )
 
     with app.app_context():
         dashapp1.title = 'Dashapp 1'
@@ -59,6 +65,6 @@ def register_extensions(server):
 
 
 def register_blueprints(server):
-    from coursework_2 import server_bp
+    from coursework_2.webapp import server_bp
 
     server.register_blueprint(server_bp)
