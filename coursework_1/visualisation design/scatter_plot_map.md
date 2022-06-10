@@ -20,16 +20,16 @@ complexity to the scatter plot map by coordinating map markers to meteorite cate
 these controls can be seen in the following screenshots.
 
 **default map settings:**
-![](/coursework_1/visualisation%20design/images/map uncoloured.png)
+![](/coursework_1/visualisation%20design/images/map%20uncoloured.png)
 
 **map markers colour-coordinated to meteorite category:**
-![](/coursework_1/visualisation%20design/images/map coloured.png)
+![](/coursework_1/visualisation%20design/images/map%20coloured.png)
 
 **map markers size-coordinated to meteorite mass (bubble map):**
-![](/coursework_1/visualisation%20design/images/map size markers.png)
+![](/coursework_1/visualisation%20design/images/map%20size%20markers.png)
 
 **geographical selection & filtering functionality:**
-![](/coursework_1/visualisation%20design/images/map selection.png)
+![](/coursework_1/visualisation%20design/images/map%20selection.png)
 
 **table (updates depending on the map markers selected by the user):**
 ![](/coursework_1/visualisation%20design/images/table.png)

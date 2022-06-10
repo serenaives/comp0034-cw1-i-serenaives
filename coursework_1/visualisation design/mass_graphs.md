@@ -21,13 +21,13 @@ control box allow the user to explore the relationship to other properties of me
 ![](/coursework_1/visualisation%20design/images/histogram.png)
 
 **Box and whisker plot**
-![](/coursework_1/visualisation%20design/images/box plot.png)
+![](/coursework_1/visualisation%20design/images/box%20plot.png)
 
 **Box and whisker plot with labels:**
-![](/coursework_1/visualisation%20design/images/box plot labelled.png)
+![](/coursework_1/visualisation%20design/images/box%20plot%20labelled.png)
 
 **colour palette**
-![](/coursework_1/visualisation%20design/images/discovery colour palette.png)
+![](/coursework_1/visualisation%20design/images/discovery%20colour%20palette.png)
 
 ## Explanation
 
