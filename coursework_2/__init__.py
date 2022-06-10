@@ -29,21 +29,21 @@ def register_dashapp(app):
         "name": "viewport",
         "content": "width=device-width, initial-scale=1, shrink-to-fit=no"}
 
-    dashapp1 = dash.Dash(__name__,
-                         server=app,
-                         url_base_pathname='/dashboard/',
-                         assets_folder=get_root_path(__name__) + '/dashboard/assets/',
-                         meta_tags=[meta_viewport],
-                         external_stylesheets=[dbc.themes.MINTY],
-                         suppress_callback_exceptions=True
-                         )
+    dashapp = dash.Dash(__name__,
+                        server=app,
+                        url_base_pathname='/dashboard/',
+                        assets_folder=get_root_path(__name__) + '/dashboard/assets/',
+                        meta_tags=[meta_viewport],
+                        external_stylesheets=[dbc.themes.MINTY],
+                        suppress_callback_exceptions=True
+                        )
 
     with app.app_context():
-        dashapp1.title = 'Dashapp 1'
-        dashapp1.layout = layout
-        register_callbacks(dashapp1)
+        dashapp.title = 'Dashapp 1'
+        dashapp.layout = layout
+        register_callbacks(dashapp)
 
-    _protect_dashviews(dashapp1)
+    _protect_dashviews(dashapp)
 
 
 def _protect_dashviews(dashapp):
