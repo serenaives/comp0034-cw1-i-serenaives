@@ -10,7 +10,7 @@ from dash import html
 from dash._callback_context import callback_context as ctx
 from dash.dependencies import Input, Output, State
 
-# Store values used in the app
+# Store values used in the coursework_2
 # ---------------------------------------------------------------------------------
 
 # mark values for year range slider
@@ -63,7 +63,7 @@ layout = dict(
     font_color='black'
 )
 
-# Initialise the app
+# Initialise the coursework_2
 # ---------------------------------------------------------------------------------
 app = dash.Dash(external_stylesheets=[dbc.themes.MINTY], suppress_callback_exceptions=True)
 
@@ -237,6 +237,7 @@ def get_year_graph(filtered_df, discovery):
         xaxis_title='Year',
     )
     fig.update_yaxes(rangemode='tozero')
+
     return fig
 
 

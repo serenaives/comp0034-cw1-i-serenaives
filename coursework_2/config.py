@@ -17,7 +17,7 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_ECHO = True
 
     DATA_PATH = pathlib.Path(__file__).parent.parent.joinpath("data")
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(DATA_PATH.joinpath('meteorites_flask_app.sqlite'))
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + str(DATA_PATH.joinpath('coursework_2.sqlite'))
 
 
 class TestingConfig(Config):
