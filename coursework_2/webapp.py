@@ -66,3 +66,8 @@ def register():
         return redirect(url_for('main.login'))
 
     return render_template('register.html', title='Register', form=form)
+
+
+@server_bp.route('/quiz/')
+def quiz():
+    return render_template("quiz.html", title='Quiz')
