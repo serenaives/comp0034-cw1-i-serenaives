@@ -66,10 +66,10 @@ This functional approach to the dashboard design manifests in:
 See screenshots of the overall dashboard layout below:
 
 **page header and control box:**
-![](images/page header.png)
+![](coursework_1/visualisation%20design/images/page header.png)
 
 **visualisations:**
-![](images/full page.png)
+![](coursework_1/visualisation%20design/images/full page.png)
 
 ### Interactivity
 
@@ -93,10 +93,10 @@ There are two elements to the dashboard's interactive components:
 
 ### Individual Data Visualisations
 The design rationale and evaluation of the visualisations for each property (as described above) is linked in a separate .md file below:
-1. [Location of meteorite landings: scatter plot map](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/scatter_plot_map.md)
-2. [Meteorite landings by category: bar graph & pie chart](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/category_graphs.md)
-3. [Meteorite landings by year: line graph](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/year_graph.md)
-4. [Meteorite landings by mass: histogram & box and whisker plot](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives/blob/master/visualisation%20design/mass_graphs.md)
+1. [Location of meteorite landings: scatter plot map](coursework_1/visualisation%20design/scatter_plot_map.md)
+2. [Meteorite landings by category: bar graph & pie chart](coursework_1/visualisation%20design/category_graphs.md)
+3. [Meteorite landings by year: line graph](coursework_1/visualisation%20design/year_graph.md)
+4. [Meteorite landings by mass: histogram & box and whisker plot](coursework_1/visualisation%20design/mass_graphs.md)
 
 ## References
 
