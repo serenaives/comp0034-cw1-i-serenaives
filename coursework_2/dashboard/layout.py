@@ -32,9 +32,15 @@ layout = dbc.Container([
         dbc.CardGroup([
             dbc.Card([html.H1('Meteorite Landings')], style={'align': 'left', 'padding': '1%'}),
             dbc.CardGroup([
-                dbc.Card([dbc.Button(['explore the data'], color='danger', style={'height': '100%'})], style={'width': '2'}),
-                dbc.Card([dbc.Button(['take the quiz'], color='danger', style={'height': '100%'})], style={'width': '2'}),
-                dbc.Card([dbc.Button(['log in/ register'], color='danger', style={'height': '100%'})], style={'width': '2'})
+                dbc.Card([
+                    dbc.Button([
+                        'back to main page'
+                    ],
+                        color='danger',
+                        style={'height': '100%'},
+                        href='http://127.0.0.1:5000'
+                    )
+                ], style={'width': '2'}),
             ], style={'align': 'right'})
         ], style={'padding': '1%'}, id='card-grp'),
     ]),
