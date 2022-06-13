@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbarColor03">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link {{ 'active' if active_page == 'index' else '' }}" href="#">Home
+          <a class="nav-link {{ 'active' if active_page == 'index' else '' }}" href="{{ url_for('main.index') }}">Home
             <span class="visually-hidden">(current)</span>
           </a>
         </li>
@@ -24,19 +24,17 @@
           <a class="nav-link {{ 'active' if active_page == 'quiz' else '' }}" href="{{ url_for('main.quiz') }}">Quiz</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="{{ url_for('main.leaderboard') }}">Leaderboard</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Separated link</a>
+            {% if current_user.is_anonymous %}
+            <a class="dropdown-item" href="#">Log In</a>
+            {% else %}
+            <a class="dropdown-item" href="#">Log Out</a>
+            {% endif %}
+            <a class="dropdown-item" href="#">Register</a>
           </div>
         </li>
       </ul>
