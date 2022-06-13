@@ -71,3 +71,8 @@ def register():
 @server_bp.route('/quiz/')
 def quiz():
     return render_template("quiz.html", title='Quiz')
+
+
+@server_bp.route('/leaderboard/')
+def leaderboard():
+    return render_template("leaderboard.html", title='Leaderboard')

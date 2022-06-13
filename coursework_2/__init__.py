@@ -18,7 +18,7 @@ def create_app(Config):
         from coursework_2.extensions import db
         db.create_all()
 
-    Bootstrap(server)
+    bootstrap = Bootstrap(server)
 
     return server
 
