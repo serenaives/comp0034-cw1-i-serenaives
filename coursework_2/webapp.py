@@ -68,16 +68,25 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@server_bp.route('/quiz%20home/')
+@server_bp.route('/quiz_home/')
 def quiz_home():
     return render_template("quiz_home.html", title='Quiz Home')
 
 
-@server_bp.route('/quiz%20play/')
+@server_bp.route('/quiz_play/', methods=['GET', 'POST'])
+@login_required
 def quiz_play():
-    return render_template("quiz_play.html", title='Quiz Play')
+    if current_user.is_authenticated:
+        return render_template("quiz_play.html", title='Quiz Play')
 
 
-@server_bp.route('/leaderboard/')
-def leaderboard():
-    return render_template("leaderboard.html", title='Leaderboard')
+@server_bp.route('/leaderboard_home/')
+def leaderboard_home():
+    return render_template("leaderboard_home.html", title='Leaderboard Home')
+
+
+@server_bp.route('/leaderboard_active/', methods=['GET', 'POST'])
+@login_required
+def leaderboard_active():
+    if current_user.is_authenticated:
+        return render_template("leaderboard_active.html", title='Leaderboard Active')
