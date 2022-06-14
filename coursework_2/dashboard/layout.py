@@ -28,17 +28,18 @@ layout = dbc.Container([
 
     # page header
     # ------------------------------------------------------------------------------
+
     dbc.Row([
         dbc.CardGroup([
-            dbc.Card([html.H1('Meteorite Landings')], style={'align': 'left', 'padding': '1%'}),
+            dbc.Card([html.H1('Meteorite Landings: Dashboard')], style={'align': 'left', 'padding': '1%'}),
             dbc.CardGroup([
                 dbc.Card([
                     dbc.Button([
-                        'back to main page'
+                        'back to home page'
                     ],
                         color='secondary',
-                        style={'height': '100%'},
-                        href="http://127.0.0.1:5000"
+                        style={'height': '100%', 'display': 'inline-flex', 'align-items': 'center'},
+                        href="http://127.0.0.1:5000",
                     )
                 ], style={'width': '2'}),
             ], style={'align': 'right'})
