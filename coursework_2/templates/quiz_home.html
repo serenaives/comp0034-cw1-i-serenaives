@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% set title = 'Quiz Home' %}
+{% set active_page = "quiz_home" %}
+{%  block content %}
+    <br></br>
+    <a href = "{{url_for('main.quiz_play')}}">
+        <button class="btn btn-default" data-toggle="tooltip" data-placement="right" title="Click to play">
+            <img src="../static/images/brain.svg" class = "img-responsive center-block d-block mx-auto" alt = "Brain Image">
+        </button>
+    </a>
+    <br></br>
+    <p class = "display-2">
+        Take the Quiz
+    </p>
+    <div class="col-lg-8 col-md-offset-5">
+        <h3 class = "text-light text-center">
+            Try the quiz to test your knowledge and
+            <a href="{{ url_for('main.leaderboard')}}">compete</a> with friends. Click the brain to start!
+        </h3>
+    </div>
+{% endblock %}
