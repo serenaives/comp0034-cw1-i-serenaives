@@ -68,9 +68,14 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@server_bp.route('/quiz/')
-def quiz():
-    return render_template("quiz.html", title='Quiz')
+@server_bp.route('/quiz%20home/')
+def quiz_home():
+    return render_template("quiz_home.html", title='Quiz Home')
+
+
+@server_bp.route('/quiz%20play/')
+def quiz_play():
+    return render_template("quiz_play.html", title='Quiz Play')
 
 
 @server_bp.route('/leaderboard/')

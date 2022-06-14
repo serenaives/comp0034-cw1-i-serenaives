@@ -36,9 +36,9 @@ layout = dbc.Container([
                     dbc.Button([
                         'back to main page'
                     ],
-                        color='danger',
+                        color='secondary',
                         style={'height': '100%'},
-                        href='http://127.0.0.1:5000'
+                        href="http://127.0.0.1:5000"
                     )
                 ], style={'width': '2'}),
             ], style={'align': 'right'})
@@ -254,7 +254,7 @@ layout = dbc.Container([
                                         n_clicks=0,
                                         children=[
                                             html.P('clear selection')
-                                        ], color='danger')
+                                        ], color='secondary')
                                 ], style={'align': 'right'})
                             ], style={'width': '20%', 'align': 'right'})
                         ])
@@ -267,7 +267,7 @@ layout = dbc.Container([
                                 id='interactive-table',
                                 columns=[{'name': i, 'id': i} for i in table_cols],
                                 style_header={
-                                    'backgroundColor': '#FF7850',
+                                    'backgroundColor': '#F3959A',
                                     'color': '#ffffff',
                                     'fontWeight': 'bold'
                                 }
@@ -409,4 +409,4 @@ layout = dbc.Container([
             ], id='mass-control-box')
         ], style={'width': '40%', 'alignment': 'right'})
     ])
-], fluid=True)
+], className='bg-primary', fluid=True)
