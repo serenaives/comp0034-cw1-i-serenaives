@@ -397,7 +397,7 @@ def register_callbacks(dashapp):
                     hoverinfo='text',
                     mode='markers',
                     marker=dict(
-                        color='#FF7850',
+                        color='#F3959A',
                         # set marker size proportional to mass
                         size=2 * (np.log(filtered_df['mass (g)'])),
                         opacity=0.6),
