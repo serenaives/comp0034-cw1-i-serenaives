@@ -2,11 +2,12 @@
 {% set title = 'Home' %}
 {% set active_page = "index" %}
 {%  block content %}
-    <div class = "container">
-    <div class = "row">
-        <div class = "col-lg-12">
+    <a href = "/dashboard/">
+        <button class="btn btn-default" data-toggle="tooltip" data-placement="right" title="Click to launch the dashboard">
             <img src="../static/images/meteorite.svg" class = "img-responsive center-block d-block mx-auto" alt = "Meteorite Image">
-        </div>
-    </div>
-    </div>
+        </button>
+    </a>
+    <h1>
+        The Dashboard
+    </h1>
 {% endblock %}
