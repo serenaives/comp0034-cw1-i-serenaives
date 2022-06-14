@@ -15,3 +15,4 @@ The rationale for the design of the visualisations used in the dashboard is outl
 ## Additional Information
 - see [requirements.txt](/requirements.txt) for dependencies
 - runs on local server http://127.0.0.1:5000 & note the hardcoded URL in the dash app
+- note on images: they are my own. but inspired by x, y & z

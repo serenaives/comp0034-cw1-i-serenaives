@@ -23,20 +23,20 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ 'active' if active_page == 'quiz_home' else '' }}" href="{{ url_for('main.quiz_home') }}">Quiz</a>
+          <a class="nav-link {{ 'active' if active_page == 'quiz_home' or active_page == 'quiz_play' else '' }}" href="{{ url_for('main.quiz_home') }}">Quiz</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ 'active' if active_page == 'leaderboard' else '' }}" href="{{ url_for('main.leaderboard') }}">Leaderboard</a>
+          <a class="nav-link {{ 'active' if active_page == 'leaderboard_home' or active_page == 'leaderboard_active' else '' }}" href="{{ url_for('main.leaderboard_home') }}">Leaderboard</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
           <div class="dropdown-menu">
             {% if current_user.is_anonymous %}
             <a class="dropdown-item" href="{{ url_for('main.login') }}">Log In</a>
+            <a class="dropdown-item" href="{{ url_for('main.register') }}">Register</a>
             {% else %}
             <a class="dropdown-item" href="{{ url_for('main.logout') }}">Log Out</a>
             {% endif %}
-            <a class="dropdown-item" href="{{ url_for('main.register') }}">Register</a>
           </div>
         </li>
       </ul>

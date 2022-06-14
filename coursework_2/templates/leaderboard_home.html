@@ -1,0 +1,21 @@
+{%  extends 'base.html' %}
+{% set title = 'Leaderboard' %}
+{% set active_page = "leaderboard_home" %}
+{%  block content %}
+    <br></br>
+    <br></br>
+    <a href = "{{url_for('main.leaderboard_active')}}">
+        <button class="btn btn-default" data-toggle="tooltip" data-placement="right" title="Click for leaderboard">
+            <img src="../static/images/trophy.svg" class = "img-responsive center-block d-block mx-auto" alt = "Trophy Image">
+        </button>
+    </a>
+    <br></br>
+    <p class = "display-2">
+        Compete and Improve
+    </p>
+    <div class="col-lg-8 col-md-offset-5">
+        <h3 class = "text-light text-center">
+            Keep track of your friends' <a href="{{ url_for('main.quiz_home') }}">quiz<a> scores with the leaderboard. Click the trophy to check it out!
+        </h3>
+    </div>
+{% endblock %}
