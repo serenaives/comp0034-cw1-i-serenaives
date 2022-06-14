@@ -2,6 +2,7 @@
 {% set title = 'Home' %}
 {% set active_page = "index" %}
 {%  block content %}
+    <div class="d-flex align-items-center flex-column">
     <br></br>
     <a href = "/dashboard/" target = "_blank">
         <button class="btn btn-default" data-toggle="tooltip" data-placement="right" title="Click to launch the dashboard">
@@ -17,5 +18,6 @@
             Use the visualisation dashboard to explore NASA's
             meteorite landings <a href="https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh">dataset</a>. Click the meteorite to start!
         </h3>
+    </div>
     </div>
 {% endblock %}
