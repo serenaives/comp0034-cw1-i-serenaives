@@ -1,3 +1,10 @@
 {% extends 'base.html' %}
 {% set title = 'Quiz End' %}
 {% set active_page = "quiz_end" %}
+{% block content %}
+    <p>Your Final Score is {{ session["score"] }}. Congratulations <3</p>
+    <p>Your High Score is {{ session["highscore"] }}. Congratulations <3
+    {% if session["new_highscore"] %}
+        <p>NEW HIGHSCORE!</p>
+    {% endif %}
+{% endblock %}

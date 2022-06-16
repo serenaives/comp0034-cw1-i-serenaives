@@ -15,12 +15,23 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    highscore = db.Column(db.Integer)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+    def update_highscore(self, current_score):
+        if current_score > self.highscore:
+            User.query.filter_by(id=self.id).update(dict(highscore=current_score))
+            db.session.commit()
+            return True
+        else:
+            return False
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

@@ -3,6 +3,9 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+from flask import session
+from flask import g
+from flask import flash
 from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
@@ -37,6 +40,7 @@ def login():
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')
+
         return redirect(next_page)
 
     return render_template('login.html', title='Sign In', form=form)
@@ -45,8 +49,9 @@ def login():
 @server_bp.route('/logout/')
 @login_required
 def logout():
+    session.clear()
     logout_user()
-
+    flash('Successfully logged out')
     return redirect(url_for('main.index'))
 
 
@@ -59,6 +64,8 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data)
         user.set_password(form.password.data)
+        # initialise all new user's highscores to zero
+        user.highscore = 0
         db.session.add(user)
         db.session.commit()
 
@@ -69,6 +76,8 @@ def register():
 
 @server_bp.route('/quiz_home/')
 def quiz_home():
+    session['marks'] = 0
+    session['new_highscore'] = False
     return render_template("quiz_home.html", title='Quiz Home')
 
 
@@ -76,23 +85,39 @@ def quiz_home():
 @login_required
 def quiz_play(id):
     form = QuestionForm()
-    ques = Questions.query.filter_by(q_id=id).first()
+    q = Questions.query.filter_by(q_id=id).first()
 
-    if not ques:
+    if not q:
         return redirect(url_for('main.quiz_end'))
 
     if request.method == 'POST':
-        option = request.form['options']
+
+        # user has submitted the form via POST request
+
+        try:
+            option = request.form['options']
+            if option == q.ans:
+                session['marks'] += 3
+        except KeyError:
+            # if no answer, do not update score
+            pass
+        print(session['marks'])
+
         return redirect(url_for('main.quiz_play', id=(id + 1)))
 
-    form.options.choices = [(ques.option_a, ques.option_a), (ques.option_b, ques.option_b),
-                            (ques.option_c, ques.option_c)]
-    return render_template('quiz_play.html', form=form, q=ques, title='Quiz Play Question {}'.format(id))
+    form.options.choices = [(q.option_a, q.option_a), (q.option_b, q.option_b),
+                            (q.option_c, q.option_c)]
+    return render_template('quiz_play.html', form=form, q=q, title='Quiz Play Question {}'.format(id))
 
 
 @server_bp.route('/quiz_end/')
 def quiz_end():
-    return render_template("quiz_end.html", title='Quiz Home')
+    session["score"] = session['marks']
+    session['marks'] = 0
+    session['new_highscore'] = current_user.update_highscore(session["score"])
+    session["highscore"] = current_user.highscore
+    session["marks"] = 0
+    return render_template("quiz_end.html", title='Quiz End')
 
 
 @server_bp.route('/leaderboard_home/')
