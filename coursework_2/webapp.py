@@ -68,15 +68,16 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@server_bp.route('/quiz/home/')
+@server_bp.route('/quiz_home/')
 def quiz_home():
     return render_template("quiz_home.html", title='Quiz Home')
 
 
-@server_bp.route('/quiz/play/', methods=['GET', 'POST'])
+@server_bp.route('/quiz_play/', methods=['GET', 'POST'])
 @login_required
 def quiz_play():
-    return render_template('quiz_play.html', title='Quiz Play')
+    if current_user.is_authenticated:
+        return render_template("quiz_play.html", title='Quiz Play')
 
 
 @server_bp.route('/leaderboard_home/')

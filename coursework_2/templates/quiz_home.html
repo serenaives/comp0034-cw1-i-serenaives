@@ -2,6 +2,7 @@
 {% set title = 'Quiz Home' %}
 {% set active_page = "quiz_home" %}
 {%  block content %}
+    <div class="d-flex align-items-center flex-column">
     <br></br>
     <br></br>
     <a href = "{{url_for('main.quiz_play')}}">
@@ -18,5 +19,6 @@
             Try the quiz to test your understanding and
             <a href="{{ url_for('main.leaderboard_home')}}">compete</a> with friends. Click the brain to play!
         </h3>
+    </div>
     </div>
 {% endblock %}
