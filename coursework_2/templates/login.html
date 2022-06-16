@@ -4,7 +4,7 @@
 {% block content %}
     <div class="d-flex align-items-center flex-column">
         <br></br>
-        <h1>Sign In</h1>
+        <h1 class = "text-light text-center">Log In</h1>
         <form action="" method="post" novalidate>
           {{ form.hidden_tag() }}
           <p>
@@ -21,6 +21,6 @@
           <p class="error"><strong>Error:</strong> {{ error }}
             {% endif %}
         </form>
-        <p> New User? <a href="{{ url_for('main.register') }}">Register Here!</a></p>
+        <p> New User? <a href="{{ url_for('main.register') }}">Register Now!</a></p>
     </div>
 {% endblock %}

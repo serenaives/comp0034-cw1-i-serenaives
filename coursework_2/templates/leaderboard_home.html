@@ -2,7 +2,6 @@
 {% set title = 'Leaderboard' %}
 {% set active_page = "leaderboard_home" %}
 {%  block content %}
-    <div class="d-flex align-items-center flex-column">
     <br></br>
     <br></br>
     <a href = "{{url_for('main.leaderboard_active')}}">
@@ -12,12 +11,13 @@
     </a>
     <br></br>
     <p class = "display-2">
-        Compete and Improve
+        Compete & Improve
     </p>
     <div class="col-lg-8 col-md-offset-5">
         <h3 class = "text-light text-center">
-            Keep track of your friends' <a href="{{ url_for('main.quiz_home') }}">quiz<a> scores with the leaderboard. Click the trophy to check it out!
+            Keep track of your friends'
+            <a href="{{ url_for('main.quiz_home') }}">quiz</a>
+            scores with the leaderboard. Click the trophy to check it out!
         </h3>
-    </div>
     </div>
 {% endblock %}
