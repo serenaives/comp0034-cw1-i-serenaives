@@ -10,9 +10,8 @@ from flask_login import logout_user
 from werkzeug.urls import url_parse
 
 from coursework_2.extensions import db
-from coursework_2.forms import LoginForm
-from coursework_2.forms import RegistrationForm
-from coursework_2.models import User
+from coursework_2.forms import LoginForm, RegistrationForm, QuestionForm
+from coursework_2.models import User, Questions
 
 server_bp = Blueprint('main', __name__)
 
@@ -73,11 +72,27 @@ def quiz_home():
     return render_template("quiz_home.html", title='Quiz Home')
 
 
-@server_bp.route('/quiz_play/', methods=['GET', 'POST'])
+@server_bp.route('/quiz_play/<int:id>', methods=['GET', 'POST'])
 @login_required
-def quiz_play():
-    if current_user.is_authenticated:
-        return render_template("quiz_play.html", title='Quiz Play')
+def quiz_play(id):
+    form = QuestionForm()
+    ques = Questions.query.filter_by(q_id=id).first()
+
+    if not ques:
+        return redirect(url_for('main.quiz_end'))
+
+    if request.method == 'POST':
+        option = request.form['options']
+        return redirect(url_for('main.quiz_play', id=(id + 1)))
+
+    form.options.choices = [(ques.option_a, ques.option_a), (ques.option_b, ques.option_b),
+                            (ques.option_c, ques.option_c)]
+    return render_template('quiz_play.html', form=form, q=ques, title='Quiz Play Question {}'.format(id))
+
+
+@server_bp.route('/quiz_end/')
+def quiz_end():
+    return render_template("quiz_end.html", title='Quiz Home')
 
 
 @server_bp.route('/leaderboard_home/')

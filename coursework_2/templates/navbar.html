@@ -23,7 +23,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ 'active' if active_page == 'quiz_home' or active_page == 'quiz_play' else '' }}" href="{{ url_for('main.quiz_home') }}">Quiz</a>
+          <a class="nav-link {{ 'active' if active_page == 'quiz_home' or active_page == 'quiz_play' or active_page == 'quiz_end' else '' }}" href="{{ url_for('main.quiz_home') }}">Quiz</a>
         </li>
         <li class="nav-item">
           <a class="nav-link {{ 'active' if active_page == 'leaderboard_home' or active_page == 'leaderboard_active' else '' }}" href="{{ url_for('main.leaderboard_home') }}">Leaderboard</a>

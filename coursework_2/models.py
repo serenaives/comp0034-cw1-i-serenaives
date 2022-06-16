@@ -24,3 +24,15 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+
+class Questions(db.Model):
+    q_id = db.Column(db.Integer, primary_key=True)
+    ques = db.Column(db.String(350), unique=True)
+    option_a = db.Column(db.String(100))
+    option_b = db.Column(db.String(100))
+    option_c = db.Column(db.String(100))
+    ans = db.Column(db.String(100))
+
+    def __repr__(self):
+        return '<Question: {}>'.format(self.ques)
