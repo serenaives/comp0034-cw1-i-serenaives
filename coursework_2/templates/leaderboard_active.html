@@ -27,8 +27,32 @@
                             </tr>
                       {% endfor %}
                       </tbody>
-                    </table>
+                </table>
+                <br></br>
+                <div class="d-flex flex-row justify-content-start align-items-center">
+                    <h3 class="text-light mr-1">Filter by: </h3>
+                    <div class = "col-1"></div>
+                    <div class="form-group">
+                        <a href="{{ url_for('main.leaderboard_active', filter="all") }}">
+                            <button class="btn btn-secondary btn-block d-flex align-items-center" type="button">
+                                <i class="fa fa-angle-left mt-1 mr-2"></i>&nbsp;All time</button>
+                        </a>
+                    </div>
+                    <div class = "col-1"></div>
+                    <div class="form-group">
+                        <a href="{{ url_for('main.leaderboard_active', filter="week") }}">
+                            <button class="btn btn-secondary btn-block d-flex align-items-center" type="button">
+                                <i class="fa fa-angle-left mt-1 mr-2"></i>Past week</button>
+                        </a>
+                    </div>
+                  </div>
+                </div>
             </div>
         </div>
     </div>
+    <style>
+        .btn-space {
+            margin-right: 5px;
+        }
+    </style>
 {% endblock %}

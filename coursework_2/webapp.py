@@ -11,6 +11,9 @@ from flask_login import login_user
 from flask_login import logout_user
 from werkzeug.urls import url_parse
 
+import datetime
+import dateutil
+
 from coursework_2.extensions import db
 from coursework_2.forms import LoginForm, RegistrationForm, QuestionForm
 from coursework_2.models import User, Questions, Highscores
@@ -73,7 +76,7 @@ def register():
 
         return redirect(url_for('main.login'))
 
-    return render_template('register.html', title='Register', form=form)
+    return render_template("register.html", title="Register", form=form)
 
 
 @server_bp.route('/quiz_home/')
@@ -140,19 +143,35 @@ def leaderboard_home():
     return render_template("leaderboard_home.html", title='Leaderboard Home')
 
 
-@server_bp.route('/leaderboard_active/', methods=['GET', 'POST'])
+@server_bp.route('/leaderboard_active/<string:filter>', methods=['GET', 'POST'])
 @login_required
-def leaderboard_active():
-    # select users with the highest highscores, up to a maximum of 10 users
-    hs = Highscores.query.order_by(Highscores.value.desc()).limit(10).all()
-    # create dictionary of highscore data
+def leaderboard_active(filter):
+    if filter == "all":
+        # select users with the highest highscores, up to a maximum of 10 users
+        hs = Highscores.query.order_by(Highscores.value.desc()).limit(10).all()
+
+    elif filter == "week":
+        today = datetime.datetime.strptime(str(datetime.date.today()), "%Y-%m-%d")
+        one_week = dateutil.relativedelta.relativedelta(weeks=1)
+        today_minus_week = today - one_week
+        # filter high scores obtained in the past week and select users with the highest high scores, up to a maximum
+        # of 10 users
+        hs = Highscores.query.order_by(Highscores.value.desc()).filter(Highscores.date.between(today_minus_week, today)).limit(10).all()
+
+    else:
+        # catch error and return to home page
+        flash("Error loading leader board")
+        return render_template("main.index")
+
+    # create dictionary to store high score data
     scores = []
     for s in hs:
         if s.prepare_leaderboard is not None:
             scores.append(s.prepare_leaderboard())
-    # number the scores in descendng order
+
+    # number the high scores in descending order
     count = 0
     for s in scores:
         s.update({'position': count + 1})
         count += 1
-    return render_template("leaderboard_active.html", scores=scores, title='Leaderboard Active')
+    return render_template("leaderboard_active.html", scores=scores, title='Leaderboard Active {}'.format(filter))

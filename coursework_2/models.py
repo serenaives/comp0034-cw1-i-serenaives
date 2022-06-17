@@ -1,4 +1,3 @@
-from datetime import date
 from sqlite3 import Error
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
@@ -84,15 +83,3 @@ class Highscores(db.Model):
                     date=self.date.strftime('%m/%d/%Y')
                 ))
         return curr
-
-
-def update_highscores(user_id, new_highscore):
-    hs = Highscores.query.filter_by(user_id=user_id)
-    if hs.count() > 0:
-        # there is already a highscores record corresponding to current user
-        hs.update(dict(value=new_highscore, date=date.today()))
-    else:
-        hs_new = Highscores(user_id=user_id, value=new_highscore, date=date.today())
-        db.session.add(hs_new)
-    db.session.commit()
-

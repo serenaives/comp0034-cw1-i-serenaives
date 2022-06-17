@@ -20,11 +20,11 @@
                     </a>
             </div>
             <div class="form-group">
-                    <button class="btn btn-primary d-flex align-items-center btn-info" type="button", onclick="useHint()">
+                    <button class="btn d-flex align-items-center btn-info" type="button", onclick="useHint()">
                         <i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;Give me a Hint!</button>
             </div>
             <div class="form-group">
-                {{ form.submit(class= "btn btn-primary border-success align-items-center btn-success") }}
+                {{ form.submit(class= "btn border-success align-items-center btn-success") }}
                 <i class="fa fa-angle-right ml-2"></i></button>
             </div>
         </div>
@@ -36,3 +36,6 @@
         window.location.href = {{url_for('main.use_hint') }};
     }
 </script>
+<style>
+    a:link { text-decoration: none; }
+</style>

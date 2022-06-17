@@ -30,3 +30,4 @@ Werkzeug==2.0.3
 flask_migrate
 flask_bootstrap
 datetime
+flask_admin
