@@ -2,9 +2,42 @@
 {% set title = 'Quiz End' %}
 {% set active_page = "quiz_end" %}
 {% block content %}
-    <p>Your Final Score is {{ session["score"] }}. Congratulations <3</p>
-    <p>Your High Score is {{ session["highscore"] }}. Congratulations <3
-    {% if session["new_highscore"] %}
-        <p>NEW HIGHSCORE!</p>
-    {% endif %}
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-8">
+                <div class="border">
+                    <div class="question bg-white text-dark border-bottom">
+                        <div class="d-flex flex-row justify-content-between align-items-center mcq">
+                            {% if session["new_highscore"] %}
+                                <h3 class="text-danger px-2">New Highscore!</h3></div>
+                            {% else %}
+                                <h3 class="text-danger px-2">Nice One!</h3></div>
+                            {% endif %}
+                    </div>
+                    <div class="question bg-white text-dark p-3 border-bottom">
+                        <div class="d-flex flex-row align-items-center question-title">
+                            <h5 class="mt-1 ml-2">Your Final Score is {{ session["score"] }}</h5>
+                        </div>
+                        <div class="ans ml-2">
+                            <h5 class="mt-1 ml-2">Your High Score is {{ session["highscore"] }}</h5>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
+                        <div class="form-group">
+                            <a href = "{{ url_for('main.quiz_home') }}">
+                                <button class="btn btn-primary d-flex align-items-center btn-danger" type="button">
+                                    <i class="fa fa-angle-left mt-1 mr-1"></i>Back to Quiz Home</button>
+                                </a>
+                        </div>
+                        <div class="form-group">
+                            <a href = "{{ url_for('main.leaderboard_active') }}">
+                                <button class="btn btn-primary d-flex align-items-center btn-info" type="button"">
+                                    <i class="fa fa-angle-left mt-1 mr-1"></i>Check out the Leaderboard!</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
