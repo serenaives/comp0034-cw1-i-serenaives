@@ -2,6 +2,27 @@
 {% set title = 'Leaderboard Active' %}
 {% set active_page = "leaderboard_active" %}
 {% block content %}
-        <div class="d-flex align-items-center flex-column">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-8">
+                <div class="border">
+                    <div class="question bg-white text-dark border-bottom">
+                        <div class="d-flex flex-row justify-content-center align-items-center mcq">
+                        <h3 class="text-danger px-2">Highest Scoring Players</h3></div>
+                    </div>
+                    <ul class="list-group justify-content-center align-items-center">
+                        <li class="list-group-item w-100 text-center">
+                        {% for s in scores %}
+                            <div class="col">{{ s["position"] }}</div>
+                            <div class="col">{{ s["username"] }}</div>
+                            <div class="col">{{ s["score"] }}</div>
+                            <div class="col-3">{{ s["date"] }}</div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 {% endblock %}

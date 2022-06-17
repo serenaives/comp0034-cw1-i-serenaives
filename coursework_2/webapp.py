@@ -10,6 +10,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
+from flask_sqlalchemy import model
 from werkzeug.urls import url_parse
 
 from coursework_2.extensions import db
@@ -136,5 +137,14 @@ def leaderboard_home():
 @server_bp.route('/leaderboard_active/', methods=['GET', 'POST'])
 @login_required
 def leaderboard_active():
-    if current_user.is_authenticated:
-        return render_template("leaderboard_active.html", title='Leaderboard Active')
+    # query users with the 10 highest highscores
+    hs = Highscores.query.order_by(Highscores.value.desc()).limit(10).all()
+    scores = []
+    for s in hs:
+        if s.prepare_leaderboard is not None:
+            scores.append(s.prepare_leaderboard())
+    count = 0
+    for s in scores:
+        s.update({'position': count+1})
+        count += 1
+    return render_template("leaderboard_active.html", scores=scores, title='Leaderboard Active')

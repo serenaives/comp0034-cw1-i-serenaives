@@ -70,6 +70,21 @@ class Highscores(db.Model):
         self.value = value
         self.date = date
 
+    def prepare_leaderboard(self):
+        try:
+            user = User.query.filter_by(id=self.user_id).first()
+            username = user.username
+
+        except AttributeError:
+            return
+
+        curr = (dict(
+                    username=username,
+                    score=self.value,
+                    date=self.date.strftime('%m/%d/%Y')
+                ))
+        return curr
+
 
 def update_highscores(user_id, new_highscore):
     hs = Highscores.query.filter_by(user_id=user_id)
@@ -80,3 +95,4 @@ def update_highscores(user_id, new_highscore):
         hs_new = Highscores(user_id=user_id, value=new_highscore, date=date.today())
         db.session.add(hs_new)
     db.session.commit()
+
