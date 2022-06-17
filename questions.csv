@@ -1,0 +1,6 @@
+﻿q_id,ques,option_a,option_b,option_c,ans,hint
+1,How many meteorite landings were recorded in 2001?,1010,1281,587,1281,The line graphs gives the count of meteorite landings by year.
+2,Which meteorite category was most prominent between 1795 and 1915?,stony,stony iron,iron,stony,Think about filtering one of the category graphs.
+3,What is the name of the heaviest meteorite ever recorded?,Sikhote-Alin,Hoba,Campo del Cielo,Hoba,Hovering over points on the interactive map gives you meteorite names.
+4,What is the median mass of all the recorded meteorites?,3.406185,3.303217,5.32301,3.406185,Median is a summary statistic. Think about which visualisations can help us find summary statistics.
+5,Which year saw the most meteorite landings?,2013,1999,1979,1979,The line graph gives the count of meteorite landings by year.
