@@ -1,5 +1,17 @@
 {% extends "base.html" %}
 {% set active_page = "quiz_play" %}
 {% block content %}
-    {% include 'question.html' %}
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center row">
+            <div class="col-8">
+                <div class="progress">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: {{ ((q.q_id)/5)*100 }}%" aria-valuenow="{{ q.q_id }}" aria-valuemin="0" aria-valuemax="5"></div>
+                </div>
+                <br></br>
+                {% include 'question.html' %}
+                <br></br>
+                <h4 class ="text-light">Remember to use the  <a href = "/dashboard/" target = "_blank">visualisation dashboard</a> to answer the questions!</h4>
+            </div>
+        </div>
+    </div>
 {% endblock %}

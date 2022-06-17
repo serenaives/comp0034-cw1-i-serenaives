@@ -44,6 +44,7 @@ class Questions(db.Model):
     option_b = db.Column(db.String(100))
     option_c = db.Column(db.String(100))
     ans = db.Column(db.String(100))
+    hint = db.Column(db.String(100))
 
     def __repr__(self):
         return '<Question: {}>'.format(self.ques)

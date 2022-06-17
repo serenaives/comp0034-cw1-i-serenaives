@@ -91,9 +91,7 @@ def quiz_play(id):
         return redirect(url_for('main.quiz_end'))
 
     if request.method == 'POST':
-
         # user has submitted the form via POST request
-
         try:
             option = request.form['options']
             if option == q.ans:

@@ -1,32 +1,32 @@
 <form method="post" novalidate>
-<div class="container mt-5">
-        <div class="d-flex justify-content-center row">
-            <div class="col-8">
-                <div class="border">
-                    <div class="question bg-white text-dark border-bottom">
-                        <div class="d-flex flex-row justify-content-between align-items-center mcq">
-                            <h3 class="text-danger px-2">Question {{ q.q_id }}</h3></div>
-                    </div>
-                    <div class="question bg-white text-dark p-3 border-bottom">
-                        <div class="d-flex flex-row align-items-center question-title">
-                            <h5 class="mt-1 ml-2">{{ q.ques }}</h5>
-                        </div><div class="ans ml-2">
-                            {{ form.options(class="list-unstyled") }}
+            <div class="border">
+                <div class="question bg-white text-dark border-bottom">
+                    <div class="d-flex flex-row justify-content-between align-items-center mcq">
+                        <h3 class="text-danger px-2">Question {{ q.q_id }} of 5</h3></div>
+                </div>
+                <div class="question bg-white text-dark p-3 border-bottom">
+                    <div class="d-flex flex-row align-items-center question-title">
+                        <h5 class="mt-1 ml-2">{{ q.ques }}</h5>
+                    </div><div class="ans ml-2">
+                        {{ form.options(class="list-unstyled") }}
 </div></div>
-                    <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
-                        <div class="form-group">
-                            <a id = "GFG" href = "{{ url_for('main.quiz_home') }}">
-                                <button class="btn btn-primary d-flex align-items-center btn-danger" type="button">
-                                    <i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;Quit</button>
-                                </a>
-                        </div>
-                        <div class="form-group">
-                            {{ form.submit(class= "btn btn-primary border-success align-items-center btn-success") }}
-                            <i class="fa fa-angle-right ml-2"></i></button>
-                        </div>
+                <div class="d-flex flex-row justify-content-between align-items-center p-3 bg-white">
+                    <div class="form-group">
+                        <a href = "{{ url_for('main.quiz_home') }}">
+                            <button class="btn btn-primary d-flex align-items-center btn-danger" type="button">
+                                <i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;Quit</button>
+                            </a>
+                    </div>
+                    <div class="form-group">
+                        <a>
+                            <button class="btn btn-primary d-flex align-items-center btn-info" type="button" onClick="alert('{{ q.hint }}')">
+                                <i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;Give me a Hint</button>
+                            </a>
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class= "btn btn-primary border-success align-items-center btn-success") }}
+                        <i class="fa fa-angle-right ml-2"></i></button>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 </form>
