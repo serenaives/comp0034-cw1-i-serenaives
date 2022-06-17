@@ -18,10 +18,8 @@
                             </a>
                     </div>
                     <div class="form-group">
-                        <a>
-                            <button class="btn btn-primary d-flex align-items-center btn-info" type="button" onClick="alert('{{ q.hint }}')">
-                                <i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;Give me a Hint</button>
-                            </a>
+                            <button class="btn btn-primary d-flex align-items-center btn-info" type="button", onclick="useHint()">
+                                <i class="fa fa-angle-left mt-1 mr-1"></i>&nbsp;Give me a Hint!</button>
                     </div>
                     <div class="form-group">
                         {{ form.submit(class= "btn btn-primary border-success align-items-center btn-success") }}
@@ -30,3 +28,9 @@
                 </div>
             </div>
 </form>
+<script>
+    function useHint() {
+        alert('{{ q.hint }}')
+        window.location.href = {{url_for('main.use_hint') }};
+    }
+</script>

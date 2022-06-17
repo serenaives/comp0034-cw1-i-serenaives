@@ -78,6 +78,7 @@ def register():
 def quiz_home():
     session['marks'] = 0
     session['new_highscore'] = False
+    session['used_hint'] = True
     return render_template("quiz_home.html", title='Quiz Home')
 
 
@@ -94,12 +95,16 @@ def quiz_play(id):
         # user has submitted the form via POST request
         try:
             option = request.form['options']
+            # award 3 points if correct answer was submitted
             if option == q.ans:
                 session['marks'] += 3
         except KeyError:
             # if no answer, do not update score
             pass
-        print(session['marks'])
+        # penalise if hint was used
+        if session['used_hint']:
+            session['marks'] -= 1
+            session['used_hint'] = False
 
         return redirect(url_for('main.quiz_play', id=(id + 1)))
 
@@ -108,13 +113,18 @@ def quiz_play(id):
     return render_template('quiz_play.html', form=form, q=q, title='Quiz Play Question {}'.format(id))
 
 
+@server_bp.route('/use_hint/')
+def use_hint():
+    session['used_hint'] = True
+    # do not navigate away from current page: HTTP response code 204
+    return '', 204
+
+
 @server_bp.route('/quiz_end/')
 def quiz_end():
     session["score"] = session['marks']
-    session['marks'] = 0
     session['new_highscore'] = current_user.update_highscore(session["score"])
     session["highscore"] = current_user.highscore
-    session["marks"] = 0
     return render_template("quiz_end.html", title='Quiz End')
 
 
