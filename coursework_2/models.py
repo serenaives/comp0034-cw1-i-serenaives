@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from werkzeug.security import generate_password_hash
 
+from coursework_2 import update_highscores
 from coursework_2.extensions import db
 from coursework_2.extensions import login
 

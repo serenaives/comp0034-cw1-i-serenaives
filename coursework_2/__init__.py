@@ -18,7 +18,9 @@ def create_app(Config):
     with server.app_context():
         from coursework_2.models import User
         from coursework_2.extensions import db
+        from coursework_2.load_csv import load_questions
         db.create_all()
+        load_questions()
 
     bootstrap = Bootstrap(server)
 
