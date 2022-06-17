@@ -4,6 +4,8 @@ from flask.helpers import get_root_path
 from flask_login import login_required
 import dash_bootstrap_components as dbc
 from flask_bootstrap import Bootstrap
+from flask_admin import Admin
+
 
 def create_app(Config):
     server = Flask(__name__)
@@ -24,6 +26,8 @@ def create_app(Config):
 
 
 def register_dashapp(app):
+    # access Dash app via Flask route
+
     from coursework_2.dashboard.layout import layout
     from coursework_2.dashboard.callbacks import register_callbacks
 
@@ -71,3 +75,19 @@ def register_blueprints(server):
     from coursework_2.webapp import server_bp
 
     server.register_blueprint(server_bp)
+
+
+def update_highscores(user_id, new_highscore):
+    from coursework_2.models import Highscores
+    from coursework_2.extensions import db
+    from datetime import date
+
+    hs = Highscores.query.filter_by(user_id=user_id)
+    if hs.count() > 0:
+        # there is already a Highscores record corresponding to current user
+        hs.update(dict(value=new_highscore, date=date.today()))
+    else:
+        # new Highscores record needs to be created
+        hs_new = Highscores(user_id=user_id, value=new_highscore, date=date.today())
+        db.session.add(hs_new)
+    db.session.commit()
