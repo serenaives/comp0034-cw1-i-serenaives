@@ -1,10 +1,10 @@
+from datetime import date
 from flask import Blueprint
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
 from flask import session
-from flask import g
 from flask import flash
 from flask_login import current_user
 from flask_login import login_required
@@ -14,7 +14,7 @@ from werkzeug.urls import url_parse
 
 from coursework_2.extensions import db
 from coursework_2.forms import LoginForm, RegistrationForm, QuestionForm
-from coursework_2.models import User, Questions
+from coursework_2.models import User, Questions, Highscores
 
 server_bp = Blueprint('main', __name__)
 
@@ -64,7 +64,7 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data)
         user.set_password(form.password.data)
-        # initialise all new user's highscores to zero
+        # initialise new user's highscores to zero
         user.highscore = 0
         db.session.add(user)
         db.session.commit()
@@ -78,7 +78,7 @@ def register():
 def quiz_home():
     session['marks'] = 0
     session['new_highscore'] = False
-    session['used_hint'] = True
+    session['used_hint'] = False
     return render_template("quiz_home.html", title='Quiz Home')
 
 
