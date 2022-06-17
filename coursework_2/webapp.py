@@ -1,4 +1,3 @@
-from datetime import date
 from flask import Blueprint
 from flask import redirect
 from flask import render_template
@@ -10,7 +9,6 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-from flask_sqlalchemy import model
 from werkzeug.urls import url_parse
 
 from coursework_2.extensions import db
@@ -33,6 +31,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        # validate form
         if user is None or not user.check_password(form.password.data):
             error = 'Invalid username or password'
             return render_template('login.html', form=form, error=error)
@@ -50,6 +49,7 @@ def login():
 @server_bp.route('/logout/')
 @login_required
 def logout():
+    # clear data from user's current session and display homepage
     session.clear()
     logout_user()
     flash('Successfully logged out')
@@ -67,6 +67,7 @@ def register():
         user.set_password(form.password.data)
         # initialise new user's highscores to zero
         user.highscore = 0
+        # add the new user to the database
         db.session.add(user)
         db.session.commit()
 
@@ -77,6 +78,7 @@ def register():
 
 @server_bp.route('/quiz_home/')
 def quiz_home():
+    # ensure quiz session data is reset before starting a new quiz
     session['marks'] = 0
     session['new_highscore'] = False
     session['used_hint'] = False
@@ -84,6 +86,7 @@ def quiz_home():
 
 
 @server_bp.route('/quiz_play/<int:id>', methods=['GET', 'POST'])
+# each question is routed to an individual page /quiz_play/[question number]
 @login_required
 def quiz_play(id):
     form = QuestionForm()
@@ -102,8 +105,8 @@ def quiz_play(id):
         except KeyError:
             # if no answer, do not update score
             pass
-        # penalise if hint was used
         if session['used_hint']:
+            # penalise if hint was used
             session['marks'] -= 1
             session['used_hint'] = False
 
@@ -115,6 +118,8 @@ def quiz_play(id):
 
 
 @server_bp.route('/use_hint/')
+# when user clicks on 'give me a hint button' this data is
+# passed to webapp.py by assigning a value to variable used_hint in the session data
 def use_hint():
     session['used_hint'] = True
     # do not navigate away from current page: HTTP response code 204
@@ -123,6 +128,7 @@ def use_hint():
 
 @server_bp.route('/quiz_end/')
 def quiz_end():
+    # use session data to calculate score and compare to highscore
     session["score"] = session['marks']
     session['new_highscore'] = current_user.update_highscore(session["score"])
     session["highscore"] = current_user.highscore
@@ -137,14 +143,16 @@ def leaderboard_home():
 @server_bp.route('/leaderboard_active/', methods=['GET', 'POST'])
 @login_required
 def leaderboard_active():
-    # query users with the 10 highest highscores
+    # select users with the highest highscores, up to a maximum of 10 users
     hs = Highscores.query.order_by(Highscores.value.desc()).limit(10).all()
+    # create dictionary of highscore data
     scores = []
     for s in hs:
         if s.prepare_leaderboard is not None:
             scores.append(s.prepare_leaderboard())
+    # number the scores in descendng order
     count = 0
     for s in scores:
-        s.update({'position': count+1})
+        s.update({'position': count + 1})
         count += 1
     return render_template("leaderboard_active.html", scores=scores, title='Leaderboard Active')
