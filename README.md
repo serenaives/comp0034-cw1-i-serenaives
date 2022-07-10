@@ -22,7 +22,7 @@ This application integrates the dashboard from the first stage within an applica
 view the dashboard as well as take a quiz, the results of which are recorded and used to display an updated
 leaderboard.
 
-The code for this stage of the project is in the folder [/coursework_2](/coursework_2). The structure of
+The code for this stage of the project is in the folder [coursework_2](/coursework_2). The structure of
 the code is as follows:
 - `dashboard` contains the code from the Dash app used in coursework 1 with some minor adjustments to code structure
 (splitting layouts and callbacks) and style (made colour scheme consistent with the rest of the web app) that were
