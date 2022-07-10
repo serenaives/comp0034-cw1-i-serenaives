@@ -15,10 +15,10 @@ were observed falling, those that were found later, and the total value of all t
 enable the user to manipulate various factors to address question 3.
 
 **line graph with hover functionality**:
-![](/coursework_1/visualisation%20design/images/line%20graph.png)
+![](/part_1/visualisation%20design/images/line%20graph.png)
 
 **colour palette:**
-![](/coursework_1/visualisation%20design/images/discovery%20colour%20palette.png)
+![](/part_1/visualisation%20design/images/discovery%20colour%20palette.png)
 
 ## Explanation
 

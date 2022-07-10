@@ -14,9 +14,9 @@ from werkzeug.urls import url_parse
 import datetime
 import dateutil
 
-from coursework_2.extensions import db
-from coursework_2.forms import LoginForm, RegistrationForm, QuestionForm
-from coursework_2.models import User, Questions, Highscores
+from part_2.extensions import db
+from part_2.forms import LoginForm, RegistrationForm, QuestionForm
+from part_2.models import User, Questions, Highscores
 
 server_bp = Blueprint('main', __name__)
 

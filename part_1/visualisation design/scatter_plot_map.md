@@ -13,26 +13,26 @@ The latitude and longitude data for each meteorite landing was used to create a 
 each data point corresponding to a single meteorite landing. Questions 1 and 2 can be addressed by observing
 distribution of points.
 
-The control box at the top of the dashboard (displayed in [visualisation_design.md](/coursework_1/visualisation%20design/images/visualisation_design.md))
+The control box at the top of the dashboard (displayed in [visualisation_design.md](/part_1/visualisation%20design/images/visualisation_design.md))
 contains the tools intended to answer question 3; range sliders allow user to filter the plotted points by year of
 meteorite discovery and mass. It also includes interactive radio selection buttons which the user can use to add
 complexity to the scatter plot map by coordinating map markers to meteorite category and/ or mass. The effects of
 these controls can be seen in the following screenshots.
 
 **default map settings:**
-![](/coursework_1/visualisation%20design/images/map%20uncoloured.png)
+![](/part_1/visualisation%20design/images/map%20uncoloured.png)
 
 **map markers colour-coordinated to meteorite category:**
-![](/coursework_1/visualisation%20design/images/map%20coloured.png)
+![](/part_1/visualisation%20design/images/map%20coloured.png)
 
 **map markers size-coordinated to meteorite mass (bubble map):**
-![](/coursework_1/visualisation%20design/images/map%20size%20markers.png)
+![](/part_1/visualisation%20design/images/map%20size%20markers.png)
 
 **geographical selection & filtering functionality:**
-![](/coursework_1/visualisation%20design/images/map%20selection.png)
+![](/part_1/visualisation%20design/images/map%20selection.png)
 
 **table (updates depending on the map markers selected by the user):**
-![](/coursework_1/visualisation%20design/images/table.png)
+![](/part_1/visualisation%20design/images/table.png)
 
 ## Explanation
 

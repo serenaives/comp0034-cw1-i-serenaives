@@ -1,8 +1,8 @@
 import pandas as pd
 from sqlalchemy.exc import IntegrityError
 
-from coursework_2.models import Questions
-from coursework_2.extensions import db
+from part_2.models import Questions
+from part_2.extensions import db
 from pathlib import Path
 
 fp = Path(__file__).parent.parent.joinpath('questions.csv')

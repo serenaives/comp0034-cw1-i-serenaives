@@ -16,9 +16,9 @@ def create_app(Config):
     register_blueprints(server)
 
     with server.app_context():
-        from coursework_2.models import User
-        from coursework_2.extensions import db
-        from coursework_2.load_csv import load_questions
+        from part_2.models import User
+        from part_2.extensions import db
+        from part_2.load_csv import load_questions
         db.create_all()
         load_questions()
 
@@ -30,8 +30,8 @@ def create_app(Config):
 def register_dashapp(app):
     # access Dash app via Flask route
 
-    from coursework_2.dashboard.layout import layout
-    from coursework_2.dashboard.callbacks import register_callbacks
+    from part_2.dashboard.layout import layout
+    from part_2.dashboard.callbacks import register_callbacks
 
     # Meta tags for viewport responsiveness
     meta_viewport = {
@@ -63,9 +63,9 @@ def _protect_dashviews(dashapp):
 
 
 def register_extensions(server):
-    from coursework_2.extensions import db
-    from coursework_2.extensions import login
-    from coursework_2.extensions import migrate
+    from part_2.extensions import db
+    from part_2.extensions import login
+    from part_2.extensions import migrate
 
     db.init_app(server)
     login.init_app(server)
@@ -74,14 +74,14 @@ def register_extensions(server):
 
 
 def register_blueprints(server):
-    from coursework_2.webapp import server_bp
+    from part_2.webapp import server_bp
 
     server.register_blueprint(server_bp)
 
 
 def update_highscores(user_id, new_highscore):
-    from coursework_2.models import Highscores
-    from coursework_2.extensions import db
+    from part_2.models import Highscores
+    from part_2.extensions import db
     from datetime import date
 
     hs = Highscores.query.filter_by(user_id=user_id)

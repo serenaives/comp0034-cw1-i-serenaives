@@ -15,7 +15,7 @@ improve readability.
 The sub-folder `visualisation design` containing the .md files which contain
 screenshots of the application and outline the rationale for the design of the visualisations 
 used in the dashboard. Reading these files should start with
-[visualisation_design.md](/coursework_1/visualisation%20design/visualisation_design.md).
+[visualisation_design.md](/part_1/visualisation%20design/visualisation_design.md).
 
 The second stage of the project is the web application created using the Python-based web framework Flask.
 This application integrates the dashboard from the first stage within an application which allows users to 

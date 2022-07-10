@@ -10,7 +10,7 @@ from dash import html
 from dash._callback_context import callback_context as ctx
 from dash.dependencies import Input, Output, State
 
-# Store values used in the coursework_2
+# Store values used in the part_2
 # ---------------------------------------------------------------------------------
 
 # mark values for year range slider
@@ -63,7 +63,7 @@ layout = dict(
     font_color='black'
 )
 
-# Initialise the coursework_2
+# Initialise the part_2
 # ---------------------------------------------------------------------------------
 app = dash.Dash(external_stylesheets=[dbc.themes.MINTY], suppress_callback_exceptions=True)
 
