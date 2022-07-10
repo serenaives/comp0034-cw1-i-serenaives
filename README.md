@@ -3,8 +3,9 @@
 Link to [GitHub repository](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives)
 
 ## Video Demonstrations
-[Coursework 1: Dashboard](https://www.youtube.com/watch?v=z-lsMgPTBN8)
-[Coursework 2: Web Application](https://youtu.be/dkCUtbyEaxE)
+Video demo for [Coursework 1: Dashboard](https://www.youtube.com/watch?v=z-lsMgPTBN8)
+
+Video demo for [Coursework 2: Web Application](https://youtu.be/dkCUtbyEaxE)
 
 ## Data
 The dataset used in this project is [Meteorite Landings via NASA Open Data Portal](https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh).
