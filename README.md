@@ -23,7 +23,7 @@ view the dashboard as well as take a quiz, the results of which are recorded and
 leaderboard.
 
 The code for this stage of the project is in the folder [/coursework_2](/coursework_2). The structure of
-the code is as follows.
+the code is as follows:
 - `dashboard` contains the code from the Dash app used in coursework 1 with some minor adjustments to code structure
 (splitting layouts and callbacks) and style (made colour scheme consistent with the rest of the web app) that were
 necessary for integrating it within the Flask app
@@ -49,7 +49,7 @@ YouTube link to video demo for [Coursework 2: Web Application](https://youtu.be/
   - For coursework 1 (visualisation dashboard), run `dash_app.py`
   - For coursework 2 (web app), run `run.py`
 - Both applications run on local server http://127.0.0.1:5000
-  - Note that the URL for this server is hardcoded into the dash app's redirect back to main page button
+  - Note that the URL for this server is hardcoded into the dash app's redirect back to main page button.
   This should be changed manually if you are not running the application on the same development server
 
 ## Note on copyright
