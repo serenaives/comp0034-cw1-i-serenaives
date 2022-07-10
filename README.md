@@ -1,4 +1,4 @@
-# Data Visualisation with Dash and Flask
+# Data Visualisation & Web Design with Dash and Flask
 
 Link to [GitHub repository](https://github.com/ucl-comp0035/comp0034-cw1-i-serenaives)
 
