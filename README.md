@@ -8,11 +8,11 @@ Programming for Data Science*.
 The first stage of the project was to create a Python Dash application that uses data from a chosen dataset.
 I used a dataset on meteorite landings from NASA to create an interactive dashboard of visualisations.
 
-The folder [coursework 1](/coursework_1) contains the code for the Dash app, which is all contained within
+The directory `coursework 1` contains the code for the Dash app, which is all contained within
 `dash_app.py`, although an improved structure might split the layout and callbacks into separate files to
 improve readability.
 
-The sub-folder [visualisation design](/coursework_1/visualisation%20design) containing the .md files which contain
+The sub-folder `visualisation design` containing the .md files which contain
 screenshots of the application and outline the rationale for the design of the visualisations 
 used in the dashboard. Reading these files should start with
 [visualisation_design.md](/coursework_1/visualisation%20design/visualisation_design.md).
@@ -22,7 +22,7 @@ This application integrates the dashboard from the first stage within an applica
 view the dashboard as well as take a quiz, the results of which are recorded and used to display an updated
 leaderboard.
 
-The code for this stage of the project is in the folder [coursework_2](/coursework_2). The structure of
+The code for this stage of the project is in the directory `coursework_2`. The structure of
 the code is as follows:
 - `dashboard` contains the code from the Dash app used in coursework 1 with some minor adjustments to code structure
 (splitting layouts and callbacks) and style (made colour scheme consistent with the rest of the web app) that were
