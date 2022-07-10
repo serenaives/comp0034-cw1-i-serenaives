@@ -62,6 +62,4 @@ YouTube link to video demo for [Coursework 2: Web Application](https://youtu.be/
   - Link to [Bootstrap website](https://getbootstrap.com)
   - Link to [Bootswatch website](https://bootswatch.com)
 - I created all the images used in the web application myself using the vector-drawing
-application Graphic, but I had some trouble with the meteorite and ended up drawing very
-heavily from [this image](https://media.istockphoto.com/vectors/cute-meteorite-kawaii-comic-character-icon-vector-id1199462490?k=20&m=1199462490&s=170667a&w=0&h=w6YaFZVoXv44F3jULPZ-v1XZX0OyxJ_CI0tw6XZWLCo=)
-for inspiration.
+application Graphic, but I had some trouble with the meteorite and ended up essentially copying [this image](https://media.istockphoto.com/vectors/cute-meteorite-kawaii-comic-character-icon-vector-id1199462490?k=20&m=1199462490&s=170667a&w=0&h=w6YaFZVoXv44F3jULPZ-v1XZX0OyxJ_CI0tw6XZWLCo=)
