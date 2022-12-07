@@ -7,8 +7,7 @@ The first stage of this project was to create a Python Dash application that use
 landings from NASA to create an interactive dashboard of visualisations.
 
 The directory `part_1` contains the code for the Dash app, which is all contained within
-`dash_app.py`, although an improved structure might split the layout and callbacks into separate files to
-improve readability.
+`dash_app.py`.
 
 The second stage of the project is the web application created using the Python-based web framework Flask.
 This application integrates the dashboard from the first stage within an application which allows users to 
